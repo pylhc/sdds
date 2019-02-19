@@ -6,7 +6,8 @@ This package provides reading and writing functionality for **self describing da
 
 ### Prerequisites
 
-The package depends only on `numpy` as a third-party package.
+The only third-party package sdds depends on is `numpy`.
+
 
 ### Installing
 
@@ -24,6 +25,8 @@ import sdds
 sdds_data = sdds.read('path_to_input.sdds')
 sdds.write(sdds_data, 'path_to_output.sdds')
 ```
+
+
 ## Description
 
 Reading and writing capabilities for [sdds-files](https://ops.aps.anl.gov/SDDSIntroTalk/slides.html)
@@ -38,10 +41,11 @@ with attributes corresponding to the sdds-format itself
 - Can't read binary columns
 - No support for `&include` tag
 
+
 ## Authors
 
 * **Jaime** - *Initial work* - [jaimecp89](https://github.com/jaimecp89)
-* **Lukáš** - *Did things* - [lmalina](https://github.com/lmalina)
+* **Lukáš** - *Other work* - [lmalina](https://github.com/lmalina)
 * **Josch** - *Publishing* - [JoschD](https://github.com/JoschD)
 * **pyLHC/OMC-Team** - *Working Group* - [pyLHC](https://github.com/orgs/pylhc/teams/omc-team)
 
