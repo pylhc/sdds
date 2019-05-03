@@ -1,8 +1,11 @@
 """
-Module sdds.writer
+Writer
 -------------------
 
 Write sdds files.
+
+:author: Jaime
+:module: writer
 
 """
 from typing import IO, List, Union, Iterable
