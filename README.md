@@ -1,4 +1,9 @@
 # SDDS
+[![Travis (.com)](https://img.shields.io/travis/com/pylhc/sdds.svg?style=popout)](https://travis-ci.com/pylhc/sdds/)
+[![Code Climate coverage](https://img.shields.io/codeclimate/coverage/pylhc/sdds.svg?style=popout)](https://codeclimate.com/github/pylhc/sdds)
+[![Code Climate maintainability (percentage)](https://img.shields.io/codeclimate/maintainability-percentage/pylhc/sdds.svg?style=popout)](https://codeclimate.com/github/pylhc/sdds)
+[![GitHub last commit](https://img.shields.io/github/last-commit/pylhc/sdds.svg?style=popout)](https://github.com/pylhc/sdds/)
+[![GitHub release](https://img.shields.io/github/release/pylhc/sdds.svg?style=popout)](https://github.com/pylhc/sdds/)
 
 This package provides reading and writing functionality for **self describing data sets (sdds)**. 
 
