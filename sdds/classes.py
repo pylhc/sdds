@@ -1,11 +1,14 @@
 """
-Module sdds.classes
+Classes
 ----------------------
 
 This module holds the classes handled by the sdds handler.
 
 Most of the documentation comes from:
 https://ops.aps.anl.gov/manuals/SDDStoolkit/SDDStoolkitsu2.html
+
+:author: Jaime
+:module: classes
 
 """
 from typing import Any, Tuple, List, Iterator, Optional, Dict

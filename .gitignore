@@ -6,3 +6,6 @@
 .cache
 /doc/_build/*
 *pycache*
+build/*
+dist/*
+sdds.egg-info/*

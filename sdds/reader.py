@@ -1,9 +1,11 @@
 """
-Module sdds.reader
+Reader
 -------------------
 
 Read sdds files.
 
+:author: Jaime
+:module: reader
 """
 from typing import IO, Any, List, Optional, Generator, Dict, Union, Tuple, Callable, Type
 import numpy as np

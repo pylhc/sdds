@@ -1,15 +1,12 @@
 language: python
 email:
-    recipients:
-#      - lmalina@cern.ch
-#      - jcoellod@cern.ch
     on_success: always
     on_failure: always
 python:
  - "3.6"
 script:
  - pytest --cov=tfs tests
-# - travis-sphinx build --source=doc/ --nowarn
+ - travis-sphinx build --source=doc/ --nowarn
 after_success:
-# - travis-sphinx deploy
+ - travis-sphinx deploy
  
