@@ -2,7 +2,7 @@ import os
 import io
 import pytest
 import numpy as np
-import context
+from . import context
 from sdds.reader import (
     read_sdds,
     _gen_words,
