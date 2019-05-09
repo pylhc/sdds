@@ -11,15 +11,19 @@ https://ops.aps.anl.gov/manuals/SDDStoolkit/SDDStoolkitsu2.html
 :module: classes
 
 """
-from typing import Any, Tuple, List, Iterator, Optional, Dict
+from typing import Any, Tuple, List, Iterator, Optional, Dict, Union
+from typing import get_type_hints
 
 
 ENCODING = "utf-8"
 ENCODING_LEN = 1
 
-NUMTYPES =       {"float": ">f",  "double": ">d",  "short": ">i2", "long": ">i4", "char": ">i1"}
-NUMTYPES_SIZES = {"float": 4,     "double": 8,     "short": 2,     "long": 4,     "char": 1}
-NUMTYPES_CAST =  {"float": float, "double": float, "short": int,   "long": int,   "char": str}
+NUMTYPES = {"float": ">f", "double": ">d", "short": ">i2",
+            "long": ">i4", "llong": ">i8", "char": ">i1"}
+NUMTYPES_SIZES = {"float": 4, "double": 8, "short": 2,
+                  "long": 4, "llong": 8, "char": 1}
+NUMTYPES_CAST = {"float": float, "double": float, "short": int,
+                 "long": int, "llong": int, "char": str}
 
 
 class Description:
@@ -81,11 +85,17 @@ class Definition:
     def __init__(self, name: str, type_: str, **kwargs) -> None:
         self.name = name
         self.type = type_
+        type_hints = get_type_hints(self)
         for argname in kwargs:
             assert hasattr(self, argname),\
                    f"Unknown name {argname} for data type "\
                    f"{self.__class__.__name__}"
-            setattr(self, argname, kwargs[argname])
+            # The type of the parameter can be resolved from the type hint
+            type_hint = type_hints[argname]
+            if hasattr(type_hint, "__args__"):  # For the Optional[...] types
+                type_hint = next(t for t in type_hint.__args__
+                                 if not isinstance(t, type(None)))
+            setattr(self, argname, type_hint(kwargs[argname]))
 
 
 class Column(Definition):
