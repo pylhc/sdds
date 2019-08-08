@@ -10,8 +10,8 @@ Write sdds files.
 """
 from typing import IO, List, Union, Iterable
 import numpy as np
-from classes import (SddsFile, Column, Parameter, Definition, Array, Data, Description,
-                     ENCODING, NUMTYPES)
+from sdds.classes import (SddsFile, Column, Parameter, Definition, Array, Data, Description,
+                          ENCODING, NUMTYPES)
 
 
 def write_sdds(sdds_file: SddsFile, output_path: str) -> None:
