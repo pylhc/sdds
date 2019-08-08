@@ -1,6 +1,6 @@
 # SDDS-Files Changelog
 
-## Version 0.1.2
+## Version 0.1.2 and Version 0.1.3
  - Fixed:
    - From relative to absolute imports (IMPORTANT FIX!!)
 
