@@ -3,15 +3,15 @@ import io
 import pytest
 import numpy as np
 from . import context
-from reader import (
+from sdds.reader import (
     read_sdds,
     _gen_words,
     _get_def_as_dict,
     _read_header,
     _sort_definitions,
 )
-from writer import write_sdds, _sdds_def_as_str
-from classes import Parameter, Column, Array
+from sdds.writer import write_sdds, _sdds_def_as_str
+from sdds.classes import Parameter, Column, Array
 
 
 CURRENT_DIR = os.path.dirname(__file__)

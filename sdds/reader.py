@@ -9,8 +9,8 @@ Read sdds files.
 """
 from typing import IO, Any, List, Optional, Generator, Dict, Union, Tuple, Callable, Type
 import numpy as np
-from classes import (SddsFile, Column, Parameter, Definition, Array, Data, Description,
-                     ENCODING, NUMTYPES, NUMTYPES_CAST, NUMTYPES_SIZES)
+from sdds.classes import (SddsFile, Column, Parameter, Definition, Array, Data, Description,
+                          ENCODING, NUMTYPES, NUMTYPES_CAST, NUMTYPES_SIZES)
 
 
 def read_sdds(file_path: str) -> SddsFile:
