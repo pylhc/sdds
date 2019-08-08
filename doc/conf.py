@@ -25,7 +25,7 @@ warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../sdds/'))
+sys.path.insert(0, os.path.abspath('../'))
 
 # -- General configuration ------------------------------------------------
 
