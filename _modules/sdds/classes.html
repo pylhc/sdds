@@ -1,0 +1,383 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>sdds.classes &mdash; sdds 0.1.3 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> sdds
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../root/index.html">SDDS Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">sdds</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>sdds.classes</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for sdds.classes</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Classes</span>
+<span class="sd">----------------------</span>
+
+<span class="sd">This module holds the classes handled by the sdds handler.</span>
+
+<span class="sd">Most of the documentation comes from:</span>
+<span class="sd">https://ops.aps.anl.gov/manuals/SDDStoolkit/SDDStoolkitsu2.html</span>
+
+<span class="sd">:author: Jaime</span>
+<span class="sd">:module: classes</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">get_type_hints</span>
+
+
+<span class="n">ENCODING</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span>
+<span class="n">ENCODING_LEN</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="n">NUMTYPES</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;float&quot;</span><span class="p">:</span> <span class="s2">&quot;&gt;f&quot;</span><span class="p">,</span> <span class="s2">&quot;double&quot;</span><span class="p">:</span> <span class="s2">&quot;&gt;d&quot;</span><span class="p">,</span> <span class="s2">&quot;short&quot;</span><span class="p">:</span> <span class="s2">&quot;&gt;i2&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;long&quot;</span><span class="p">:</span> <span class="s2">&quot;&gt;i4&quot;</span><span class="p">,</span> <span class="s2">&quot;llong&quot;</span><span class="p">:</span> <span class="s2">&quot;&gt;i8&quot;</span><span class="p">,</span> <span class="s2">&quot;char&quot;</span><span class="p">:</span> <span class="s2">&quot;&gt;i1&quot;</span><span class="p">}</span>
+<span class="n">NUMTYPES_SIZES</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;float&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;double&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;short&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                  <span class="s2">&quot;long&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;llong&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;char&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+<span class="n">NUMTYPES_CAST</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;float&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="s2">&quot;double&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="s2">&quot;short&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="s2">&quot;long&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;llong&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;char&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">}</span>
+
+
+<div class="viewcode-block" id="Description"><a class="viewcode-back" href="../../root/index.html#sdds.classes.Description">[docs]</a><span class="k">class</span> <span class="nc">Description</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Description (&amp;description) command container.</span>
+
+<span class="sd">    This optional command describes the data set in terms of two strings.</span>
+<span class="sd">    The first, text, is an informal description that is intended principally for human consumption.</span>
+<span class="sd">    The second, contents, is intended to formally specify the type of data stored in a data set.</span>
+<span class="sd">    Most frequently, the contents field is used to record the name of the program that created</span>
+<span class="sd">    or most recently modified the file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">TAG</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&amp;description&quot;</span>
+    <span class="n">text</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">contents</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">contents</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">text</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contents</span> <span class="o">=</span> <span class="n">contents</span></div>
+
+
+<div class="viewcode-block" id="Include"><a class="viewcode-back" href="../../root/index.html#sdds.classes.Include">[docs]</a><span class="k">class</span> <span class="nc">Include</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Include (&amp;include) command container.</span>
+
+<span class="sd">    This optional command directs that SDDS header lines be read from the file named</span>
+<span class="sd">    by the filename field. These commands may be nested.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span></div>
+
+
+<div class="viewcode-block" id="Definition"><a class="viewcode-back" href="../../root/index.html#sdds.classes.Definition">[docs]</a><span class="k">class</span> <span class="nc">Definition</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Abstract class for the common behaviour of the data definition commands.</span>
+
+<span class="sd">    The name field must be supplied, as must the type field. The type must be</span>
+<span class="sd">    one of short, long, float, double, character, or string.</span>
+
+<span class="sd">    The optional symbol field allows specification of a symbol to represent the parameter;</span>
+<span class="sd">    it may contain escape sequences, for example, to produce Greek or mathematical characters.</span>
+<span class="sd">    The optional units field allows specification of the units of the parameter.</span>
+<span class="sd">    The optional description field provides for an informal description of the parameter.</span>
+<span class="sd">    The optional format field allows specification of the print format string to be used to</span>
+<span class="sd">    print the data (e.g., for ASCII in SDDS or other formats).</span>
+
+<span class="sd">    The Column, Array and Parameter definitions inherit from this class. They can be created just by</span>
+<span class="sd">    passing name and type and optionally more parameters that depend on the actual definition type.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        AssertionError: If an invalid argument for the definition type is passed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">symbol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">units</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">format_string</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">type_</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">type_</span>
+        <span class="n">type_hints</span> <span class="o">=</span> <span class="n">get_type_hints</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">argname</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argname</span><span class="p">),</span>\
+                   <span class="n">f</span><span class="s2">&quot;Unknown name </span><span class="si">{argname}</span><span class="s2"> for data type &quot;</span>\
+                   <span class="n">f</span><span class="s2">&quot;</span><span class="si">{self.__class__.__name__}</span><span class="s2">&quot;</span>
+            <span class="c1"># The type of the parameter can be resolved from the type hint</span>
+            <span class="n">type_hint</span> <span class="o">=</span> <span class="n">type_hints</span><span class="p">[</span><span class="n">argname</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">type_hint</span><span class="p">,</span> <span class="s2">&quot;__args__&quot;</span><span class="p">):</span>  <span class="c1"># For the Optional[...] types</span>
+                <span class="n">type_hint</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">type_hint</span><span class="o">.</span><span class="n">__args__</span>
+                                 <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)))</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argname</span><span class="p">,</span> <span class="n">type_hint</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">argname</span><span class="p">]))</span></div>
+
+
+<div class="viewcode-block" id="Column"><a class="viewcode-back" href="../../root/index.html#sdds.classes.Column">[docs]</a><span class="k">class</span> <span class="nc">Column</span><span class="p">(</span><span class="n">Definition</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Column (&amp;column) command container, a data definition.</span>
+
+<span class="sd">    This optional command defines a column that will appear in the tabular data</span>
+<span class="sd">    section of each data page.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">TAG</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&amp;column&quot;</span></div>
+
+
+<div class="viewcode-block" id="Parameter"><a class="viewcode-back" href="../../root/index.html#sdds.classes.Parameter">[docs]</a><span class="k">class</span> <span class="nc">Parameter</span><span class="p">(</span><span class="n">Definition</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parameter (&amp;parameter) command container, a data definition.</span>
+
+<span class="sd">    This optional command defines a parameter that will appear along with the</span>
+<span class="sd">    tabular data section of each data page.</span>
+
+<span class="sd">    The optional fixed_value field allows specification of a constant value for a given parameter.</span>
+<span class="sd">    This value will not change from data page to data page, and is not specified along</span>
+<span class="sd">    with non-fixed parameters or tabular data. This feature is for convenience only;</span>
+<span class="sd">    the parameter thus defined is treated like any other.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">TAG</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&amp;parameter&quot;</span>
+    <span class="n">fixed_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Array"><a class="viewcode-back" href="../../root/index.html#sdds.classes.Array">[docs]</a><span class="k">class</span> <span class="nc">Array</span><span class="p">(</span><span class="n">Definition</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Array (&amp;array) command container, a data definition.</span>
+
+<span class="sd">    This optional command defines an array that will appear along with the</span>
+<span class="sd">    tabular data section of each data page.</span>
+
+<span class="sd">    The optional group_name field allows specification of a string giving the name of the array</span>
+<span class="sd">    group to which the array belongs; such strings may be defined by the user to indicate</span>
+<span class="sd">    that different arrays are related (e.g., have the same dimensions, or parallel elements).</span>
+<span class="sd">    The optional dimensions field gives the number of dimensions in the array.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">TAG</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&amp;array&quot;</span>
+    <span class="n">field_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">dimensions</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="Data"><a class="viewcode-back" href="../../root/index.html#sdds.classes.Data">[docs]</a><span class="k">class</span> <span class="nc">Data</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Data (&amp;data) command container.</span>
+
+<span class="sd">    This command is optional unless parameter commands without fixed_value</span>
+<span class="sd">    fields, array commands, or column commands have been given.</span>
+
+<span class="sd">    The mode field is required, and it must be “binary”, the only supported mode.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">TAG</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&amp;data&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span></div>
+
+
+<div class="viewcode-block" id="SddsFile"><a class="viewcode-back" href="../../root/index.html#sdds.classes.SddsFile">[docs]</a><span class="k">class</span> <span class="nc">SddsFile</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Holds the contents of the SDDS file as a pair of dictionaries.</span>
+
+<span class="sd">    The first dictionary &quot;definitions&quot; has the form: name (as a str) -&gt;</span>
+<span class="sd">    Definition, containing an object of each field in the SDDS file (of type</span>
+<span class="sd">    Parameter, Array or Column). The &quot;values&quot; dictionary has the form:</span>
+<span class="sd">    name (as a str) -&gt; value. To access them:</span>
+<span class="sd">    sdds_file = SddsFile(...)</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        def_ = sdds_file.definitions[&quot;name&quot;]</span>
+<span class="sd">        val = sdds_file.values[&quot;name&quot;]</span>
+<span class="sd">        # The definitions and values can also be accessed like:</span>
+<span class="sd">        def_, val = sdds_file[&quot;name&quot;]</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># This should always be &quot;SDDS1&quot;</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Description</span><span class="p">]</span>
+    <span class="n">definitions</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Definition</span><span class="p">]</span>
+    <span class="n">values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Description</span><span class="p">],</span>
+                 <span class="n">definitions_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Definition</span><span class="p">],</span>
+                 <span class="n">values_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="n">version</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">description</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">definitions</span> <span class="o">=</span> <span class="p">{</span><span class="n">definition</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">definition</span> <span class="k">for</span> <span class="n">definition</span> <span class="ow">in</span> <span class="n">definitions_list</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="p">{</span><span class="n">definition</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">definition</span><span class="p">,</span> <span class="n">value</span>
+                       <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">definitions_list</span><span class="p">,</span> <span class="n">values_list</span><span class="p">)}</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Definition</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">definitions</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Definition</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+        <span class="k">for</span> <span class="n">def_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definitions</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="p">[</span><span class="n">def_name</span><span class="p">]</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, OMC-TEAM
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
