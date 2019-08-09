@@ -1,15 +1,15 @@
 SDDS Modules
 **************************
 
-.. automodule:: classes
+.. automodule:: sdds.classes
     :members:
 
 
-.. automodule:: reader
+.. automodule:: sdds.reader
     :members:
 
 
-.. automodule:: writer
+.. automodule:: sdds.writer
     :members:
 
 
