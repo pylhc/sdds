@@ -19,11 +19,11 @@ ENCODING = "utf-8"
 ENCODING_LEN = 1
 
 NUMTYPES = {"float": ">f", "double": ">d", "short": ">i2",
-            "long": ">i4", "llong": ">i8", "char": ">i1"}
+            "long": ">i4", "llong": ">i8", "char": ">i1", "boolean": ">i1"}
 NUMTYPES_SIZES = {"float": 4, "double": 8, "short": 2,
-                  "long": 4, "llong": 8, "char": 1}
+                  "long": 4, "llong": 8, "char": 1, "boolean": 1}
 NUMTYPES_CAST = {"float": float, "double": float, "short": int,
-                 "long": int, "llong": int, "char": str}
+                 "long": int, "llong": int, "char": str, "boolean": int}
 
 
 class Description:
