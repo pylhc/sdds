@@ -72,8 +72,19 @@ def _write_parameters(param_gen: Iterable[Parameter], outbytes: IO[bytes]):
 
 
 def _write_arrays(array_gen: Iterable[Array], outbytes: IO[bytes]):
+    def get_dimensions_from_array(value):
+        # Return the number of items per dimension
+        # For an array a[n][m], returns [n, m]
+        if isinstance(value, np.ndarray) or isinstance(value, list):
+            return [len(value)] + get_dimensions_from_array(value[0])
+        return []
+
     for array_def, value in array_gen:
-        outbytes.write(np.array(len(value), dtype=NUMTYPES["long"]).tobytes())
+        # Number of items per dimensions need to be written before the data
+        elements_per_dim = get_dimensions_from_array(value)
+        long_array = np.array(elements_per_dim, dtype=NUMTYPES["long"])
+        outbytes.write(long_array.tobytes())
+
         if array_def.type == "string":
             for string in value:
                 _write_string(string, outbytes)
