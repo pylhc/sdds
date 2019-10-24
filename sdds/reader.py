@@ -26,6 +26,7 @@ def read_sdds(file_path: str) -> SddsFile:
     with open(file_path, "rb") as inbytes:
         version, definition_list, description, data = _read_header(inbytes)
         data_list = _read_data(data, definition_list, inbytes)
+
         return SddsFile(version, description, definition_list, data_list)
 
 
@@ -33,7 +34,7 @@ def read_sdds(file_path: str) -> SddsFile:
 # Common reading of header and data.
 ##############################################################################
 
-def _read_header(inbytes: IO[bytes]) ->Tuple[str, List[Definition], Optional[Description], Data]:
+def _read_header(inbytes: IO[bytes]) -> Tuple[str, List[Definition], Optional[Description], Data]:
     word_gen = _gen_words(inbytes)
     version = next(word_gen)  # First token is the SDDS version
     assert version == "SDDS1",\
@@ -85,6 +86,9 @@ def _sort_definitions(orig_defs: List[Definition]) -> List[Definition]:
 def _read_data(data: Data, definitions: List[Definition], inbytes: IO[bytes]) -> List[Any]:
     if data.mode == "binary":
         return _read_data_binary(definitions, inbytes)
+    elif data.mode == "ascii":
+        return _read_data_ascii(definitions, inbytes)
+
     raise ValueError(f"Unsupported data mode {data.mode}.")
 
 
@@ -125,6 +129,7 @@ def _read_bin_column(inbytes: IO[bytes], definition: Column, row_count: int):
 
 def _read_bin_array(inbytes: IO[bytes], definition: Array) -> Any:
     dims, total_len = _read_bin_array_len(inbytes, definition.dimensions)
+
     if definition.type == "string":
         len_type: str = "long"\
                         if not hasattr(definition, "modifier")\
@@ -135,7 +140,9 @@ def _read_bin_array(inbytes: IO[bytes], definition: Array) -> Any:
             str_len = int(_read_bin_numeric(inbytes, len_type, 1))
             str_array.append(inbytes.read(str_len).decode(ENCODING))
         return str_array
-    return _read_bin_numeric(inbytes, definition.type, total_len).reshape(dims)
+
+    data = _read_bin_numeric(inbytes, definition.type, total_len)
+    return data.reshape(dims)
 
 
 def _read_bin_array_len(inbytes: IO[bytes], num_dims: int) -> Tuple[List[int], int]:
@@ -150,6 +157,87 @@ def _read_bin_numeric(inbytes: IO[bytes], type_: str, count: int) -> Any:
 
 def _read_bin_int(inbytes: IO[bytes]) -> int:
     return int(_read_bin_numeric(inbytes, "long", 1))
+
+
+##############################################################################
+# ASCII data reading
+##############################################################################
+
+def _read_data_ascii(definitions: List[Definition], inbytes: IO[bytes]) -> List[Any]:
+    def _ascii_generator(ascii_text):
+        for line in ascii_text:
+            yield line
+
+    # Convert bytes to ASCII, separate by lines and remove comments
+    ascii_text = [chr(r) for r in inbytes.read()]
+    ascii_text = ''.join(ascii_text).split('\n')
+    ascii_text = [line for line in ascii_text if not line.startswith('!')]
+
+    # Get the generator for the text
+    ascii_gen = _ascii_generator(ascii_text)
+
+    # Dict of function to call for each type of tag: array, parameter
+    functs_dict = {Parameter: _read_ascii_parameter,
+                   Array: _read_ascii_array
+                   }
+
+    # Iterate through every parameters and arrays in the file
+    data = []
+    for definition in definitions:
+        def_tag = definition.__class__
+
+        # Call the function handling the tag we're on
+        # Change the current line according to the tag and dimensions
+        value = functs_dict[def_tag](ascii_gen, definition)
+        data.append(value)
+
+    return data
+
+
+def _read_ascii_parameter(ascii_gen: Generator[str, None, None],
+                          definition: Parameter) -> Union[str, int, float]:
+
+    # Check if we got fixed values, no need to read a line if that's the case
+    if definition.fixed_value is not None:
+        if definition.type == "string":
+            return definition.fixed_value
+        if definition.type in NUMTYPES_CAST:
+            return NUMTYPES_CAST[definition.type](definition.fixed_value)
+
+    # No fixed value -> read a line
+    # Strings can be returned without cast
+    if definition.type == "string":
+        return next(ascii_gen)
+
+    # For other types, a cast is needed
+    if definition.type in NUMTYPES_CAST:
+        return NUMTYPES_CAST[definition.type](next(ascii_gen))
+
+    raise TypeError(f"Type {definition.type} for Parameter unsupported")
+
+
+def _read_ascii_array(ascii_gen: Generator[str, None, None],
+                      definition: Array) -> np.ndarray:
+
+    # Get the number of elements per dimension
+    dimensions = next(ascii_gen).split()
+    dimensions = np.array(dimensions, dtype="int")
+
+    # Get all the data given by the dimensions
+    data = []
+    while len(data) != np.prod(dimensions):
+        # The values on each line are split by a space
+        data += next(ascii_gen).strip().split(' ')
+
+    # Cast every object to the correct type
+    if definition.type != 'string':
+        data = list(map(NUMTYPES_CAST[definition.type], data))
+
+    # Convert to np.array so that it can be reshaped to reflect the dimensions
+    data = np.array(data)
+    data = data.reshape(dimensions)
+
+    return data
 
 
 ##############################################################################
