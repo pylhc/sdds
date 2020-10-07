@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,27 +11,29 @@
   
 
   
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="prev" title="Welcome to SDDS documentation!" href="../index.html" /> 
@@ -49,7 +50,7 @@
           
 
           
-            <a href="../index.html" class="icon icon-home"> sdds
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> sdds
           
 
           
@@ -59,7 +60,7 @@
             
             
               <div class="version">
-                0.1.3
+                0.1
               </div>
             
           
@@ -76,6 +77,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -95,6 +97,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -133,7 +136,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../index.html">Docs</a> &raquo;</li>
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>SDDS Modules</li>
     
@@ -169,9 +172,9 @@
 <dd class="field-even"><p>classes</p>
 </dd>
 </dl>
-<dl class="class">
+<dl class="py class">
 <dt id="sdds.classes.Array">
-<em class="property">class </em><code class="sig-prename descclassname">sdds.classes.</code><code class="sig-name descname">Array</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">type_: str</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdds/classes.html#Array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sdds.classes.Array" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">sdds.classes.</code><code class="sig-name descname">Array</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">type_</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdds/classes.html#Array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sdds.classes.Array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Array (&amp;array) command container, a data definition.</p>
 <p>This optional command defines an array that will appear along with the
 tabular data section of each data page.</p>
@@ -181,26 +184,26 @@ that different arrays are related (e.g., have the same dimensions, or parallel e
 The optional dimensions field gives the number of dimensions in the array.</p>
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="sdds.classes.Column">
-<em class="property">class </em><code class="sig-prename descclassname">sdds.classes.</code><code class="sig-name descname">Column</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">type_: str</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdds/classes.html#Column"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sdds.classes.Column" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">sdds.classes.</code><code class="sig-name descname">Column</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">type_</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdds/classes.html#Column"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sdds.classes.Column" title="Permalink to this definition">¶</a></dt>
 <dd><p>Column (&amp;column) command container, a data definition.</p>
 <p>This optional command defines a column that will appear in the tabular data
 section of each data page.</p>
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="sdds.classes.Data">
-<em class="property">class </em><code class="sig-prename descclassname">sdds.classes.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param">mode: str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdds/classes.html#Data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sdds.classes.Data" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">sdds.classes.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mode</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdds/classes.html#Data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sdds.classes.Data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Data (&amp;data) command container.</p>
 <p>This command is optional unless parameter commands without fixed_value
 fields, array commands, or column commands have been given.</p>
 <p>The mode field is required, and it must be “binary”, the only supported mode.</p>
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="sdds.classes.Definition">
-<em class="property">class </em><code class="sig-prename descclassname">sdds.classes.</code><code class="sig-name descname">Definition</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">type_: str</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdds/classes.html#Definition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sdds.classes.Definition" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">sdds.classes.</code><code class="sig-name descname">Definition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">type_</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdds/classes.html#Definition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sdds.classes.Definition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Abstract class for the common behaviour of the data definition commands.</p>
 <p>The name field must be supplied, as must the type field. The type must be
 one of short, long, float, double, character, or string.</p>
@@ -219,9 +222,9 @@ passing name and type and optionally more parameters that depend on the actual d
 </dl>
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="sdds.classes.Description">
-<em class="property">class </em><code class="sig-prename descclassname">sdds.classes.</code><code class="sig-name descname">Description</code><span class="sig-paren">(</span><em class="sig-param">text: Optional[str] = None</em>, <em class="sig-param">contents: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdds/classes.html#Description"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sdds.classes.Description" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">sdds.classes.</code><code class="sig-name descname">Description</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">contents</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdds/classes.html#Description"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sdds.classes.Description" title="Permalink to this definition">¶</a></dt>
 <dd><p>Description (&amp;description) command container.</p>
 <p>This optional command describes the data set in terms of two strings.
 The first, text, is an informal description that is intended principally for human consumption.
@@ -230,17 +233,17 @@ Most frequently, the contents field is used to record the name of the program th
 or most recently modified the file.</p>
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="sdds.classes.Include">
-<em class="property">class </em><code class="sig-prename descclassname">sdds.classes.</code><code class="sig-name descname">Include</code><span class="sig-paren">(</span><em class="sig-param">filename: str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdds/classes.html#Include"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sdds.classes.Include" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">sdds.classes.</code><code class="sig-name descname">Include</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdds/classes.html#Include"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sdds.classes.Include" title="Permalink to this definition">¶</a></dt>
 <dd><p>Include (&amp;include) command container.</p>
 <p>This optional command directs that SDDS header lines be read from the file named
 by the filename field. These commands may be nested.</p>
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="sdds.classes.Parameter">
-<em class="property">class </em><code class="sig-prename descclassname">sdds.classes.</code><code class="sig-name descname">Parameter</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">type_: str</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdds/classes.html#Parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sdds.classes.Parameter" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">sdds.classes.</code><code class="sig-name descname">Parameter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">type_</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdds/classes.html#Parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sdds.classes.Parameter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parameter (&amp;parameter) command container, a data definition.</p>
 <p>This optional command defines a parameter that will appear along with the
 tabular data section of each data page.</p>
@@ -250,9 +253,9 @@ with non-fixed parameters or tabular data. This feature is for convenience only;
 the parameter thus defined is treated like any other.</p>
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="sdds.classes.SddsFile">
-<em class="property">class </em><code class="sig-prename descclassname">sdds.classes.</code><code class="sig-name descname">SddsFile</code><span class="sig-paren">(</span><em class="sig-param">version: str, description: Optional[sdds.classes.Description], definitions_list: List[sdds.classes.Definition], values_list: List[Any]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdds/classes.html#SddsFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sdds.classes.SddsFile" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">sdds.classes.</code><code class="sig-name descname">SddsFile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">version</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">description</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference internal" href="#sdds.classes.Description" title="sdds.classes.Description">sdds.classes.Description</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">definitions_list</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="#sdds.classes.Definition" title="sdds.classes.Definition">sdds.classes.Definition</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">values_list</span><span class="p">:</span> <span class="n">List<span class="p">[</span>Any<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdds/classes.html#SddsFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sdds.classes.SddsFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Holds the contents of the SDDS file as a pair of dictionaries.</p>
 <p>The first dictionary “definitions” has the form: name (as a str) -&gt;
 Definition, containing an object of each field in the SDDS file (of type
@@ -279,9 +282,9 @@ sdds_file = SddsFile(…)</p>
 <dd class="field-even"><p>reader</p>
 </dd>
 </dl>
-<dl class="function">
+<dl class="py function">
 <dt id="sdds.reader.read_sdds">
-<code class="sig-prename descclassname">sdds.reader.</code><code class="sig-name descname">read_sdds</code><span class="sig-paren">(</span><em class="sig-param">file_path: str</em><span class="sig-paren">)</span> &#x2192; sdds.classes.SddsFile<a class="reference internal" href="../_modules/sdds/reader.html#read_sdds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sdds.reader.read_sdds" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">sdds.reader.</code><code class="sig-name descname">read_sdds</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_path</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#sdds.classes.SddsFile" title="sdds.classes.SddsFile">sdds.classes.SddsFile</a><a class="reference internal" href="../_modules/sdds/reader.html#read_sdds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sdds.reader.read_sdds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads SDDS file from specified file_path</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -305,9 +308,9 @@ sdds_file = SddsFile(…)</p>
 <dd class="field-even"><p>writer</p>
 </dd>
 </dl>
-<dl class="function">
+<dl class="py function">
 <dt id="sdds.writer.write_sdds">
-<code class="sig-prename descclassname">sdds.writer.</code><code class="sig-name descname">write_sdds</code><span class="sig-paren">(</span><em class="sig-param">sdds_file: sdds.classes.SddsFile</em>, <em class="sig-param">output_path: str</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/sdds/writer.html#write_sdds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sdds.writer.write_sdds" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">sdds.writer.</code><code class="sig-name descname">write_sdds</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sdds_file</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#sdds.classes.SddsFile" title="sdds.classes.SddsFile">sdds.classes.SddsFile</a></span></em>, <em class="sig-param"><span class="n">output_path</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/sdds/writer.html#write_sdds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sdds.writer.write_sdds" title="Permalink to this definition">¶</a></dt>
 <dd><blockquote>
 <div><p>Writes SddsFile object into output_path</p>
 </div></blockquote>
@@ -342,11 +345,19 @@ sdds_file = SddsFile(…)</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, OMC-TEAM
+        
+        &copy; Copyright 2018-2020, pyLHC/OMC-TEAM
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -357,7 +368,6 @@ sdds_file = SddsFile(…)</p>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {
