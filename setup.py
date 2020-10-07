@@ -64,7 +64,7 @@ setuptools.setup(
         "Topic :: Scientific/Engineering",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
-    packages=find_packages(include=(MODULE_NAME,)),
+    packages=setuptools.find_packages(include=(MODULE_NAME,)),
     install_requires=DEPENDENCIES,
     tests_require=EXTRA_DEPENDENCIES["test"],
     extras_require=EXTRA_DEPENDENCIES,
