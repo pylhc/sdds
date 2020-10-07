@@ -35,7 +35,7 @@ DEPENDENCIES = [
 # Extra dependencies
 EXTRA_DEPENDENCIES = {
     "test": ["pytest>=5.2", "pytest-cov>=2.6", "attrs>=19.2.0"],
-    "doc": ["sphinx", "travis-sphinx", "sphinx_rtd_theme"],  # TODO: remove travis sphinx after GA
+    "doc": ["sphinx", "sphinx_rtd_theme"],
 }
 EXTRA_DEPENDENCIES.update(
     {"all": [elem for list_ in EXTRA_DEPENDENCIES.values() for elem in list_]}
