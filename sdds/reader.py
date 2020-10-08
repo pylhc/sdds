@@ -23,7 +23,7 @@ def read_sdds(file_path: Union[pathlib.Path, str]) -> SddsFile:
             string, in which case it will be cast to a PosixPath object.
 
     Returns:
-        the data loaded in an SddsFile object.
+        The data loaded in an SddsFile object.
     """
     file_path = pathlib.Path(file_path)
     with file_path.open("rb") as inbytes:
