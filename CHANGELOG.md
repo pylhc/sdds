@@ -3,7 +3,7 @@
 ## Version 0.2
 - Added:
     - Support for ascii files.
-    - Support for PosixPath objects from `pathlib` in read and write operations.
+    - Support for `pathlib.Path` objects in read and write operations.
 
 ## Version 0.1.2 and Version 0.1.3
  - Fixed:

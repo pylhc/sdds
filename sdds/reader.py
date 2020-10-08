@@ -19,11 +19,11 @@ def read_sdds(file_path: Union[pathlib.Path, str]) -> SddsFile:
     Reads SDDS file from specified file_path
 
     Args:
-        file_path (Union[pathlib.Path, str]): PosixPath object to the input SDDS file. Can be a
-            string, in which case it will be cast to a PosixPath object.
+        file_path (Union[pathlib.Path, str]): Path object to the input SDDS file. Can be a
+            string, in which case it will be cast to a Path object.
 
     Returns:
-        The data loaded in an SddsFile object.
+        An SddsFile object containing the loaded data.
     """
     file_path = pathlib.Path(file_path)
     with file_path.open("rb") as inbytes:

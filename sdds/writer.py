@@ -21,8 +21,8 @@ def write_sdds(sdds_file: SddsFile, output_path: Union[pathlib.Path, str]) -> No
 
     Args:
         sdds_file: SddsFile object to write
-        output_path (Union[pathlib.Path, str]): PosixPath object to the output SDDS file. Can be
-            a string, in which case it will be cast to a PosixPath object.
+        output_path (Union[pathlib.Path, str]): Path object to the output SDDS file. Can be
+            a string, in which case it will be cast to a Path object.
     """
     output_path = pathlib.Path(output_path)
     with output_path.open("wb") as outbytes:
