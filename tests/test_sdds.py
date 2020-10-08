@@ -1,4 +1,5 @@
 import os
+import pathlib
 import io
 import pytest
 import numpy as np
@@ -14,34 +15,68 @@ from sdds.writer import write_sdds, _sdds_def_as_str
 from sdds.classes import Parameter, Column, Array
 
 
-CURRENT_DIR = os.path.dirname(__file__)
+CURRENT_DIR = pathlib.Path(__file__).parent
 
 
-def test_sdds_write_read(_sdds_file, _test_file):
-    original = read_sdds(_sdds_file)
-    write_sdds(original, _test_file)
-    new = read_sdds(_test_file)
-    for definition, value in original:
-        new_def, new_val = new[definition.name]
-        assert new_def.name == definition.name
-        assert new_def.type == definition.type
-        assert np.all(value == new_val)
+class TestReadWrite:
+    def test_sdds_write_read_pathlib_input(self, _sdds_file_pathlib, tmp_file):
+        original = read_sdds(_sdds_file_pathlib)
+        write_sdds(original, tmp_file)
+        new = read_sdds(tmp_file)
+        for definition, value in original:
+            new_def, new_val = new[definition.name]
+            assert new_def.name == definition.name
+            assert new_def.type == definition.type
+            assert np.all(value == new_val)
+
+    def test_sdds_write_read_str_input(self, _sdds_file_str, tmp_file):
+        original = read_sdds(_sdds_file_str)
+        write_sdds(original, tmp_file)
+        new = read_sdds(tmp_file)
+        for definition, value in original:
+            new_def, new_val = new[definition.name]
+            assert new_def.name == definition.name
+            assert new_def.type == definition.type
+            assert np.all(value == new_val)
 
 
-def test_read_word(_sdds_file):
-    test_str = b"""   test1\ntest2 test3,\ttest4
-    """
-    word_gen = _gen_words(io.BytesIO(test_str))
-    assert next(word_gen) == "test1"
-    assert next(word_gen) == "test2"
-    assert next(word_gen) == "test3,"
-    assert next(word_gen) == "test4"
+class TestReadFunctions:
+    def test_read_word(self, _sdds_file_str):
+        test_str = b"""   test1\ntest2 test3,\ttest4
+        """
+        word_gen = _gen_words(io.BytesIO(test_str))
+        assert next(word_gen) == "test1"
+        assert next(word_gen) == "test2"
+        assert next(word_gen) == "test3,"
+        assert next(word_gen) == "test4"
 
+    def test_read_no_more(self):
+        test_str = b""
+        with pytest.raises(StopIteration):
+            next(_gen_words(io.BytesIO(test_str)))
 
-def test_read_no_more():
-    test_str = b""
-    with pytest.raises(StopIteration):
-        next(_gen_words(io.BytesIO(test_str)))
+    def test_read_header(self):
+        test_head = b"""
+SDDS1
+!# big-endian
+&parameter name=acqStamp, type=double, &end
+&parameter name=nbOfCapTurns, type=long, &end
+&array name=horPositionsConcentratedAndSorted, type=float, &end
+&array
+    name=verBunchId,
+    type=long,
+    field_length=3,
+&end
+&data mode=binary, &end
+"""
+        test_data = {"acqStamp": "double", "nbOfCapTurns": "long",
+                     "horPositionsConcentratedAndSorted": "float",
+                     "verBunchId": "long"}
+        version, definitions, _, data = _read_header(io.BytesIO(test_head))
+        assert version == "SDDS1"
+        assert data.mode == "binary"
+        for definition in definitions:
+            assert definition.type == test_data[definition.name]
 
 
 def test_def_as_dict():
@@ -66,30 +101,6 @@ def test_sort_defs():
     assert sorted_ == _sort_definitions(unsorted)
 
 
-def test_read_header():
-    test_head = b"""
-SDDS1
-!# big-endian
-&parameter name=acqStamp, type=double, &end
-&parameter name=nbOfCapTurns, type=long, &end
-&array name=horPositionsConcentratedAndSorted, type=float, &end
-&array
-    name=verBunchId,
-    type=long,
-    field_length=3,
-&end
-&data mode=binary, &end
-"""
-    test_data = {"acqStamp": "double", "nbOfCapTurns": "long",
-                 "horPositionsConcentratedAndSorted": "float",
-                 "verBunchId": "long"}
-    version, definitions, _, data = _read_header(io.BytesIO(test_head))
-    assert version == "SDDS1"
-    assert data.mode == "binary"
-    for definition in definitions:
-        assert definition.type == test_data[definition.name]
-
-
 class TestAscii:
     def template_ascii_read_write_read(self, filepath, output):
         original = read_sdds(filepath)
@@ -111,13 +122,11 @@ class TestAscii:
 
             assert values_equal
 
+    def test_sdds_write_read_asii_2_dim(self, tmp_file):
+        self.template_ascii_read_write_read('./tests/inputs/LEI_2.sdds', tmp_file)
 
-    def test_sdds_write_read_asii_2_dim(self, _test_file):
-        self.template_ascii_read_write_read('./tests/inputs/LEI_2.sdds', _test_file)
-
-
-    def test_sdds_write_read_asii_1_dim(self, _test_file):
-        self.template_ascii_read_write_read('./tests/inputs/LEI_1.sdds', _test_file)
+    def test_sdds_write_read_asii_1_dim(self, tmp_file):
+        self.template_ascii_read_write_read('./tests/inputs/LEI_1.sdds', tmp_file)
 
     def test_sdds_write_ascii(self):
         sdds_file = b'''SDDS1
@@ -131,9 +140,9 @@ class TestAscii:
 7 6 5 4 3
 2 1
 '''
-        sdds_IO = io.BytesIO(sdds_file)
-        version, definitions, description, data = _read_header(sdds_IO)
-        data_list = _read_data(data, definitions, sdds_IO)
+        sdds_io = io.BytesIO(sdds_file)
+        version, definitions, description, data = _read_header(sdds_io)
+        data_list = _read_data(data, definitions, sdds_io)
 
         assert version == 'SDDS1'
         assert len(definitions) == 2
@@ -148,7 +157,8 @@ class TestAscii:
         assert (data_list[1][3] == np.arange(10, 5, -1)).all()
         assert (data_list[1][4] == np.arange(5, 0, -1)).all()
 
-## Helpers
+
+# Helpers
 
 def _write_read_header():
     original = Parameter(name="param1", type="str")
@@ -160,15 +170,15 @@ def _write_read_header():
 
 
 @pytest.fixture()
-def _sdds_file():
-    return os.path.join(CURRENT_DIR, "inputs", "test_file.sdds")
+def _sdds_file_pathlib() -> pathlib.Path:
+    return CURRENT_DIR / "inputs" / "test_file.sdds"
 
 
 @pytest.fixture()
-def _test_file():
-    test_file = os.path.join(CURRENT_DIR, "test_file.sdds")
-    try:
-        yield test_file
-    finally:
-        if os.path.isfile(test_file):
-            os.remove(test_file)
+def _sdds_file_str() -> str:
+    return os.path.join(os.path.dirname(__file__), "inputs", "test_file.sdds")
+
+
+@pytest.fixture()
+def tmp_file(tmp_path) -> pathlib.Path:
+    return tmp_path / "random_file"
