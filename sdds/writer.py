@@ -8,21 +8,24 @@ Write sdds files.
 :module: writer
 
 """
+import pathlib
 from typing import IO, List, Union, Iterable
 import numpy as np
 from sdds.classes import (SddsFile, Column, Parameter, Definition, Array, Data, Description,
                           ENCODING, NUMTYPES)
 
 
-def write_sdds(sdds_file: SddsFile, output_path: str) -> None:
+def write_sdds(sdds_file: SddsFile, output_path: Union[pathlib.Path, str]) -> None:
     """
         Writes SddsFile object into output_path
 
     Args:
         sdds_file: SddsFile object to write
-        output_path: path, where to write sdds_file
+        output_path (Union[pathlib.Path, str]): PosixPath object to the output SDDS file. Can be
+            a string, in which case it will be cast to a PosixPath object.
     """
-    with open(output_path, "wb") as outbytes:
+    output_path = pathlib.Path(output_path)
+    with output_path.open("wb") as outbytes:
         names = _write_header(sdds_file, outbytes)
         _write_data(names, sdds_file, outbytes)
 
