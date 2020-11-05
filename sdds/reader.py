@@ -7,23 +7,26 @@ Read sdds files.
 :author: Jaime
 :module: reader
 """
+import pathlib
 from typing import IO, Any, List, Optional, Generator, Dict, Union, Tuple, Callable, Type
 import numpy as np
 from sdds.classes import (SddsFile, Column, Parameter, Definition, Array, Data, Description,
                           ENCODING, NUMTYPES, NUMTYPES_CAST, NUMTYPES_SIZES)
 
 
-def read_sdds(file_path: str) -> SddsFile:
+def read_sdds(file_path: Union[pathlib.Path, str]) -> SddsFile:
     """
     Reads SDDS file from specified file_path
 
     Args:
-        file_path: path to SDDS file
+        file_path (Union[pathlib.Path, str]): Path object to the input SDDS file. Can be a
+            string, in which case it will be cast to a Path object.
 
     Returns:
-        SddsFile object
+        An SddsFile object containing the loaded data.
     """
-    with open(file_path, "rb") as inbytes:
+    file_path = pathlib.Path(file_path)
+    with file_path.open("rb") as inbytes:
         version, definition_list, description, data = _read_header(inbytes)
         data_list = _read_data(data, definition_list, inbytes)
 
