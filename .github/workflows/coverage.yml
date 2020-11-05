@@ -72,7 +72,7 @@ jobs:
           chmod +x ./cc-test-reporter
           ./cc-test-reporter before-build
       - name: Run all tests
-        run: python -m pytest
+        run: python -m pytest --cov-report xml --cov=sdds
 
       - name: Push Coverage to CodeClimate
         if: ${{ success() }}  # only if tests were successful
