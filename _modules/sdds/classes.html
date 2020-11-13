@@ -13,6 +13,7 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
 
   
   
@@ -49,9 +50,12 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> sdds
+            <a href="../../index.html">
           
 
+          
+            
+            <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
           
           </a>
 
@@ -85,7 +89,12 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../root/index.html">SDDS Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">SDDS Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#classes">Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#reader">Reader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#writer">Writer</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -152,16 +161,11 @@
   <h1>Source code for sdds.classes</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Classes</span>
-<span class="sd">----------------------</span>
+<span class="sd">-------</span>
 
-<span class="sd">This module holds the classes handled by the sdds handler.</span>
-
-<span class="sd">Most of the documentation comes from:</span>
+<span class="sd">This module holds classes to handle different namelist commands in an SDDS file.</span>
+<span class="sd">Implementation are based on documentation at:</span>
 <span class="sd">https://ops.aps.anl.gov/manuals/SDDStoolkit/SDDStoolkitsu2.html</span>
-
-<span class="sd">:author: Jaime</span>
-<span class="sd">:module: classes</span>
-
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">get_type_hints</span>
@@ -178,14 +182,15 @@
                  <span class="s2">&quot;long&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;llong&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;char&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;boolean&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">}</span>
 
 
-<div class="viewcode-block" id="Description"><a class="viewcode-back" href="../../root/index.html#sdds.classes.Description">[docs]</a><span class="k">class</span> <span class="nc">Description</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Description (&amp;description) command container.</span>
+<div class="viewcode-block" id="Description"><a class="viewcode-back" href="../../modules/index.html#sdds.classes.Description">[docs]</a><span class="k">class</span> <span class="nc">Description</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Description (&amp;description) command container.</span>
 
-<span class="sd">    This optional command describes the data set in terms of two strings.</span>
-<span class="sd">    The first, text, is an informal description that is intended principally for human consumption.</span>
-<span class="sd">    The second, contents, is intended to formally specify the type of data stored in a data set.</span>
-<span class="sd">    Most frequently, the contents field is used to record the name of the program that created</span>
-<span class="sd">    or most recently modified the file.</span>
+<span class="sd">    This optional command describes the data set in terms of two strings. The first, text,</span>
+<span class="sd">    is an informal description that is intended principally for human consumption. The second,</span>
+<span class="sd">    contents, is intended to formally specify the type of data stored in a data set. Most</span>
+<span class="sd">    frequently, the contents field is used to record the name of the program that created or most</span>
+<span class="sd">    recently modified the file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">TAG</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&amp;description&quot;</span>
     <span class="n">text</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
@@ -196,11 +201,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">contents</span> <span class="o">=</span> <span class="n">contents</span></div>
 
 
-<div class="viewcode-block" id="Include"><a class="viewcode-back" href="../../root/index.html#sdds.classes.Include">[docs]</a><span class="k">class</span> <span class="nc">Include</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Include (&amp;include) command container.</span>
+<div class="viewcode-block" id="Include"><a class="viewcode-back" href="../../modules/index.html#sdds.classes.Include">[docs]</a><span class="k">class</span> <span class="nc">Include</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Include (&amp;include) command container.</span>
 
-<span class="sd">    This optional command directs that SDDS header lines be read from the file named</span>
-<span class="sd">    by the filename field. These commands may be nested.</span>
+<span class="sd">    This optional command directs that SDDS header lines be read from the file named by the</span>
+<span class="sd">    filename field. These commands may be nested.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span>
 
@@ -208,18 +214,19 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span></div>
 
 
-<div class="viewcode-block" id="Definition"><a class="viewcode-back" href="../../root/index.html#sdds.classes.Definition">[docs]</a><span class="k">class</span> <span class="nc">Definition</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Abstract class for the common behaviour of the data definition commands.</span>
+<div class="viewcode-block" id="Definition"><a class="viewcode-back" href="../../modules/index.html#sdds.classes.Definition">[docs]</a><span class="k">class</span> <span class="nc">Definition</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract class for the common behaviour of the data definition commands.</span>
 
-<span class="sd">    The name field must be supplied, as must the type field. The type must be</span>
-<span class="sd">    one of short, long, float, double, character, or string.</span>
+<span class="sd">    The name field must be supplied, as must the type field. The type must be one of short, long,</span>
+<span class="sd">    float, double, character, or string.</span>
 
-<span class="sd">    The optional symbol field allows specification of a symbol to represent the parameter;</span>
-<span class="sd">    it may contain escape sequences, for example, to produce Greek or mathematical characters.</span>
-<span class="sd">    The optional units field allows specification of the units of the parameter.</span>
-<span class="sd">    The optional description field provides for an informal description of the parameter.</span>
-<span class="sd">    The optional format field allows specification of the print format string to be used to</span>
-<span class="sd">    print the data (e.g., for ASCII in SDDS or other formats).</span>
+<span class="sd">    The optional symbol field allows specification of a symbol to represent the parameter; it may</span>
+<span class="sd">    contain escape sequences, for example, to produce Greek or mathematical characters. The</span>
+<span class="sd">    optional units field allows specification of the units of the parameter. The optional</span>
+<span class="sd">    description field provides for an informal description of the parameter. The optional format</span>
+<span class="sd">    field allows specification of the print format string to be used to print the data (e.g.,</span>
+<span class="sd">    for ASCII in SDDS or other formats).</span>
 
 <span class="sd">    The Column, Array and Parameter definitions inherit from this class. They can be created just by</span>
 <span class="sd">    passing name and type and optionally more parameters that depend on the actual definition type.</span>
@@ -250,40 +257,39 @@
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argname</span><span class="p">,</span> <span class="n">type_hint</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">argname</span><span class="p">]))</span></div>
 
 
-<div class="viewcode-block" id="Column"><a class="viewcode-back" href="../../root/index.html#sdds.classes.Column">[docs]</a><span class="k">class</span> <span class="nc">Column</span><span class="p">(</span><span class="n">Definition</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Column (&amp;column) command container, a data definition.</span>
+<div class="viewcode-block" id="Column"><a class="viewcode-back" href="../../modules/index.html#sdds.classes.Column">[docs]</a><span class="k">class</span> <span class="nc">Column</span><span class="p">(</span><span class="n">Definition</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Column (&amp;column) command container, a data definition.</span>
 
-<span class="sd">    This optional command defines a column that will appear in the tabular data</span>
-<span class="sd">    section of each data page.</span>
+<span class="sd">    This optional command defines a column that will appear in the tabular data section of each</span>
+<span class="sd">    data page.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">TAG</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&amp;column&quot;</span></div>
 
 
-<div class="viewcode-block" id="Parameter"><a class="viewcode-back" href="../../root/index.html#sdds.classes.Parameter">[docs]</a><span class="k">class</span> <span class="nc">Parameter</span><span class="p">(</span><span class="n">Definition</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Parameter (&amp;parameter) command container, a data definition.</span>
+<div class="viewcode-block" id="Parameter"><a class="viewcode-back" href="../../modules/index.html#sdds.classes.Parameter">[docs]</a><span class="k">class</span> <span class="nc">Parameter</span><span class="p">(</span><span class="n">Definition</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameter (&amp;parameter) command container, a data definition.</span>
 
-<span class="sd">    This optional command defines a parameter that will appear along with the</span>
-<span class="sd">    tabular data section of each data page.</span>
-
-<span class="sd">    The optional fixed_value field allows specification of a constant value for a given parameter.</span>
-<span class="sd">    This value will not change from data page to data page, and is not specified along</span>
-<span class="sd">    with non-fixed parameters or tabular data. This feature is for convenience only;</span>
-<span class="sd">    the parameter thus defined is treated like any other.</span>
+<span class="sd">    This optional command defines a parameter that will appear along with the tabular data</span>
+<span class="sd">    section of each data page. The optional fixed_value field allows specification of a constant</span>
+<span class="sd">    value for a given parameter. This value will not change from data page to data page,</span>
+<span class="sd">    and is not specified along with non-fixed parameters or tabular data. This feature is for</span>
+<span class="sd">    convenience only; the parameter thus defined is treated like any other.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">TAG</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&amp;parameter&quot;</span>
     <span class="n">fixed_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
-<div class="viewcode-block" id="Array"><a class="viewcode-back" href="../../root/index.html#sdds.classes.Array">[docs]</a><span class="k">class</span> <span class="nc">Array</span><span class="p">(</span><span class="n">Definition</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Array (&amp;array) command container, a data definition.</span>
+<div class="viewcode-block" id="Array"><a class="viewcode-back" href="../../modules/index.html#sdds.classes.Array">[docs]</a><span class="k">class</span> <span class="nc">Array</span><span class="p">(</span><span class="n">Definition</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Array (&amp;array) command container, a data definition.</span>
 
-<span class="sd">    This optional command defines an array that will appear along with the</span>
-<span class="sd">    tabular data section of each data page.</span>
-
-<span class="sd">    The optional group_name field allows specification of a string giving the name of the array</span>
-<span class="sd">    group to which the array belongs; such strings may be defined by the user to indicate</span>
-<span class="sd">    that different arrays are related (e.g., have the same dimensions, or parallel elements).</span>
-<span class="sd">    The optional dimensions field gives the number of dimensions in the array.</span>
+<span class="sd">    This optional command defines an array that will appear along with the tabular data section</span>
+<span class="sd">    of each data page. The optional group_name field allows specification of a string giving the</span>
+<span class="sd">    name of the array group to which the array belongs; such strings may be defined by the user</span>
+<span class="sd">    to indicate that different arrays are related (e.g., have the same dimensions, or parallel</span>
+<span class="sd">    elements). The optional dimensions field gives the number of dimensions in the array.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">TAG</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&amp;array&quot;</span>
     <span class="n">field_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
@@ -291,13 +297,13 @@
     <span class="n">dimensions</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span></div>
 
 
-<div class="viewcode-block" id="Data"><a class="viewcode-back" href="../../root/index.html#sdds.classes.Data">[docs]</a><span class="k">class</span> <span class="nc">Data</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Data (&amp;data) command container.</span>
+<div class="viewcode-block" id="Data"><a class="viewcode-back" href="../../modules/index.html#sdds.classes.Data">[docs]</a><span class="k">class</span> <span class="nc">Data</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Data (&amp;data) command container.</span>
 
-<span class="sd">    This command is optional unless parameter commands without fixed_value</span>
-<span class="sd">    fields, array commands, or column commands have been given.</span>
-
-<span class="sd">    The mode field is required, and it must be “binary”, the only supported mode.</span>
+<span class="sd">    This command is optional unless parameter commands without fixed_value fields,</span>
+<span class="sd">    array commands, or column commands have been given. The mode field is required, and it must</span>
+<span class="sd">    be “binary”, the only supported mode.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">TAG</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&amp;data&quot;</span>
 
@@ -305,14 +311,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span></div>
 
 
-<div class="viewcode-block" id="SddsFile"><a class="viewcode-back" href="../../root/index.html#sdds.classes.SddsFile">[docs]</a><span class="k">class</span> <span class="nc">SddsFile</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Holds the contents of the SDDS file as a pair of dictionaries.</span>
+<div class="viewcode-block" id="SddsFile"><a class="viewcode-back" href="../../modules/index.html#sdds.classes.SddsFile">[docs]</a><span class="k">class</span> <span class="nc">SddsFile</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Holds the contents of the SDDS file as a pair of dictionaries.</span>
 
-<span class="sd">    The first dictionary &quot;definitions&quot; has the form: name (as a str) -&gt;</span>
-<span class="sd">    Definition, containing an object of each field in the SDDS file (of type</span>
-<span class="sd">    Parameter, Array or Column). The &quot;values&quot; dictionary has the form:</span>
-<span class="sd">    name (as a str) -&gt; value. To access them:</span>
-<span class="sd">    sdds_file = SddsFile(...)</span>
+<span class="sd">    The first dictionary &quot;definitions&quot; has the form: **name (str) -&gt; Definition**, containing an</span>
+<span class="sd">    object of each field in the SDDS file (of type `Parameter`, `Array` or `Column`). The &quot;values&quot;</span>
+<span class="sd">    dictionary has the form: **name (str) -&gt; value**. To access them: ``sdds_file = SddsFile(...)``.</span>
 
 <span class="sd">    .. code-block:: python</span>
 
@@ -320,7 +325,6 @@
 <span class="sd">        val = sdds_file.values[&quot;name&quot;]</span>
 <span class="sd">        # The definitions and values can also be accessed like:</span>
 <span class="sd">        def_, val = sdds_file[&quot;name&quot;]</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># This should always be &quot;SDDS1&quot;</span>
     <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Description</span><span class="p">]</span>

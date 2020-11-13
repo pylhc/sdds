@@ -13,6 +13,7 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
 
   
   
@@ -49,9 +50,12 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> sdds
+            <a href="../../index.html">
           
 
+          
+            
+            <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
           
           </a>
 
@@ -85,7 +89,12 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../root/index.html">SDDS Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">SDDS Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#classes">Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#reader">Reader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#writer">Writer</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -152,13 +161,10 @@
   <h1>Source code for sdds.writer</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Writer</span>
-<span class="sd">-------------------</span>
+<span class="sd">------</span>
 
-<span class="sd">Write sdds files.</span>
-
-<span class="sd">:author: Jaime</span>
-<span class="sd">:module: writer</span>
-
+<span class="sd">This module contains the writing functionality of ``sdds``.</span>
+<span class="sd">It provides a high-level function to write SDDS files in different formats, and a series of helpers.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">pathlib</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">IO</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Iterable</span>
@@ -167,14 +173,14 @@
                           <span class="n">ENCODING</span><span class="p">,</span> <span class="n">NUMTYPES</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="write_sdds"><a class="viewcode-back" href="../../root/index.html#sdds.writer.write_sdds">[docs]</a><span class="k">def</span> <span class="nf">write_sdds</span><span class="p">(</span><span class="n">sdds_file</span><span class="p">:</span> <span class="n">SddsFile</span><span class="p">,</span> <span class="n">output_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="write_sdds"><a class="viewcode-back" href="../../modules/index.html#sdds.writer.write_sdds">[docs]</a><span class="k">def</span> <span class="nf">write_sdds</span><span class="p">(</span><span class="n">sdds_file</span><span class="p">:</span> <span class="n">SddsFile</span><span class="p">,</span> <span class="n">output_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Writes SddsFile object into output_path</span>
+<span class="sd">    Writes SddsFile object into ``output_path``.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        sdds_file: SddsFile object to write</span>
-<span class="sd">        output_path (Union[pathlib.Path, str]): Path object to the output SDDS file. Can be</span>
-<span class="sd">            a string, in which case it will be cast to a Path object.</span>
+<span class="sd">        sdds_file: `SddsFile` object to write</span>
+<span class="sd">        output_path (Union[pathlib.Path, str]): `Path` object to the output SDDS file. Can be</span>
+<span class="sd">            a `string`, in which case it will be cast to a `Path` object.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">output_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">output_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outbytes</span><span class="p">:</span>
