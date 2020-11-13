@@ -1,15 +1,10 @@
 """
 Classes
-----------------------
+-------
 
-This module holds the classes handled by the sdds handler.
-
-Most of the documentation comes from:
+This module holds classes to handle different namelist commands in an SDDS file.
+Implementation are based on documentation at:
 https://ops.aps.anl.gov/manuals/SDDStoolkit/SDDStoolkitsu2.html
-
-:author: Jaime
-:module: classes
-
 """
 from typing import Any, Tuple, List, Iterator, Optional, Dict, Union
 from typing import get_type_hints
@@ -27,13 +22,14 @@ NUMTYPES_CAST = {"float": float, "double": float, "short": int,
 
 
 class Description:
-    """Description (&description) command container.
+    """
+    Description (&description) command container.
 
-    This optional command describes the data set in terms of two strings.
-    The first, text, is an informal description that is intended principally for human consumption.
-    The second, contents, is intended to formally specify the type of data stored in a data set.
-    Most frequently, the contents field is used to record the name of the program that created
-    or most recently modified the file.
+    This optional command describes the data set in terms of two strings. The first, text,
+    is an informal description that is intended principally for human consumption. The second,
+    contents, is intended to formally specify the type of data stored in a data set. Most
+    frequently, the contents field is used to record the name of the program that created or most
+    recently modified the file.
     """
     TAG: str = "&description"
     text: Optional[str]
@@ -45,10 +41,11 @@ class Description:
 
 
 class Include:
-    """Include (&include) command container.
+    """
+    Include (&include) command container.
 
-    This optional command directs that SDDS header lines be read from the file named
-    by the filename field. These commands may be nested.
+    This optional command directs that SDDS header lines be read from the file named by the
+    filename field. These commands may be nested.
     """
     filename: str
 
@@ -57,17 +54,18 @@ class Include:
 
 
 class Definition:
-    """Abstract class for the common behaviour of the data definition commands.
+    """
+    Abstract class for the common behaviour of the data definition commands.
 
-    The name field must be supplied, as must the type field. The type must be
-    one of short, long, float, double, character, or string.
+    The name field must be supplied, as must the type field. The type must be one of short, long,
+    float, double, character, or string.
 
-    The optional symbol field allows specification of a symbol to represent the parameter;
-    it may contain escape sequences, for example, to produce Greek or mathematical characters.
-    The optional units field allows specification of the units of the parameter.
-    The optional description field provides for an informal description of the parameter.
-    The optional format field allows specification of the print format string to be used to
-    print the data (e.g., for ASCII in SDDS or other formats).
+    The optional symbol field allows specification of a symbol to represent the parameter; it may
+    contain escape sequences, for example, to produce Greek or mathematical characters. The
+    optional units field allows specification of the units of the parameter. The optional
+    description field provides for an informal description of the parameter. The optional format
+    field allows specification of the print format string to be used to print the data (e.g.,
+    for ASCII in SDDS or other formats).
 
     The Column, Array and Parameter definitions inherit from this class. They can be created just by
     passing name and type and optionally more parameters that depend on the actual definition type.
@@ -99,39 +97,38 @@ class Definition:
 
 
 class Column(Definition):
-    """Column (&column) command container, a data definition.
+    """
+    Column (&column) command container, a data definition.
 
-    This optional command defines a column that will appear in the tabular data
-    section of each data page.
+    This optional command defines a column that will appear in the tabular data section of each
+    data page.
     """
     TAG: str = "&column"
 
 
 class Parameter(Definition):
-    """Parameter (&parameter) command container, a data definition.
+    """
+    Parameter (&parameter) command container, a data definition.
 
-    This optional command defines a parameter that will appear along with the
-    tabular data section of each data page.
-
-    The optional fixed_value field allows specification of a constant value for a given parameter.
-    This value will not change from data page to data page, and is not specified along
-    with non-fixed parameters or tabular data. This feature is for convenience only;
-    the parameter thus defined is treated like any other.
+    This optional command defines a parameter that will appear along with the tabular data
+    section of each data page. The optional fixed_value field allows specification of a constant
+    value for a given parameter. This value will not change from data page to data page,
+    and is not specified along with non-fixed parameters or tabular data. This feature is for
+    convenience only; the parameter thus defined is treated like any other.
     """
     TAG: str = "&parameter"
     fixed_value: Optional[str] = None
 
 
 class Array(Definition):
-    """Array (&array) command container, a data definition.
+    """
+    Array (&array) command container, a data definition.
 
-    This optional command defines an array that will appear along with the
-    tabular data section of each data page.
-
-    The optional group_name field allows specification of a string giving the name of the array
-    group to which the array belongs; such strings may be defined by the user to indicate
-    that different arrays are related (e.g., have the same dimensions, or parallel elements).
-    The optional dimensions field gives the number of dimensions in the array.
+    This optional command defines an array that will appear along with the tabular data section
+    of each data page. The optional group_name field allows specification of a string giving the
+    name of the array group to which the array belongs; such strings may be defined by the user
+    to indicate that different arrays are related (e.g., have the same dimensions, or parallel
+    elements). The optional dimensions field gives the number of dimensions in the array.
     """
     TAG: str = "&array"
     field_length: int = 0
@@ -140,12 +137,12 @@ class Array(Definition):
 
 
 class Data:
-    """Data (&data) command container.
+    """
+    Data (&data) command container.
 
-    This command is optional unless parameter commands without fixed_value
-    fields, array commands, or column commands have been given.
-
-    The mode field is required, and it must be “binary”, the only supported mode.
+    This command is optional unless parameter commands without fixed_value fields,
+    array commands, or column commands have been given. The mode field is required, and it must
+    be “binary”, the only supported mode.
     """
     TAG: str = "&data"
 
@@ -154,13 +151,12 @@ class Data:
 
 
 class SddsFile:
-    """Holds the contents of the SDDS file as a pair of dictionaries.
+    """
+    Holds the contents of the SDDS file as a pair of dictionaries.
 
-    The first dictionary "definitions" has the form: name (as a str) ->
-    Definition, containing an object of each field in the SDDS file (of type
-    Parameter, Array or Column). The "values" dictionary has the form:
-    name (as a str) -> value. To access them:
-    sdds_file = SddsFile(...)
+    The first dictionary "definitions" has the form: **name (str) -> Definition**, containing an
+    object of each field in the SDDS file (of type `Parameter`, `Array` or `Column`). The "values"
+    dictionary has the form: **name (str) -> value**. To access them: ``sdds_file = SddsFile(...)``.
 
     .. code-block:: python
 
@@ -168,7 +164,6 @@ class SddsFile:
         val = sdds_file.values["name"]
         # The definitions and values can also be accessed like:
         def_, val = sdds_file["name"]
-
     """
     version: str  # This should always be "SDDS1"
     description: Optional[Description]

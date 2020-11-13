@@ -1,12 +1,9 @@
 """
 Writer
--------------------
+------
 
-Write sdds files.
-
-:author: Jaime
-:module: writer
-
+This module contains the writing functionality of ``sdds``.
+It provides a high-level function to write SDDS files in different formats, and a series of helpers.
 """
 import pathlib
 from typing import IO, List, Union, Iterable
@@ -17,12 +14,12 @@ from sdds.classes import (SddsFile, Column, Parameter, Definition, Array, Data, 
 
 def write_sdds(sdds_file: SddsFile, output_path: Union[pathlib.Path, str]) -> None:
     """
-        Writes SddsFile object into output_path
+    Writes SddsFile object into ``output_path``.
 
     Args:
-        sdds_file: SddsFile object to write
-        output_path (Union[pathlib.Path, str]): Path object to the output SDDS file. Can be
-            a string, in which case it will be cast to a Path object.
+        sdds_file: `SddsFile` object to write
+        output_path (Union[pathlib.Path, str]): `Path` object to the output SDDS file. Can be
+            a `string`, in which case it will be cast to a `Path` object.
     """
     output_path = pathlib.Path(output_path)
     with output_path.open("wb") as outbytes:
