@@ -1,11 +1,9 @@
 """
 Reader
--------------------
+------
 
-Read sdds files.
-
-:author: Jaime
-:module: reader
+This module contains the reading functionality of ``sdds``.
+It provides a high-level function to read SDDS files in different formats, and a series of helpers.
 """
 import pathlib
 from typing import IO, Any, List, Optional, Generator, Dict, Union, Tuple, Callable, Type
@@ -16,14 +14,14 @@ from sdds.classes import (SddsFile, Column, Parameter, Definition, Array, Data, 
 
 def read_sdds(file_path: Union[pathlib.Path, str]) -> SddsFile:
     """
-    Reads SDDS file from specified file_path
+    Reads SDDS file from the specified ``file_path``.
 
     Args:
-        file_path (Union[pathlib.Path, str]): Path object to the input SDDS file. Can be a
-            string, in which case it will be cast to a Path object.
+        file_path (Union[pathlib.Path, str]): `Path` object to the input SDDS file. Can be a
+            `string`, in which case it will be cast to a `Path` object.
 
     Returns:
-        An SddsFile object containing the loaded data.
+        An `SddsFile` object containing the loaded data.
     """
     file_path = pathlib.Path(file_path)
     with file_path.open("rb") as inbytes:
@@ -74,9 +72,9 @@ def _read_header(inbytes: IO[bytes]) -> Tuple[str, List[Definition], Optional[De
 
 
 def _sort_definitions(orig_defs: List[Definition]) -> List[Definition]:
-    """Sorts the definitions in the parameter, array, column order.
-
-    According to the specification parameters appear first in data pages then arrays
+    """
+    Sorts the definitions in the parameter, array, column order.
+    According to the specification, parameters appear first in data pages then arrays
     and then columns. Inside each group they follow the order of appearance in the header.
     """
     definitions: List[Definition] = [definition for definition in orig_defs
