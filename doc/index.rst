@@ -1,17 +1,18 @@
-.. omc3 documentation master file, created by
-   sphinx-quickstart on Tue Oct  8 13:32:26 2013.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+Welcome to SDDS' documentation!
+===============================
 
-Welcome to SDDS documentation!
-=====================================
+``sdds`` is a library for reading and writing capabilities for `SDDS files <https://ops.aps.anl.gov/SDDSIntroTalk/slides.html>`_ used at `CERN <https://home.cern/>`_.
 
-Contents:
+It provides a high-level object called `SddsFile` to do so, with attributes corresponding to the self-describing data sets `format <https://ops.aps.anl.gov/manuals/SDDStoolkit/SDDStoolkitsu2.html>`_.
+
+
+Package Reference
+=================
 
 .. toctree::
    :maxdepth: 2
 
-   root/index
+   modules/index
 
 
 Indices and tables
