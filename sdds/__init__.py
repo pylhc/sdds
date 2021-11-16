@@ -6,7 +6,7 @@ from sdds.classes import SddsFile
 __title__ = "sdds"
 __description__ = "SDDS file handling."
 __url__ = "https://github.com/pylhc/sdds"
-__version__ = "0.2"
+__version__ = "0.2.1"
 __author__ = "pylhc"
 __author_email__ = "pylhc@github.com"
 __license__ = "MIT"
