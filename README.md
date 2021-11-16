@@ -4,6 +4,7 @@
 [![Code Climate maintainability (percentage)](https://img.shields.io/codeclimate/maintainability-percentage/pylhc/sdds.svg?style=popout)](https://codeclimate.com/github/pylhc/sdds)
 [![GitHub last commit](https://img.shields.io/github/last-commit/pylhc/sdds.svg?style=popout)](https://github.com/pylhc/sdds/)
 [![GitHub release](https://img.shields.io/github/release/pylhc/sdds.svg?style=popout)](https://github.com/pylhc/sdds/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5705820.svg)](https://doi.org/10.5281/zenodo.5705820)
 
 ## Description
 
