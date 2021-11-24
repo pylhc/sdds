@@ -8,8 +8,6 @@
 [![Conda-forge Version](https://img.shields.io/conda/vn/conda-forge/sdds?color=orange&logo=anaconda)](https://anaconda.org/conda-forge/sdds)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5705820.svg)](https://doi.org/10.5281/zenodo.5705820)
 
-## Description
-
 This package provides reading and writing functionality for [**self describing data sets (sdds)**](https://ops.aps.anl.gov/SDDSIntroTalk/slides.html) files.
 On the python side, the data is stored in a class structure with attributes corresponding to the sdds-format itself (see [sdds-format](https://ops.aps.anl.gov/manuals/SDDStoolkit/SDDStoolkitsu2.html)). 
 
