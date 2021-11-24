@@ -2,8 +2,10 @@
 [![Cron Testing](https://github.com/pylhc/sdds/workflows/Cron%20Testing/badge.svg)](https://github.com/pylhc/sdds/actions?query=workflow%3A%22Cron+Testing%22)
 [![Code Climate coverage](https://img.shields.io/codeclimate/coverage/pylhc/sdds.svg?style=popout)](https://codeclimate.com/github/pylhc/sdds)
 [![Code Climate maintainability (percentage)](https://img.shields.io/codeclimate/maintainability-percentage/pylhc/sdds.svg?style=popout)](https://codeclimate.com/github/pylhc/sdds)
-[![GitHub last commit](https://img.shields.io/github/last-commit/pylhc/sdds.svg?style=popout)](https://github.com/pylhc/sdds/)
-[![GitHub release](https://img.shields.io/github/release/pylhc/sdds.svg?style=popout)](https://github.com/pylhc/sdds/)
+<!-- [![GitHub last commit](https://img.shields.io/github/last-commit/pylhc/sdds.svg?style=popout)](https://github.com/pylhc/sdds/) -->
+[![PyPI Version](https://img.shields.io/pypi/v/sdds?label=PyPI&logo=pypi)](https://pypi.org/project/sdds/)
+[![GitHub release](https://img.shields.io/github/v/release/pylhc/sdds?logo=github)](https://github.com/pylhc/sdds/)
+[![Conda-forge Version](https://img.shields.io/conda/vn/conda-forge/sdds?color=orange&logo=anaconda)](https://anaconda.org/conda-forge/sdds)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5705820.svg)](https://doi.org/10.5281/zenodo.5705820)
 
 ## Description
