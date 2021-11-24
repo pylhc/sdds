@@ -13,15 +13,19 @@
 This package provides reading and writing functionality for [**self describing data sets (sdds)**](https://ops.aps.anl.gov/SDDSIntroTalk/slides.html) files.
 On the python side, the data is stored in a class structure with attributes corresponding to the sdds-format itself (see [sdds-format](https://ops.aps.anl.gov/manuals/SDDStoolkit/SDDStoolkitsu2.html)). 
 
-## Getting Started
+## Installing
 
-Installation is easily done via `pip`. The package is then used as `sdds`.
-
+Installation is easily done via `pip`:
+```bash
+python -m pip install sdds
 ```
-pip install sdds
+
+One can also install in a `conda` environment via the `conda-forge` channel with:
+```bash
+conda install -c conda-forge sdds
 ```
 
-Example use:
+## Example Usage
 
 ```python
 import sdds
@@ -34,13 +38,6 @@ sdds.write(sdds_data, "path_to_output.sdds")
 
 - Can't read binary columns
 - No support for `&include` tag
-
-## Authors
-
-* **Jaime** - *Initial work* - [jaimecp89](https://github.com/jaimecp89)
-* **Lukáš** - *Other work* - [lmalina](https://github.com/lmalina)
-* **Josch** - *Publishing* - [JoschD](https://github.com/JoschD)
-* **pyLHC/OMC-Team** - *Working Group* - [pyLHC](https://github.com/orgs/pylhc/teams/omc-team)
 
 ## License
 
