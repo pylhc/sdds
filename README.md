@@ -11,6 +11,8 @@
 This package provides reading and writing functionality for [**self describing data sets (sdds)**](https://ops.aps.anl.gov/SDDSIntroTalk/slides.html) files.
 On the python side, the data is stored in a class structure with attributes corresponding to the sdds-format itself (see [sdds-format](https://ops.aps.anl.gov/manuals/SDDStoolkit/SDDStoolkitsu2.html)). 
 
+See the [API documentation](https://pylhc.github.io/sdds/) for details.
+
 ## Installing
 
 Installation is easily done via `pip`:
@@ -40,4 +42,3 @@ sdds.write(sdds_data, "path_to_output.sdds")
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
