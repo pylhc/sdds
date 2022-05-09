@@ -6,27 +6,38 @@ This module contains the reading functionality of ``sdds``.
 It provides a high-level function to read SDDS files in different formats, and a series of helpers.
 """
 import pathlib
+import re
+import struct
+import sys
 from typing import IO, Any, List, Optional, Generator, Dict, Union, Tuple, Callable, Type
 import numpy as np
 from sdds.classes import (SddsFile, Column, Parameter, Definition, Array, Data, Description,
-                          ENCODING, NUMTYPES, NUMTYPES_CAST, NUMTYPES_SIZES)
+                          ENCODING, NUMTYPES_CAST, NUMTYPES_SIZES, get_dtype_str)
 
 
-def read_sdds(file_path: Union[pathlib.Path, str]) -> SddsFile:
+def read_sdds(file_path: Union[pathlib.Path, str], endianness: str = None) -> SddsFile:
     """
     Reads SDDS file from the specified ``file_path``.
 
     Args:
         file_path (Union[pathlib.Path, str]): `Path` object to the input SDDS file. Can be a
             `string`, in which case it will be cast to a `Path` object.
+        endianness (str): Endianness of the file. Either 'big' or 'little'.
+                          If not given, the endianness is either extracted from
+                          the comments in the header of the file (if present)
+                          or determined by the machine you are running on.
+                          Binary files written by this package are all big-endian,
+                          and contain a comment in the file.
 
     Returns:
         An `SddsFile` object containing the loaded data.
     """
     file_path = pathlib.Path(file_path)
     with file_path.open("rb") as inbytes:
+        if endianness is None:
+            endianness = _get_endianness(inbytes)
         version, definition_list, description, data = _read_header(inbytes)
-        data_list = _read_data(data, definition_list, inbytes)
+        data_list = _read_data(data, definition_list, inbytes, endianness)
 
         return SddsFile(version, description, definition_list, data_list)
 
@@ -84,9 +95,9 @@ def _sort_definitions(orig_defs: List[Definition]) -> List[Definition]:
     return definitions
 
 
-def _read_data(data: Data, definitions: List[Definition], inbytes: IO[bytes]) -> List[Any]:
+def _read_data(data: Data, definitions: List[Definition], inbytes: IO[bytes], endianness: str) -> List[Any]:
     if data.mode == "binary":
-        return _read_data_binary(definitions, inbytes)
+        return _read_data_binary(definitions, inbytes, endianness)
     elif data.mode == "ascii":
         return _read_data_ascii(definitions, inbytes)
 
@@ -97,17 +108,17 @@ def _read_data(data: Data, definitions: List[Definition], inbytes: IO[bytes]) ->
 # Binary data reading
 ##############################################################################
 
-def _read_data_binary(definitions: List[Definition], inbytes: IO[bytes]) -> List[Any]:
-    row_count: int = _read_bin_int(inbytes)  # First int in bin data
+def _read_data_binary(definitions: List[Definition], inbytes: IO[bytes], endianness: str) -> List[Any]:
+    row_count: int = _read_bin_int(inbytes, endianness)  # First int in bin data
     functs_dict: Dict[Type[Definition], Callable] = {
         Parameter: _read_bin_param,
-        Column: lambda x, y: _read_bin_column(x, y, row_count),
+        Column: lambda x, y, z: _read_bin_column(x, y, z, row_count),
         Array: _read_bin_array
     }
-    return [functs_dict[definition.__class__](inbytes, definition) for definition in definitions]
+    return [functs_dict[definition.__class__](inbytes, definition, endianness) for definition in definitions]
 
 
-def _read_bin_param(inbytes: IO[bytes], definition: Parameter) -> Union[int, float, str]:
+def _read_bin_param(inbytes: IO[bytes], definition: Parameter, endianness: str) -> Union[int, float, str]:
     try:
         if definition.fixed_value is not None:
             if definition.type == "string":
@@ -116,20 +127,20 @@ def _read_bin_param(inbytes: IO[bytes], definition: Parameter) -> Union[int, flo
     except AttributeError:
         pass
     if definition.type == "string":
-        str_len: int = _read_bin_int(inbytes)
-        return inbytes.read(str_len).decode(ENCODING)
+        str_len: int = _read_bin_int(inbytes, endianness)
+        return
     return NUMTYPES_CAST[definition.type](
-        _read_bin_numeric(inbytes, definition.type, 1)
+        _read_bin_numeric(inbytes, definition.type, 1, endianness)
     )
 
 
-def _read_bin_column(inbytes: IO[bytes], definition: Column, row_count: int):
+def _read_bin_column(inbytes: IO[bytes], definition: Column, endianness: str, row_count: int):
     # TODO: This columns things might be interesting to implement.
     raise NotImplementedError("")
 
 
-def _read_bin_array(inbytes: IO[bytes], definition: Array) -> Any:
-    dims, total_len = _read_bin_array_len(inbytes, definition.dimensions)
+def _read_bin_array(inbytes: IO[bytes], definition: Array, endianness: str) -> Any:
+    dims, total_len = _read_bin_array_len(inbytes, definition.dimensions, endianness)
 
     if definition.type == "string":
         len_type: str = "long"\
@@ -138,26 +149,31 @@ def _read_bin_array(inbytes: IO[bytes], definition: Array) -> Any:
                              .get(definition.modifier, "long")
         str_array = []
         for _ in range(total_len):
-            str_len = int(_read_bin_numeric(inbytes, len_type, 1))
-            str_array.append(inbytes.read(str_len).decode(ENCODING))
+            str_len = int(_read_bin_numeric(inbytes, len_type, 1, endianness))
+            str_array.append(_read_string(inbytes, str_len, endianness))
         return str_array
 
-    data = _read_bin_numeric(inbytes, definition.type, total_len)
+    data = _read_bin_numeric(inbytes, definition.type, total_len, endianness)
     return data.reshape(dims)
 
 
-def _read_bin_array_len(inbytes: IO[bytes], num_dims: int) -> Tuple[List[int], int]:
-    dims = [_read_bin_int(inbytes) for _ in range(num_dims)]
+def _read_bin_array_len(inbytes: IO[bytes], num_dims: int, endianness: str) -> Tuple[List[int], int]:
+    dims = [_read_bin_int(inbytes, endianness) for _ in range(num_dims)]
     return dims, int(np.prod(dims))
 
 
-def _read_bin_numeric(inbytes: IO[bytes], type_: str, count: int) -> Any:
+def _read_bin_numeric(inbytes: IO[bytes], type_: str, count: int, endianness: str) -> Any:
     return np.frombuffer(inbytes.read(count * NUMTYPES_SIZES[type_]),
-                         dtype=np.dtype(NUMTYPES[type_]))
+                         dtype=np.dtype(get_dtype_str(type_, endianness)))
 
 
-def _read_bin_int(inbytes: IO[bytes]) -> int:
-    return int(_read_bin_numeric(inbytes, "long", 1))
+def _read_bin_int(inbytes: IO[bytes], endianness: str) -> int:
+    return int(_read_bin_numeric(inbytes, "long", 1, endianness))
+
+
+def _read_string(inbytes: IO[bytes], str_len: int, endianness: str) -> str:
+    str_dtype = get_dtype_str("string", endianness)
+    return struct.unpack(str_dtype, inbytes.read(str_len)).decode(ENCODING)
 
 
 ##############################################################################
@@ -245,12 +261,26 @@ def _read_ascii_array(ascii_gen: Generator[str, None, None],
 # Helper generators to consume the input bytes
 ##############################################################################
 
+def _get_endianness(inbytes: IO[bytes]) -> str:
+    """Tries to determine endianness from file-comments.
+    If nothing found, uses machine endianness."""
+    while True:
+        line = inbytes.readline().decode(ENCODING)
+        if not line:
+            break
+        if line.strip() == "!# big-endian":
+            return "big"
+        if line.strip() == "!# little-endian":
+            return "little"
+    return sys.byteorder
+
+
 def _gen_real_lines(inbytes: IO[bytes]) -> Generator[str, None, None]:
     """No comments and stripped lines."""
     while True:
         line = inbytes.readline().decode(ENCODING)
         if not line:
-            return  # TODO is this ok?
+            return
         if line != "\n" and not line.strip().startswith("!"):
             yield line.strip()
 
