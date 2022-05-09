@@ -6,11 +6,12 @@ This module contains the reading functionality of ``sdds``.
 It provides a high-level function to read SDDS files in different formats, and a series of helpers.
 """
 import pathlib
-import re
 import struct
 import sys
 from typing import IO, Any, List, Optional, Generator, Dict, Union, Tuple, Callable, Type
+
 import numpy as np
+
 from sdds.classes import (SddsFile, Column, Parameter, Definition, Array, Data, Description,
                           ENCODING, NUMTYPES_CAST, NUMTYPES_SIZES, get_dtype_str)
 
@@ -128,7 +129,7 @@ def _read_bin_param(inbytes: IO[bytes], definition: Parameter, endianness: str) 
         pass
     if definition.type == "string":
         str_len: int = _read_bin_int(inbytes, endianness)
-        return
+        return _read_string(inbytes, str_len, endianness)
     return NUMTYPES_CAST[definition.type](
         _read_bin_numeric(inbytes, definition.type, 1, endianness)
     )
@@ -172,8 +173,9 @@ def _read_bin_int(inbytes: IO[bytes], endianness: str) -> int:
 
 
 def _read_string(inbytes: IO[bytes], str_len: int, endianness: str) -> str:
-    str_dtype = get_dtype_str("string", endianness)
-    return struct.unpack(str_dtype, inbytes.read(str_len)).decode(ENCODING)
+    str_dtype = get_dtype_str("string", endianness, len=str_len)
+    packed_str = inbytes.read(str_len)
+    return struct.unpack(str_dtype, packed_str)[0].decode(ENCODING)
 
 
 ##############################################################################
@@ -264,15 +266,19 @@ def _read_ascii_array(ascii_gen: Generator[str, None, None],
 def _get_endianness(inbytes: IO[bytes]) -> str:
     """Tries to determine endianness from file-comments.
     If nothing found, uses machine endianness."""
+    endianness = sys.byteorder
     while True:
         line = inbytes.readline().decode(ENCODING)
         if not line:
-            break
+            break  # break at beginning of binary part
         if line.strip() == "!# big-endian":
-            return "big"
+            endianness = "big"
+            break
         if line.strip() == "!# little-endian":
-            return "little"
-    return sys.byteorder
+            endianness = "little"
+            break
+    inbytes.seek(0)   # return back to beginning of file
+    return endianness
 
 
 def _gen_real_lines(inbytes: IO[bytes]) -> Generator[str, None, None]:

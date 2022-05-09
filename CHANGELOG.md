@@ -1,5 +1,11 @@
 # SDDS-Files Changelog
 
+## Version 0.3
+- Added:
+    - little endian support.
+    - manual endian selection for reader.
+    - string and representation for classes
+
 ## Version 0.2
 - Added:
     - Support for ascii files.

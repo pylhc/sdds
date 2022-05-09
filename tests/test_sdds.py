@@ -1,6 +1,9 @@
 import os
 import pathlib
 import io
+import struct
+import sys
+
 import pytest
 import numpy as np
 from sdds.reader import (
@@ -38,6 +41,24 @@ class TestReadWrite:
             assert new_def.name == definition.name
             assert new_def.type == definition.type
             assert np.all(value == new_val)
+
+
+class TestEndianness:
+    def test_sdds_read_little_endian(self, _sdds_file_little_endian):
+        read_sdds(_sdds_file_little_endian)
+
+    def test_sdds_read_big_endian(self, _sdds_file_pathlib):
+        read_sdds(_sdds_file_pathlib)
+
+    def test_sdds_read_big_endian_as_little_endian(self, _sdds_file_pathlib):
+        with pytest.raises(ValueError) as e:
+            read_sdds(_sdds_file_pathlib, endianness='little')
+        assert "buffer size" in str(e)
+
+    def test_sdds_read_little_endian_as_big_endian(self, _sdds_file_little_endian):
+        with pytest.raises(struct.error) as e:
+            read_sdds(_sdds_file_little_endian, endianness='big')
+        assert "buffer" in str(e)
 
 
 class TestReadFunctions:
@@ -122,11 +143,11 @@ class TestAscii:
 
             assert values_equal
 
-    def test_sdds_write_read_asii_2_dim(self, tmp_file):
-        self.template_ascii_read_write_read('./tests/inputs/LEI_2.sdds', tmp_file)
+    def test_sdds_write_read_ascii_1_dim(self, _sdds_file_lei1, tmp_file):
+        self.template_ascii_read_write_read(_sdds_file_lei1, tmp_file)
 
-    def test_sdds_write_read_asii_1_dim(self, tmp_file):
-        self.template_ascii_read_write_read('./tests/inputs/LEI_1.sdds', tmp_file)
+    def test_sdds_write_read_ascii_2_dim(self, _sdds_file_lei1, tmp_file):
+        self.template_ascii_read_write_read(_sdds_file_lei1, tmp_file)
 
     def test_sdds_write_ascii(self):
         sdds_file = b'''SDDS1
@@ -142,7 +163,7 @@ class TestAscii:
 '''
         sdds_io = io.BytesIO(sdds_file)
         version, definitions, description, data = _read_header(sdds_io)
-        data_list = _read_data(data, definitions, sdds_io)
+        data_list = _read_data(data, definitions, sdds_io, endianness=sys.byteorder)
 
         assert version == 'SDDS1'
         assert len(definitions) == 2
@@ -177,6 +198,21 @@ def _sdds_file_pathlib() -> pathlib.Path:
 @pytest.fixture()
 def _sdds_file_str() -> str:
     return os.path.join(os.path.dirname(__file__), "inputs", "test_file.sdds")
+
+
+@pytest.fixture()
+def _sdds_file_little_endian() -> pathlib.Path:
+    return CURRENT_DIR / "inputs" / "test_file_little_endian.sdds"
+
+
+@pytest.fixture()
+def _sdds_file_lei1() -> pathlib.Path:
+    return CURRENT_DIR / "inputs" / "LEI_1.sdds"
+
+
+@pytest.fixture()
+def _sdds_file_lei2() -> pathlib.Path:
+    return CURRENT_DIR / "inputs" / "LEI_2.sdds"
 
 
 @pytest.fixture()

@@ -16,6 +16,7 @@ from sdds.classes import (SddsFile, Column, Parameter, Definition, Array, Data, 
 def write_sdds(sdds_file: SddsFile, output_path: Union[pathlib.Path, str]) -> None:
     """
     Writes SddsFile object into ``output_path``.
+    The byteorder will be big-endian, independent of the byteorder of the current machine.
 
     Args:
         sdds_file: `SddsFile` object to write
@@ -100,4 +101,4 @@ def _write_columns(col_gen: Iterable[Tuple[Column, Any]], outbytes: IO[bytes]):
 
 def _write_string(string: str, outbytes: IO[bytes]):
     outbytes.write(np.array(len(string), dtype=get_dtype_str("long")).tobytes())
-    outbytes.write(struct.pack(get_dtype_str("string"), string.encode(ENCODING)))
+    outbytes.write(struct.pack(get_dtype_str("string", len=len(string)), string.encode(ENCODING)))
