@@ -101,4 +101,4 @@ def _write_columns(col_gen: Iterable[Tuple[Column, Any]], outbytes: IO[bytes]):
 
 def _write_string(string: str, outbytes: IO[bytes]):
     outbytes.write(np.array(len(string), dtype=get_dtype_str("long")).tobytes())
-    outbytes.write(struct.pack(get_dtype_str("string", len=len(string)), string.encode(ENCODING)))
+    outbytes.write(struct.pack(get_dtype_str("string", length=len(string)), string.encode(ENCODING)))

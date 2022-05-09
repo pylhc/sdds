@@ -28,8 +28,10 @@ NUMTYPES_CAST = {"float": float, "double": float, "short": int,
                  "long": int, "llong": int, "char": str, "boolean": int}
 
 
-def get_dtype_str(type_: str, endianness: str = 'big', len: Any = ''):
-    return f"{ENDIAN[endianness]}{str(len)}{NUMTYPES[type_]}"
+def get_dtype_str(type_: str, endianness: str = 'big', length: int = None):
+    if length is None:
+        length = ''
+    return f"{ENDIAN[endianness]}{length}{NUMTYPES[type_]}"
 
 
 ##############################################################################

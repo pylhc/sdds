@@ -173,7 +173,7 @@ def _read_bin_int(inbytes: IO[bytes], endianness: str) -> int:
 
 
 def _read_string(inbytes: IO[bytes], str_len: int, endianness: str) -> str:
-    str_dtype = get_dtype_str("string", endianness, len=str_len)
+    str_dtype = get_dtype_str("string", endianness, length=str_len)
     packed_str = inbytes.read(str_len)
     return struct.unpack(str_dtype, packed_str)[0].decode(ENCODING)
 
