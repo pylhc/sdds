@@ -15,7 +15,8 @@ from sdds.reader import (
     _sort_definitions,
 )
 from sdds.writer import write_sdds, _sdds_def_as_str
-from sdds.classes import Parameter, Column, Array
+from sdds.classes import (Parameter, Column, Array,
+                          SddsFile, Definition, Include, Data, Description, get_dtype_str, NUMTYPES)
 
 
 CURRENT_DIR = pathlib.Path(__file__).parent
@@ -188,6 +189,48 @@ class TestAscii:
         assert (data_list[1][3] == np.arange(10, 5, -1)).all()
         assert (data_list[1][4] == np.arange(5, 0, -1)).all()
 
+
+class TestClasses:
+    def test_string_and_repr(self):
+        sdds = SddsFile(version="SDDS1", description=None, definitions_list=[], values_list=[])
+        assert "SDDS-File" in repr(sdds)
+        assert "SDDS-File" in str(sdds)
+
+        definition = Definition(name="mydef", type_="mytype")
+        assert "Definition" in repr(definition)
+        assert "mydef" in repr(definition)
+        assert "Definition" in str(definition)
+        assert "mydef" in str(definition)
+        assert "mytype" in str(definition)
+        assert "no tag" in str(definition)
+
+        array = Array(name="mydef", type_="mytype")
+        assert "Array" in repr(array)
+        assert "Array" in str(array)
+        assert "&array" in str(array)
+
+        data = Data(mode="binary")
+        assert 'binary' in repr(data)
+        assert 'binary' in str(data)
+
+        include = Include(filename="myfile")
+        assert "Include" in repr(include)
+        assert "Include" in str(include)
+        assert "myfile" in str(include)
+
+        description = Description()
+        assert "Description" in repr(description)
+        assert "Description" in str(description)
+
+    def test_get_dtype(self):
+        assert '>' in get_dtype_str("float", endianness='big')
+        assert '>' in get_dtype_str("float")  # important for reading
+        assert '<' not in get_dtype_str("float")  # important for reading
+        assert '<' in get_dtype_str("float", endianness='little')
+        assert "16" in get_dtype_str("string", length=16)
+
+        for name, format_ in NUMTYPES.items():
+            assert get_dtype_str(name).endswith(format_)
 
 # Helpers
 

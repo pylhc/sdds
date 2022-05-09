@@ -122,10 +122,11 @@ class Definition:
             setattr(self, argname, type_hint(kwargs[argname]))
 
     def __repr__(self):
-        return f"<SDDS Definiton {self.name}>"
+        return f"<SDDS {self.__class__.__name__} '{self.name}'>"
 
     def __str__(self):
-        return f"<Definition> {', '.join(f'{k}: {v}' for k, v in self.__dict__.items())}"
+        return (f"<{self.__class__.__name__} ({getattr(self, 'TAG', 'no tag')})> "
+                f"{', '.join(f'{k}: {v}' for k, v in self.__dict__.items())}")
 
 
 class Column(Definition):
@@ -182,10 +183,7 @@ class Data:
         self.mode = mode
 
     def __repr__(self):
-        return f"<SDDS Data Container>"
-
-    def __str__(self):
-        return f"Data: {self.mode}"
+        return f"<SDDS {self.mode} Data Container>"
 
 
 class SddsFile:
@@ -228,4 +226,4 @@ class SddsFile:
         return f"<SDDS-File Object>"
 
     def __str__(self):
-        return f"SDDS-File ({self.version})" + (f": {self.description}" if self.description else "")
+        return f"SDDS-File ({self.version})"  # TODO make something nice
