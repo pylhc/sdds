@@ -60,6 +60,16 @@ class TestEndianness:
             read_sdds(_sdds_file_little_endian, endianness='big')
         assert "buffer" in str(e)
 
+    def test_sdds_write_read_write_little_endian(self, _sdds_file_little_endian, tmp_file):
+        original = read_sdds(_sdds_file_little_endian)
+        write_sdds(original, tmp_file)  # written as big-endian
+        new = read_sdds(tmp_file)  # read as big-endian
+        for definition, value in original:
+            new_def, new_val = new[definition.name]
+            assert new_def.name == definition.name
+            assert new_def.type == definition.type
+            assert np.all(value == new_val)
+
 
 class TestReadFunctions:
     def test_read_word(self, _sdds_file_str):
