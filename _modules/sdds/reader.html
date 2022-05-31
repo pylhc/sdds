@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>sdds.reader &mdash; sdds 0.2.1 documentation</title>
+  <title>sdds.reader &mdash; sdds 0.3.0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
@@ -14,6 +14,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -29,7 +30,7 @@
             <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.2
+                0.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -81,27 +82,39 @@
 <span class="sd">It provides a high-level function to read SDDS files in different formats, and a series of helpers.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">pathlib</span>
+<span class="kn">import</span> <span class="nn">struct</span>
+<span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">IO</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Type</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
 <span class="kn">from</span> <span class="nn">sdds.classes</span> <span class="kn">import</span> <span class="p">(</span><span class="n">SddsFile</span><span class="p">,</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">Definition</span><span class="p">,</span> <span class="n">Array</span><span class="p">,</span> <span class="n">Data</span><span class="p">,</span> <span class="n">Description</span><span class="p">,</span>
-                          <span class="n">ENCODING</span><span class="p">,</span> <span class="n">NUMTYPES</span><span class="p">,</span> <span class="n">NUMTYPES_CAST</span><span class="p">,</span> <span class="n">NUMTYPES_SIZES</span><span class="p">)</span>
+                          <span class="n">ENCODING</span><span class="p">,</span> <span class="n">NUMTYPES_CAST</span><span class="p">,</span> <span class="n">NUMTYPES_SIZES</span><span class="p">,</span> <span class="n">get_dtype_str</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="read_sdds"><a class="viewcode-back" href="../../modules/index.html#sdds.reader.read_sdds">[docs]</a><span class="k">def</span> <span class="nf">read_sdds</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">SddsFile</span><span class="p">:</span>
+<div class="viewcode-block" id="read_sdds"><a class="viewcode-back" href="../../modules/index.html#sdds.reader.read_sdds">[docs]</a><span class="k">def</span> <span class="nf">read_sdds</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">endianness</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SddsFile</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reads SDDS file from the specified ``file_path``.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file_path (Union[pathlib.Path, str]): `Path` object to the input SDDS file. Can be a</span>
 <span class="sd">            `string`, in which case it will be cast to a `Path` object.</span>
+<span class="sd">        endianness (str): Endianness of the file. Either &#39;big&#39; or &#39;little&#39;.</span>
+<span class="sd">                          If not given, the endianness is either extracted from</span>
+<span class="sd">                          the comments in the header of the file (if present)</span>
+<span class="sd">                          or determined by the machine you are running on.</span>
+<span class="sd">                          Binary files written by this package are all big-endian,</span>
+<span class="sd">                          and contain a comment in the file.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        An `SddsFile` object containing the loaded data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">file_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">file_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inbytes</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">endianness</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">endianness</span> <span class="o">=</span> <span class="n">_get_endianness</span><span class="p">(</span><span class="n">inbytes</span><span class="p">)</span>
         <span class="n">version</span><span class="p">,</span> <span class="n">definition_list</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">_read_header</span><span class="p">(</span><span class="n">inbytes</span><span class="p">)</span>
-        <span class="n">data_list</span> <span class="o">=</span> <span class="n">_read_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">definition_list</span><span class="p">,</span> <span class="n">inbytes</span><span class="p">)</span>
+        <span class="n">data_list</span> <span class="o">=</span> <span class="n">_read_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">definition_list</span><span class="p">,</span> <span class="n">inbytes</span><span class="p">,</span> <span class="n">endianness</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">SddsFile</span><span class="p">(</span><span class="n">version</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">definition_list</span><span class="p">,</span> <span class="n">data_list</span><span class="p">)</span></div>
 
@@ -159,9 +172,9 @@
     <span class="k">return</span> <span class="n">definitions</span>
 
 
-<span class="k">def</span> <span class="nf">_read_data</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">,</span> <span class="n">definitions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Definition</span><span class="p">],</span> <span class="n">inbytes</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="k">def</span> <span class="nf">_read_data</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">,</span> <span class="n">definitions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Definition</span><span class="p">],</span> <span class="n">inbytes</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">endianness</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
     <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;binary&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">_read_data_binary</span><span class="p">(</span><span class="n">definitions</span><span class="p">,</span> <span class="n">inbytes</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_read_data_binary</span><span class="p">(</span><span class="n">definitions</span><span class="p">,</span> <span class="n">inbytes</span><span class="p">,</span> <span class="n">endianness</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">data</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;ascii&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">_read_data_ascii</span><span class="p">(</span><span class="n">definitions</span><span class="p">,</span> <span class="n">inbytes</span><span class="p">)</span>
 
@@ -172,17 +185,17 @@
 <span class="c1"># Binary data reading</span>
 <span class="c1">##############################################################################</span>
 
-<span class="k">def</span> <span class="nf">_read_data_binary</span><span class="p">(</span><span class="n">definitions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Definition</span><span class="p">],</span> <span class="n">inbytes</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
-    <span class="n">row_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">_read_bin_int</span><span class="p">(</span><span class="n">inbytes</span><span class="p">)</span>  <span class="c1"># First int in bin data</span>
+<span class="k">def</span> <span class="nf">_read_data_binary</span><span class="p">(</span><span class="n">definitions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Definition</span><span class="p">],</span> <span class="n">inbytes</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">endianness</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+    <span class="n">row_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">_read_bin_int</span><span class="p">(</span><span class="n">inbytes</span><span class="p">,</span> <span class="n">endianness</span><span class="p">)</span>  <span class="c1"># First int in bin data</span>
     <span class="n">functs_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">Definition</span><span class="p">],</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
         <span class="n">Parameter</span><span class="p">:</span> <span class="n">_read_bin_param</span><span class="p">,</span>
-        <span class="n">Column</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">_read_bin_column</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">row_count</span><span class="p">),</span>
+        <span class="n">Column</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="n">_read_bin_column</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">row_count</span><span class="p">),</span>
         <span class="n">Array</span><span class="p">:</span> <span class="n">_read_bin_array</span>
     <span class="p">}</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">functs_dict</span><span class="p">[</span><span class="n">definition</span><span class="o">.</span><span class="vm">__class__</span><span class="p">](</span><span class="n">inbytes</span><span class="p">,</span> <span class="n">definition</span><span class="p">)</span> <span class="k">for</span> <span class="n">definition</span> <span class="ow">in</span> <span class="n">definitions</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">functs_dict</span><span class="p">[</span><span class="n">definition</span><span class="o">.</span><span class="vm">__class__</span><span class="p">](</span><span class="n">inbytes</span><span class="p">,</span> <span class="n">definition</span><span class="p">,</span> <span class="n">endianness</span><span class="p">)</span> <span class="k">for</span> <span class="n">definition</span> <span class="ow">in</span> <span class="n">definitions</span><span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">_read_bin_param</span><span class="p">(</span><span class="n">inbytes</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">definition</span><span class="p">:</span> <span class="n">Parameter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="k">def</span> <span class="nf">_read_bin_param</span><span class="p">(</span><span class="n">inbytes</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">definition</span><span class="p">:</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">endianness</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">definition</span><span class="o">.</span><span class="n">fixed_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">definition</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;string&quot;</span><span class="p">:</span>
@@ -191,20 +204,20 @@
     <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
         <span class="k">pass</span>
     <span class="k">if</span> <span class="n">definition</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;string&quot;</span><span class="p">:</span>
-        <span class="n">str_len</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">_read_bin_int</span><span class="p">(</span><span class="n">inbytes</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">inbytes</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">str_len</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">ENCODING</span><span class="p">)</span>
+        <span class="n">str_len</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">_read_bin_int</span><span class="p">(</span><span class="n">inbytes</span><span class="p">,</span> <span class="n">endianness</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_read_string</span><span class="p">(</span><span class="n">inbytes</span><span class="p">,</span> <span class="n">str_len</span><span class="p">,</span> <span class="n">endianness</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">NUMTYPES_CAST</span><span class="p">[</span><span class="n">definition</span><span class="o">.</span><span class="n">type</span><span class="p">](</span>
-        <span class="n">_read_bin_numeric</span><span class="p">(</span><span class="n">inbytes</span><span class="p">,</span> <span class="n">definition</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">_read_bin_numeric</span><span class="p">(</span><span class="n">inbytes</span><span class="p">,</span> <span class="n">definition</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">endianness</span><span class="p">)</span>
     <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_read_bin_column</span><span class="p">(</span><span class="n">inbytes</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">definition</span><span class="p">:</span> <span class="n">Column</span><span class="p">,</span> <span class="n">row_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_read_bin_column</span><span class="p">(</span><span class="n">inbytes</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">definition</span><span class="p">:</span> <span class="n">Column</span><span class="p">,</span> <span class="n">endianness</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">row_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
     <span class="c1"># TODO: This columns things might be interesting to implement.</span>
     <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_read_bin_array</span><span class="p">(</span><span class="n">inbytes</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">definition</span><span class="p">:</span> <span class="n">Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-    <span class="n">dims</span><span class="p">,</span> <span class="n">total_len</span> <span class="o">=</span> <span class="n">_read_bin_array_len</span><span class="p">(</span><span class="n">inbytes</span><span class="p">,</span> <span class="n">definition</span><span class="o">.</span><span class="n">dimensions</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_read_bin_array</span><span class="p">(</span><span class="n">inbytes</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">definition</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">endianness</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="n">dims</span><span class="p">,</span> <span class="n">total_len</span> <span class="o">=</span> <span class="n">_read_bin_array_len</span><span class="p">(</span><span class="n">inbytes</span><span class="p">,</span> <span class="n">definition</span><span class="o">.</span><span class="n">dimensions</span><span class="p">,</span> <span class="n">endianness</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">definition</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;string&quot;</span><span class="p">:</span>
         <span class="n">len_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;long&quot;</span>\
@@ -213,26 +226,32 @@
                              <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">definition</span><span class="o">.</span><span class="n">modifier</span><span class="p">,</span> <span class="s2">&quot;long&quot;</span><span class="p">)</span>
         <span class="n">str_array</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">total_len</span><span class="p">):</span>
-            <span class="n">str_len</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">_read_bin_numeric</span><span class="p">(</span><span class="n">inbytes</span><span class="p">,</span> <span class="n">len_type</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-            <span class="n">str_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inbytes</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">str_len</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">ENCODING</span><span class="p">))</span>
+            <span class="n">str_len</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">_read_bin_numeric</span><span class="p">(</span><span class="n">inbytes</span><span class="p">,</span> <span class="n">len_type</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">endianness</span><span class="p">))</span>
+            <span class="n">str_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_read_string</span><span class="p">(</span><span class="n">inbytes</span><span class="p">,</span> <span class="n">str_len</span><span class="p">,</span> <span class="n">endianness</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">str_array</span>
 
-    <span class="n">data</span> <span class="o">=</span> <span class="n">_read_bin_numeric</span><span class="p">(</span><span class="n">inbytes</span><span class="p">,</span> <span class="n">definition</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">total_len</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">_read_bin_numeric</span><span class="p">(</span><span class="n">inbytes</span><span class="p">,</span> <span class="n">definition</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">total_len</span><span class="p">,</span> <span class="n">endianness</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">dims</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_read_bin_array_len</span><span class="p">(</span><span class="n">inbytes</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">num_dims</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">]:</span>
-    <span class="n">dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">_read_bin_int</span><span class="p">(</span><span class="n">inbytes</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_dims</span><span class="p">)]</span>
+<span class="k">def</span> <span class="nf">_read_bin_array_len</span><span class="p">(</span><span class="n">inbytes</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">num_dims</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">endianness</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="n">dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">_read_bin_int</span><span class="p">(</span><span class="n">inbytes</span><span class="p">,</span> <span class="n">endianness</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_dims</span><span class="p">)]</span>
     <span class="k">return</span> <span class="n">dims</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">dims</span><span class="p">))</span>
 
 
-<span class="k">def</span> <span class="nf">_read_bin_numeric</span><span class="p">(</span><span class="n">inbytes</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">type_</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_read_bin_numeric</span><span class="p">(</span><span class="n">inbytes</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">type_</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">endianness</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">inbytes</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">count</span> <span class="o">*</span> <span class="n">NUMTYPES_SIZES</span><span class="p">[</span><span class="n">type_</span><span class="p">]),</span>
-                         <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">NUMTYPES</span><span class="p">[</span><span class="n">type_</span><span class="p">]))</span>
+                         <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">get_dtype_str</span><span class="p">(</span><span class="n">type_</span><span class="p">,</span> <span class="n">endianness</span><span class="p">)))</span>
 
 
-<span class="k">def</span> <span class="nf">_read_bin_int</span><span class="p">(</span><span class="n">inbytes</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">_read_bin_numeric</span><span class="p">(</span><span class="n">inbytes</span><span class="p">,</span> <span class="s2">&quot;long&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="k">def</span> <span class="nf">_read_bin_int</span><span class="p">(</span><span class="n">inbytes</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">endianness</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">_read_bin_numeric</span><span class="p">(</span><span class="n">inbytes</span><span class="p">,</span> <span class="s2">&quot;long&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">endianness</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">_read_string</span><span class="p">(</span><span class="n">inbytes</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">str_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">endianness</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">str_dtype</span> <span class="o">=</span> <span class="n">get_dtype_str</span><span class="p">(</span><span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="n">endianness</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">str_len</span><span class="p">)</span>
+    <span class="n">packed_str</span> <span class="o">=</span> <span class="n">inbytes</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">str_len</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">str_dtype</span><span class="p">,</span> <span class="n">packed_str</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">ENCODING</span><span class="p">)</span>
 
 
 <span class="c1">##############################################################################</span>
@@ -320,12 +339,30 @@
 <span class="c1"># Helper generators to consume the input bytes</span>
 <span class="c1">##############################################################################</span>
 
+<span class="k">def</span> <span class="nf">_get_endianness</span><span class="p">(</span><span class="n">inbytes</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Tries to determine endianness from file-comments.</span>
+<span class="sd">    If nothing found, uses machine endianness.&quot;&quot;&quot;</span>
+    <span class="n">endianness</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">byteorder</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">inbytes</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">ENCODING</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+            <span class="k">break</span>  <span class="c1"># break at beginning of binary part</span>
+        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;!# big-endian&quot;</span><span class="p">:</span>
+            <span class="n">endianness</span> <span class="o">=</span> <span class="s2">&quot;big&quot;</span>
+            <span class="k">break</span>
+        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;!# little-endian&quot;</span><span class="p">:</span>
+            <span class="n">endianness</span> <span class="o">=</span> <span class="s2">&quot;little&quot;</span>
+            <span class="k">break</span>
+    <span class="n">inbytes</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>   <span class="c1"># return back to beginning of file</span>
+    <span class="k">return</span> <span class="n">endianness</span>
+
+
 <span class="k">def</span> <span class="nf">_gen_real_lines</span><span class="p">(</span><span class="n">inbytes</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;No comments and stripped lines.&quot;&quot;&quot;</span>
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">line</span> <span class="o">=</span> <span class="n">inbytes</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">ENCODING</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
-            <span class="k">return</span>  <span class="c1"># TODO is this ok?</span>
+            <span class="k">return</span>
         <span class="k">if</span> <span class="n">line</span> <span class="o">!=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;!&quot;</span><span class="p">):</span>
             <span class="k">yield</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 

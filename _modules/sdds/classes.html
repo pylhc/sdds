@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>sdds.classes &mdash; sdds 0.2.1 documentation</title>
+  <title>sdds.classes &mdash; sdds 0.3.0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
@@ -14,6 +14,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -29,7 +30,7 @@
             <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.2
+                0.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -85,16 +86,33 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">get_type_hints</span>
 
 
+<span class="c1">##############################################################################</span>
+<span class="c1">#  Types and Encoding</span>
+<span class="c1">##############################################################################</span>
+
 <span class="n">ENCODING</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span>
 <span class="n">ENCODING_LEN</span> <span class="o">=</span> <span class="mi">1</span>
 
-<span class="n">NUMTYPES</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;float&quot;</span><span class="p">:</span> <span class="s2">&quot;&gt;f&quot;</span><span class="p">,</span> <span class="s2">&quot;double&quot;</span><span class="p">:</span> <span class="s2">&quot;&gt;d&quot;</span><span class="p">,</span> <span class="s2">&quot;short&quot;</span><span class="p">:</span> <span class="s2">&quot;&gt;i2&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;long&quot;</span><span class="p">:</span> <span class="s2">&quot;&gt;i4&quot;</span><span class="p">,</span> <span class="s2">&quot;llong&quot;</span><span class="p">:</span> <span class="s2">&quot;&gt;i8&quot;</span><span class="p">,</span> <span class="s2">&quot;char&quot;</span><span class="p">:</span> <span class="s2">&quot;&gt;i1&quot;</span><span class="p">,</span> <span class="s2">&quot;boolean&quot;</span><span class="p">:</span> <span class="s2">&quot;&gt;i1&quot;</span><span class="p">}</span>
+<span class="n">ENDIAN</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;little&#39;</span><span class="p">:</span> <span class="s1">&#39;&lt;&#39;</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">:</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">}</span>
+
+<span class="n">NUMTYPES</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;float&quot;</span><span class="p">:</span> <span class="s2">&quot;f&quot;</span><span class="p">,</span> <span class="s2">&quot;double&quot;</span><span class="p">:</span> <span class="s2">&quot;d&quot;</span><span class="p">,</span> <span class="s2">&quot;short&quot;</span><span class="p">:</span> <span class="s2">&quot;i2&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;long&quot;</span><span class="p">:</span> <span class="s2">&quot;i4&quot;</span><span class="p">,</span> <span class="s2">&quot;llong&quot;</span><span class="p">:</span> <span class="s2">&quot;i8&quot;</span><span class="p">,</span> <span class="s2">&quot;char&quot;</span><span class="p">:</span> <span class="s2">&quot;i1&quot;</span><span class="p">,</span> <span class="s2">&quot;boolean&quot;</span><span class="p">:</span> <span class="s2">&quot;i1&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;string&quot;</span><span class="p">:</span> <span class="s2">&quot;s&quot;</span><span class="p">}</span>
 <span class="n">NUMTYPES_SIZES</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;float&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;double&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;short&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
                   <span class="s2">&quot;long&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;llong&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;char&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;boolean&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
 <span class="n">NUMTYPES_CAST</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;float&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="s2">&quot;double&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="s2">&quot;short&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                  <span class="s2">&quot;long&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;llong&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;char&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;boolean&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">}</span>
 
+
+<span class="k">def</span> <span class="nf">get_dtype_str</span><span class="p">(</span><span class="n">type_</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">endianness</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;big&#39;</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ENDIAN</span><span class="p">[</span><span class="n">endianness</span><span class="p">]</span><span class="si">}{</span><span class="n">length</span><span class="si">}{</span><span class="n">NUMTYPES</span><span class="p">[</span><span class="n">type_</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+
+
+<span class="c1">##############################################################################</span>
+<span class="c1">#  Classes</span>
+<span class="c1">##############################################################################</span>
 
 <div class="viewcode-block" id="Description"><a class="viewcode-back" href="../../modules/index.html#sdds.classes.Description">[docs]</a><span class="k">class</span> <span class="nc">Description</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -112,7 +130,10 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">contents</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">text</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">contents</span> <span class="o">=</span> <span class="n">contents</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contents</span> <span class="o">=</span> <span class="n">contents</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;SDDS Description Container&gt;&quot;</span></div>
 
 
 <div class="viewcode-block" id="Include"><a class="viewcode-back" href="../../modules/index.html#sdds.classes.Include">[docs]</a><span class="k">class</span> <span class="nc">Include</span><span class="p">:</span>
@@ -125,7 +146,13 @@
     <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;SDDS Include Container&gt;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Include: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="si">:</span><span class="s2">s</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
 
 <div class="viewcode-block" id="Definition"><a class="viewcode-back" href="../../modules/index.html#sdds.classes.Definition">[docs]</a><span class="k">class</span> <span class="nc">Definition</span><span class="p">:</span>
@@ -168,7 +195,14 @@
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">type_hint</span><span class="p">,</span> <span class="s2">&quot;__args__&quot;</span><span class="p">):</span>  <span class="c1"># For the Optional[...] types</span>
                 <span class="n">type_hint</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">type_hint</span><span class="o">.</span><span class="n">__args__</span>
                                  <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)))</span>
-            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argname</span><span class="p">,</span> <span class="n">type_hint</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">argname</span><span class="p">]))</span></div>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argname</span><span class="p">,</span> <span class="n">type_hint</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">argname</span><span class="p">]))</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;SDDS </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;&gt;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;TAG&#39;</span><span class="p">,</span> <span class="s1">&#39;no tag&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">)&gt; &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Column"><a class="viewcode-back" href="../../modules/index.html#sdds.classes.Column">[docs]</a><span class="k">class</span> <span class="nc">Column</span><span class="p">(</span><span class="n">Definition</span><span class="p">):</span>
@@ -222,7 +256,10 @@
     <span class="n">TAG</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&amp;data&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;SDDS </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="si">}</span><span class="s2"> Data Container&gt;&quot;</span></div>
 
 
 <div class="viewcode-block" id="SddsFile"><a class="viewcode-back" href="../../modules/index.html#sdds.classes.SddsFile">[docs]</a><span class="k">class</span> <span class="nc">SddsFile</span><span class="p">:</span>
@@ -259,7 +296,13 @@
 
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Definition</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
         <span class="k">for</span> <span class="n">def_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definitions</span><span class="p">:</span>
-            <span class="k">yield</span> <span class="bp">self</span><span class="p">[</span><span class="n">def_name</span><span class="p">]</span></div>
+            <span class="k">yield</span> <span class="bp">self</span><span class="p">[</span><span class="n">def_name</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;SDDS-File Object&gt;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;SDDS-File (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2">)&quot;</span>  <span class="c1"># TODO make something nice</span></div>
 </pre></div>
 
            </div>
