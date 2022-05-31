@@ -34,6 +34,27 @@ sdds_data = sdds.read("path_to_input.sdds")
 sdds.write(sdds_data, "path_to_output.sdds")
 ```
 
+### Read files with different endianness
+
+By default the endianness (byte order) of the file is determined either by
+a comment `!# little-endian` or `!# big-endian` in the header of the file.
+If this comment is not found, the endianness of the running machine is assumed.
+
+One can force a certain kind of endianness to the reader by supplying it to 
+the read function:
+
+```python
+import sdds
+
+sdds_data = sdds.read("path_to_input_with_big_endian.sdds", endianness="big")
+sdds_data = sdds.read("path_to_input_with_little_endian.sdds", endianness="little")
+```
+
+Be aware that `sdds.write` will always write the file in big-endian order and 
+will also leave a comment in the file, so that the reader can determine the
+endianness and there is no need to supply it when reading 
+a file written by this package.
+
 ## Known Issues
 
 - Can't read binary columns

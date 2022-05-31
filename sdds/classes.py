@@ -10,16 +10,33 @@ from typing import Any, Tuple, List, Iterator, Optional, Dict, Union
 from typing import get_type_hints
 
 
+##############################################################################
+#  Types and Encoding
+##############################################################################
+
 ENCODING = "utf-8"
 ENCODING_LEN = 1
 
-NUMTYPES = {"float": ">f", "double": ">d", "short": ">i2",
-            "long": ">i4", "llong": ">i8", "char": ">i1", "boolean": ">i1"}
+ENDIAN = {'little': '<', 'big': '>'}
+
+NUMTYPES = {"float": "f", "double": "d", "short": "i2",
+            "long": "i4", "llong": "i8", "char": "i1", "boolean": "i1",
+            "string": "s"}
 NUMTYPES_SIZES = {"float": 4, "double": 8, "short": 2,
                   "long": 4, "llong": 8, "char": 1, "boolean": 1}
 NUMTYPES_CAST = {"float": float, "double": float, "short": int,
                  "long": int, "llong": int, "char": str, "boolean": int}
 
+
+def get_dtype_str(type_: str, endianness: str = 'big', length: int = None):
+    if length is None:
+        length = ''
+    return f"{ENDIAN[endianness]}{length}{NUMTYPES[type_]}"
+
+
+##############################################################################
+#  Classes
+##############################################################################
 
 class Description:
     """
@@ -39,6 +56,9 @@ class Description:
         self.text = text
         self.contents = contents
 
+    def __repr__(self):
+        return f"<SDDS Description Container>"
+
 
 class Include:
     """
@@ -51,6 +71,12 @@ class Include:
 
     def __init__(self, filename: str) -> None:
         self.filename = filename
+
+    def __repr__(self):
+        return f"<SDDS Include Container>"
+
+    def __str__(self):
+        return f"Include: {self.filename:s}"
 
 
 class Definition:
@@ -94,6 +120,13 @@ class Definition:
                 type_hint = next(t for t in type_hint.__args__
                                  if not isinstance(t, type(None)))
             setattr(self, argname, type_hint(kwargs[argname]))
+
+    def __repr__(self):
+        return f"<SDDS {self.__class__.__name__} '{self.name}'>"
+
+    def __str__(self):
+        return (f"<{self.__class__.__name__} ({getattr(self, 'TAG', 'no tag')})> "
+                f"{', '.join(f'{k}: {v}' for k, v in self.__dict__.items())}")
 
 
 class Column(Definition):
@@ -149,6 +182,9 @@ class Data:
     def __init__(self, mode: str) -> None:
         self.mode = mode
 
+    def __repr__(self):
+        return f"<SDDS {self.mode} Data Container>"
+
 
 class SddsFile:
     """
@@ -185,3 +221,9 @@ class SddsFile:
     def __iter__(self) -> Iterator[Tuple[Definition, Any]]:
         for def_name in self.definitions:
             yield self[def_name]
+
+    def __repr__(self):
+        return f"<SDDS-File Object>"
+
+    def __str__(self):
+        return f"SDDS-File ({self.version})"  # TODO make something nice
