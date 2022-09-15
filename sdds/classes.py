@@ -20,12 +20,15 @@ ENCODING_LEN = 1
 ENDIAN = {'little': '<', 'big': '>'}
 
 NUMTYPES = {"float": "f", "double": "d", "short": "i2",
-            "long": "i4", "llong": "i8", "char": "i1", "boolean": "i1",
-            "string": "s"}
+            "long": "i4", "llong": "i8", "char": "c", "boolean": "i1",
+            "string": "s", "character": "c"}
+NUMTYPES_ascii = {"float": "%f", "double": "%e", "short": "%i",
+                  "long": "%i", "llong": "%i", "char": "%s", "boolean": "%i",
+                  "string": "%s", "character": "%s"}
 NUMTYPES_SIZES = {"float": 4, "double": 8, "short": 2,
-                  "long": 4, "llong": 8, "char": 1, "boolean": 1}
+                  "long": 4, "llong": 8, "char": 1, "character": 1, "boolean": 1,"string": 1}
 NUMTYPES_CAST = {"float": float, "double": float, "short": int,
-                 "long": int, "llong": int, "char": str, "boolean": int}
+                 "long": int, "llong": int, "char": str, "character": str, "boolean": int, "string": str}
 
 
 def get_dtype_str(type_: str, endianness: str = 'big', length: int = None):
@@ -111,14 +114,11 @@ class Definition:
         self.type = type_
         type_hints = get_type_hints(self)
         for argname in kwargs:
-            assert hasattr(self, argname),\
-                   f"Unknown name {argname} for data type "\
-                   f"{self.__class__.__name__}"
+            assert hasattr(self, argname), f"Unknown name {argname} for data type {self.__class__.__name__}"
             # The type of the parameter can be resolved from the type hint
             type_hint = type_hints[argname]
             if hasattr(type_hint, "__args__"):  # For the Optional[...] types
-                type_hint = next(t for t in type_hint.__args__
-                                 if not isinstance(t, type(None)))
+                type_hint = next(t for t in type_hint.__args__ if not isinstance(t, type(None)))
             setattr(self, argname, type_hint(kwargs[argname]))
 
     def __repr__(self):
@@ -200,17 +200,23 @@ class SddsFile:
         val = sdds_file.values["name"]
         # The definitions and values can also be accessed like:
         def_, val = sdds_file["name"]
+        npages = number of pages
+        mode = "ascii" or "binary"
     """
     version: str  # This should always be "SDDS1"
     description: Optional[Description]
     definitions: Dict[str, Definition]
     values: Dict[str, Any]
+    npages: int
+    mode: str
 
     def __init__(self, version: str, description: Optional[Description],
                  definitions_list: List[Definition],
-                 values_list: List[Any]) -> None:
+                 values_list: List[Any], npages: int, mode: str = "binary") -> None:
         self.version = version
         self.description = description
+        self.npages = npages
+        self.mode = mode
         self.definitions = {definition.name: definition for definition in definitions_list}
         self.values = {definition.name: value for definition, value
                        in zip(definitions_list, values_list)}

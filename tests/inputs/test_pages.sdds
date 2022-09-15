@@ -1,0 +1,47 @@
+SDDS1
+&description text=text, contents=contents, &end
+&parameter name=ShortP, type=short, &end
+&parameter name=LongP, type=long, &end
+&parameter name=FloatP, type=float, &end
+&parameter name=DoubleP, type=double, &end
+&parameter name=StringP, type=string, &end
+&parameter name=CharacterP, type=character, &end
+&array name=testF, type=float, dimensions = 2, &end
+&column name=ShortC, type=short,  &end
+&column name=LongC, type=long,  &end
+&column name=FloatC, type=float,  &end
+&column name=DoubleC, type=double,  &end
+&column name=StringC, type=string,  &end
+&column name=CharacterC, type=character,  &end
+&data mode=ascii, &end
+! page number 1
+1
+2
+ 3.29999995e+00
+ 4.400000000000000e+00
+five
+a
+2 2
+1
+2 
+3
+4
+                   3
+1 1  1.00000000e+00  1.000000000000000e+00 "row 1" x 
+2 2  2.00000000e+00  2.000000000000000e+00 "row 2" y 
+3 3  3.00000000e+00  3.000000000000000e+00 "row 3" z 
+! page number 2
+7
+7
+ 8.80000019e+00
+ 9.800000000000001e+00
+ten
+b
+2 2
+5 6
+7 8
+                   4
+-1 -1 -1.00000000e+00 -1.000000000000000e+00 "row 1" i 
+-2 -2 -2.00000000e+00 -2.000000000000000e+00 "row 2" j 
+-3 -3 -3.59999990e+00 -3.600000000000000e+00 "row 3" k 
+-4 -4 -4.40000010e+00 -4.400000000000000e+00 "row 4" l 
