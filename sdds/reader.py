@@ -6,17 +6,17 @@ This module contains the reading functionality of ``sdds``.
 It provides a high-level function to read SDDS files in different formats, and a series of helpers.
 """
 import pathlib
+import shlex
 import struct
 import sys
 from typing import IO, Any, List, Optional, Generator, Dict, Union, Tuple, Callable, Type
 
 import numpy as np
 
-import shlex # needed to split string enclosed by quotes; jzemella @ 2022-08-25
-
-
-from sdds.classes import (SddsFile, Column, Parameter, Definition, Array, Data, Description,
-                          ENCODING, NUMTYPES_CAST, NUMTYPES_SIZES, get_dtype_str)
+from sdds.classes import (
+    SddsFile, Column, Parameter, Definition, Array, Data, Description,
+    ENCODING, NUMTYPES_CAST, NUMTYPES_SIZES, get_dtype_str,
+)
 
 
 def read_sdds(file_path: Union[pathlib.Path, str], endianness: str = None) -> SddsFile:
@@ -41,9 +41,9 @@ def read_sdds(file_path: Union[pathlib.Path, str], endianness: str = None) -> Sd
         if endianness is None:
             endianness = _get_endianness(inbytes)
         version, definition_list, description, data = _read_header(inbytes)
-        data_list,npages = _read_data(data, definition_list, inbytes, endianness)        
-        
-        return SddsFile(version, description, definition_list, data_list,npages,data)
+        data_list = _read_data(data, definition_list, inbytes, endianness)
+        npages = len(data_list)
+        return SddsFile(version, description, definition_list, data_list, npages, data.mode)
 
 
 ##############################################################################
@@ -101,7 +101,7 @@ def _sort_definitions(orig_defs: List[Definition]) -> List[Definition]:
 
 def _read_data(data: Data, definitions: List[Definition], inbytes: IO[bytes], endianness: str) -> List[Any]:
     if data.mode == "binary":
-        return _read_data_binary(definitions, inbytes, endianness),1 # pages are not included
+        return _read_data_binary(definitions, inbytes, endianness)
     elif data.mode == "ascii":
         return _read_data_ascii(definitions, inbytes)
 
@@ -120,6 +120,7 @@ def _read_data_binary(definitions: List[Definition], inbytes: IO[bytes], endiann
         Array: _read_bin_array
     }
     return [functs_dict[definition.__class__](inbytes, definition, endianness) for definition in definitions]
+
 
 def _read_bin_param(inbytes: IO[bytes], definition: Parameter, endianness: str) -> Union[int, float, str]:
     try:
@@ -146,10 +147,7 @@ def _read_bin_array(inbytes: IO[bytes], definition: Array, endianness: str) -> A
     dims, total_len = _read_bin_array_len(inbytes, definition.dimensions, endianness)
 
     if definition.type == "string":
-        len_type: str = "long"\
-                        if not hasattr(definition, "modifier")\
-                        else {"u1": "char", "i2": "short"}\
-                             .get(definition.modifier, "long")
+        len_type: str = {"u1": "char", "i2": "short"}.get(getattr(definition, "modifier", None), "long")
         str_array = []
         for _ in range(total_len):
             str_len = int(_read_bin_numeric(inbytes, len_type, 1, endianness))
@@ -185,6 +183,7 @@ def _read_string(inbytes: IO[bytes], str_len: int, endianness: str) -> str:
 ##############################################################################
 
 def _read_data_ascii(definitions: List[Definition], inbytes: IO[bytes]) -> List[Any]:
+    # TODO: Some simplifications (jdilly)
     def _ascii_generator(ascii_text):
         for line in ascii_text:
             yield line
@@ -194,61 +193,56 @@ def _read_data_ascii(definitions: List[Definition], inbytes: IO[bytes]) -> List[
     ascii_text = ''.join(ascii_text).split('\n')
     ascii_text = [line for line in ascii_text if not line.startswith('!')]
 
-
     # Get the generator for the text
     ascii_gen = _ascii_generator(ascii_text)
    
-
-    pages=[]
-    page=[]
-    npages=0
+    pages = []
+    npages = 0
     try: 
         while True:  # loop over pages
-            page=_read_ascii_page(ascii_gen,definitions)
+            page = _read_ascii_page(ascii_gen, definitions)
 
-            if npages==0: # quite sloppy but it works :-); jzemella @ 2022-08-25
-                 pages=page
-            elif npages==1:
-                pages=[[l1, l2] for l1,l2 in zip(pages,page) ]
+            if npages == 0:  # quite sloppy but it works :-); jzemella @ 2022-08-25
+                 pages = page
+            elif npages == 1:
+                pages = [[l1, l2] for l1, l2 in zip(pages, page)]
             else:
-                t=[l1.append(l2) for l1,l2 in zip(pages,page)]
-            npages=npages+1
+                t = [l1.append(l2) for l1, l2 in zip(pages, page)]
+            npages = npages+1
     except:
-        t=1
-    return pages,npages
+        t = 1
+    return pages
 
 
-def _read_ascii_page(ascii_gen,definitions):
-    
-    
+def _read_ascii_page(ascii_gen, definitions):
     # Dict of function to call for each type of tag: array, parameter
     functs_dict = {Parameter: _read_ascii_parameter,
                    Array: _read_ascii_array,
-                   Column : _read_ascii_column,     ## <<-- added
-                   Data : _read_ascii_data          ## <<-- added
+                   Column: _read_ascii_column,
+                   Data: _read_ascii_data
                    }
 
     # Iterate through every parameters and arrays in the file
     data = []
-    ######## added; jzemella @ 2022-08-25 
-    cnt=0 # add counter to get the column definition at once
-    flag_col=1 # sicne all columns are read at once the _read_ascii_column function is only called once per page 
+    cnt = 0  # add counter to get the column definition at once
+    flag_col = 1  # sicne all columns are read at once the _read_ascii_column function is only called once per page
     ########
     for definition in definitions:
         def_tag = definition.__class__
 
         # Call the function handling the tag we're on
         # Change the current line according to the tag and dimensions
-        if Column !=  def_tag: 
+        if Column != def_tag:
             value = functs_dict[def_tag](ascii_gen, definition)
             data.append(value)
-        elif Column == def_tag and flag_col == 1: # used a if statement to distiguish between parameters,arrays and column mode; jzemlella @ 2022-08-25
+        elif Column == def_tag and flag_col == 1:  # used a if statement to distiguish between parameters,arrays and column mode; jzemlella @ 2022-08-25
              values = functs_dict[def_tag](ascii_gen, definitions)
              for value in values:
                  data.append(list(value))
-             flag_col=0
+             flag_col = 0
 
     return data
+
 
 def _read_ascii_parameter(ascii_gen: Generator[str, None, None],
                           definition: Parameter) -> Union[str, int, float]:
@@ -260,7 +254,7 @@ def _read_ascii_parameter(ascii_gen: Generator[str, None, None],
         if definition.type in NUMTYPES_CAST:
             return NUMTYPES_CAST[definition.type](definition.fixed_value)
     
-    para=next(ascii_gen)
+    para = next(ascii_gen)
     # No fixed value -> read a line
     # Strings can be returned without cast
     if definition.type == "string":
@@ -277,10 +271,10 @@ def _read_ascii_array(ascii_gen: Generator[str, None, None],
                       definition: Array) -> np.ndarray:
 
     # Get the number of elements per dimension
-    dimensions = definition.dimensions # <<-- dimesions parameter used from definition; jzemella @2022-08-25
+    dimensions = definition.dimensions # <<-- dimensions parameter used from definition; jzemella @2022-08-25
     shape = next(ascii_gen)
-    shape = shape.split()    # <<-- changed dimesions to shape defined in line above array data; jzemella @2022-08-25
-    shape = np.array(shape, dtype="int") # 
+    shape = shape.split()    # <<-- changed dimensions to shape defined in line above array data; jzemella @2022-08-25
+    shape = np.array(shape, dtype="int")
 
     # Get all the data given by the dimensions
     data = []
@@ -299,7 +293,6 @@ def _read_ascii_array(ascii_gen: Generator[str, None, None],
     return data
 
 
-## added by jzemella @ 2022-08-25
 def _read_ascii_column(ascii_gen: Generator[str, None, None],
                       definitions: Column) -> List[Any]:
     
@@ -320,6 +313,7 @@ def _read_ascii_data():
     print('"data mode" not implemented yet')
     data = []
     return data
+
 
 ##############################################################################
 # Helper generators to consume the input bytes
