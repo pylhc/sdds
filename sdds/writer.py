@@ -36,10 +36,9 @@ def write_sdds(sdds_file: SddsFile, output_path: Union[pathlib.Path, str], mode:
         output_path (Union[pathlib.Path, str]): `Path` object to the output SDDS file. Can be
             a `string`, in which case it will be cast to a `Path` object.
         mode: Mode to write sdds-file in. If given, overrides the mode in sdds_file.
-              If neither is given, defaults to "binary".
     """
     output_path = pathlib.Path(output_path)
-    sdds_file.mode = mode if mode is not None else getattr(sdds_file, "mode", "binary")  # argument > sdds.mode > "binary"
+    sdds_file.mode = mode or sdds_file.mode  # argument > sdds.mode
 
     with output_path.open("wb") as outbytes:
         names = _write_header(sdds_file, outbytes)
