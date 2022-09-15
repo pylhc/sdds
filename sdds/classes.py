@@ -20,12 +20,15 @@ ENCODING_LEN = 1
 ENDIAN = {'little': '<', 'big': '>'}
 
 NUMTYPES = {"float": "f", "double": "d", "short": "i2",
-            "long": "i4", "llong": "i8", "char": "i1", "boolean": "i1",
-            "string": "s"}
+            "long": "i4", "llong": "i8", "char": "c", "boolean": "i1",
+            "string": "s", "character": "c"}
+NUMTYPES_ascii={"float": "%f", "double": "%e", "short": "%i",
+            "long": "%i", "llong": "%i", "char": "%s", "boolean": "%i",
+            "string": "%s", "character": "%s"}
 NUMTYPES_SIZES = {"float": 4, "double": 8, "short": 2,
-                  "long": 4, "llong": 8, "char": 1, "boolean": 1}
+                  "long": 4, "llong": 8, "char": 1, "character": 1, "boolean": 1,"string": 1}  ## <<-- added character and string; jzemella @ 2022-08-24 
 NUMTYPES_CAST = {"float": float, "double": float, "short": int,
-                 "long": int, "llong": int, "char": str, "boolean": int}
+                 "long": int, "llong": int, "char": str, "character":str, "boolean": int, "string": str} ## <<-- added character and string; jzemella @ 2022-08-24
 
 
 def get_dtype_str(type_: str, endianness: str = 'big', length: int = None):
@@ -200,17 +203,23 @@ class SddsFile:
         val = sdds_file.values["name"]
         # The definitions and values can also be accessed like:
         def_, val = sdds_file["name"]
+        npages = number of pages #<<-- jzemella @2022-08-25
+        mode = ascii or binary #<<-- jzemella @2022-08-25
     """
     version: str  # This should always be "SDDS1"
     description: Optional[Description]
     definitions: Dict[str, Definition]
     values: Dict[str, Any]
+    npages: int #<<-- jzemella @2022-08-25
+    mode: Data #<<-- jzemella @2022-08-25
 
     def __init__(self, version: str, description: Optional[Description],
                  definitions_list: List[Definition],
-                 values_list: List[Any]) -> None:
+                 values_list: List[Any],npages, mode) -> None: #<<-- jzemella @2022-08-25
         self.version = version
         self.description = description
+        self.npages = npages #<<-- jzemella @2022-08-25
+        self.mode = mode #<<-- jzemella @2022-08-25
         self.definitions = {definition.name: definition for definition in definitions_list}
         self.values = {definition.name: value for definition, value
                        in zip(definitions_list, values_list)}
