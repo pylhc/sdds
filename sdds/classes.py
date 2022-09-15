@@ -210,6 +210,11 @@ class SddsFile:
                  definitions_list: List[Definition],
                  values_list: List[Any]) -> None:
         self.version = version
+
+        name_list = [definition.name for definition in definitions_list]
+        if len(name_list) != len(set(name_list)):
+            raise ValueError("Duplicated name entries found")
+
         self.description = description
         self.definitions = {definition.name: definition for definition in definitions_list}
         self.values = {definition.name: value for definition, value

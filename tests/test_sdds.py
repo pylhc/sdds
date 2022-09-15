@@ -191,6 +191,16 @@ class TestAscii:
 
 
 class TestClasses:
+    def test_duplicated_entries(self):
+        with pytest.raises(ValueError) as e:
+            SddsFile(
+                version="SDDS1", description=None,
+                definitions_list=[Parameter(name="test", type_="int"),
+                                  Parameter(name="test", type_="str")],
+                values_list=[1, "hello"],
+            )
+        assert "Duplicated" in str(e)
+
     def test_string_and_repr(self):
         sdds = SddsFile(version="SDDS1", description=None, definitions_list=[], values_list=[])
         assert "SDDS-File" in repr(sdds)
