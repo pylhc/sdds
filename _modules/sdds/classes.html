@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>sdds.classes &mdash; sdds 0.3.0 documentation</title>
+  <title>sdds.classes &mdash; sdds 0.3.1 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
@@ -16,6 +16,7 @@
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -43,8 +44,18 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">SDDS Modules</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#classes">Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#sdds.classes.Array"><code class="docutils literal notranslate"><span class="pre">Array</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#sdds.classes.Column"><code class="docutils literal notranslate"><span class="pre">Column</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#sdds.classes.Data"><code class="docutils literal notranslate"><span class="pre">Data</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#sdds.classes.Definition"><code class="docutils literal notranslate"><span class="pre">Definition</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#sdds.classes.Description"><code class="docutils literal notranslate"><span class="pre">Description</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#sdds.classes.Include"><code class="docutils literal notranslate"><span class="pre">Include</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#sdds.classes.Parameter"><code class="docutils literal notranslate"><span class="pre">Parameter</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#sdds.classes.SddsFile"><code class="docutils literal notranslate"><span class="pre">SddsFile</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#reader">Reader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#sdds.reader.read_sdds"><code class="docutils literal notranslate"><span class="pre">read_sdds()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#writer">Writer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#sdds.writer.write_sdds"><code class="docutils literal notranslate"><span class="pre">write_sdds()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -286,6 +297,11 @@
                  <span class="n">definitions_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Definition</span><span class="p">],</span>
                  <span class="n">values_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="n">version</span>
+
+        <span class="n">name_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">definition</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">definition</span> <span class="ow">in</span> <span class="n">definitions_list</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">name_list</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">name_list</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Duplicated name entries found&quot;</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">description</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">definitions</span> <span class="o">=</span> <span class="p">{</span><span class="n">definition</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">definition</span> <span class="k">for</span> <span class="n">definition</span> <span class="ow">in</span> <span class="n">definitions_list</span><span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="p">{</span><span class="n">definition</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">definition</span><span class="p">,</span> <span class="n">value</span>
