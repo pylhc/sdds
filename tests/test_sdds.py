@@ -89,18 +89,18 @@ class TestReadFunctions:
 
     def test_read_header(self):
         test_head = b"""
-SDDS1
-!# big-endian
-&parameter name=acqStamp, type=double, &end
-&parameter name=nbOfCapTurns, type=long, &end
-&array name=horPositionsConcentratedAndSorted, type=float, &end
-&array
-    name=verBunchId,
-    type=long,
-    field_length=3,
-&end
-&data mode=binary, &end
-"""
+        SDDS1
+        !# big-endian
+        &parameter name=acqStamp, type=double, &end
+        &parameter name=nbOfCapTurns, type=long, &end
+        &array name=horPositionsConcentratedAndSorted, type=float, &end
+        &array
+            name=verBunchId,
+            type=long,
+            field_length=3,
+        &end
+        &data mode=binary, &end
+        """
         test_data = {"acqStamp": "double", "nbOfCapTurns": "long",
                      "horPositionsConcentratedAndSorted": "float",
                      "verBunchId": "long"}
@@ -112,19 +112,19 @@ SDDS1
 
     def test_read_header_optionals(self):
         test_head = b"""
-    SDDS1
-    !# little-endian
-    &description text="Momentum aperture search", contents="momentum aperture", &end
-    &parameter name=Step, type=long, &end
-    &parameter name=SVNVersion, description="SVN version number", type=string, fixed_value=28096M, &end
-    &column name=ElementName, type=string,  &end
-    &column name=s, units=m, type=double,  &end
-    &column name=ElementType, type=string,  &end
-    &column name=ElementOccurence, type=long,  &end
-    &column name=deltaPositiveFound, type=short,  &end
-    &column name=deltaPositive, symbol="$gd$R$bpos$n", type=double,  &end
-    &data mode=binary, &end
-    """
+        SDDS1
+        !# little-endian
+        &description text="Momentum aperture search", contents="momentum aperture", &end
+        &parameter name=Step, type=long, &end
+        &parameter name=SVNVersion, description="SVN version number", type=string, fixed_value=28096M, &end
+        &column name=ElementName, type=string,  &end
+        &column name=s, units=m, type=double,  &end
+        &column name=ElementType, type=string,  &end
+        &column name=ElementOccurence, type=long,  &end
+        &column name=deltaPositiveFound, type=short,  &end
+        &column name=deltaPositive, symbol="$gd$R$bpos$n", type=double,  &end
+        &data mode=binary, &end
+        """
         version, definitions, _, data = _read_header(io.BytesIO(test_head))
 
 
