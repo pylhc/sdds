@@ -62,7 +62,7 @@ def _read_header(inbytes: IO[bytes]) -> Tuple[str, List[Definition], Optional[De
                 Column.TAG: Column,
                 Parameter.TAG: Parameter,
                 Array.TAG: Array}[word](name=def_dict.pop("name"),
-                                        type_=def_dict.pop("type"),
+                                        type=def_dict.pop("type"),
                                         **def_dict))
             continue
         if word == Description.TAG:

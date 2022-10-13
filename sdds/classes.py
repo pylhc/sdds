@@ -6,8 +6,11 @@ This module holds classes to handle different namelist commands in an SDDS file.
 Implementation are based on documentation at:
 https://ops.aps.anl.gov/manuals/SDDStoolkit/SDDStoolkitsu2.html
 """
-from typing import Any, Tuple, List, Iterator, Optional, Dict, Union
-from typing import get_type_hints
+from typing import Any, Tuple, List, Iterator, Optional, Dict, ClassVar
+from dataclasses import dataclass, fields
+import logging
+
+LOGGER = logging.getLogger(__name__)
 
 
 ##############################################################################
@@ -38,6 +41,7 @@ def get_dtype_str(type_: str, endianness: str = 'big', length: int = None):
 #  Classes
 ##############################################################################
 
+@dataclass
 class Description:
     """
     Description (&description) command container.
@@ -48,18 +52,15 @@ class Description:
     frequently, the contents field is used to record the name of the program that created or most
     recently modified the file.
     """
-    TAG: str = "&description"
     text: Optional[str]
     contents: Optional[str]
-
-    def __init__(self, text: Optional[str] = None, contents: Optional[str] = None) -> None:
-        self.text = text
-        self.contents = contents
+    TAG: ClassVar[str] = "&description"
 
     def __repr__(self):
         return f"<SDDS Description Container>"
 
 
+@dataclass
 class Include:
     """
     Include (&include) command container.
@@ -69,9 +70,6 @@ class Include:
     """
     filename: str
 
-    def __init__(self, filename: str) -> None:
-        self.filename = filename
-
     def __repr__(self):
         return f"<SDDS Include Container>"
 
@@ -79,6 +77,7 @@ class Include:
         return f"Include: {self.filename:s}"
 
 
+@dataclass
 class Definition:
     """
     Abstract class for the common behaviour of the data definition commands.
@@ -106,20 +105,26 @@ class Definition:
     description: Optional[str] = None
     format_string: Optional[str] = None
 
-    def __init__(self, name: str, type_: str, **kwargs) -> None:
-        self.name = name
-        self.type = type_
-        type_hints = get_type_hints(self)
-        for argname in kwargs:
-            assert hasattr(self, argname),\
-                   f"Unknown name {argname} for data type "\
-                   f"{self.__class__.__name__}"
-            # The type of the parameter can be resolved from the type hint
-            type_hint = type_hints[argname]
+    def __post_init__(self):
+        # Fix types (probably strings from reading files) by using the type-hints:
+        for field in fields(self):
+            value = getattr(self, field.name)
+            if value is None:
+                continue
+            if value == "None":
+                break
+
+            type_hint = field.type
             if hasattr(type_hint, "__args__"):  # For the Optional[...] types
                 type_hint = next(t for t in type_hint.__args__
                                  if not isinstance(t, type(None)))
-            setattr(self, argname, type_hint(kwargs[argname]))
+
+            if isinstance(value, type_hint):
+                continue
+
+            LOGGER.debug(f"converting {field.name}: "
+                         f"{type(value).__name__} -> {type_hint.__name__}")
+            setattr(self, field.name, type_hint(getattr(self, field.name)))
 
     def __repr__(self):
         return f"<SDDS {self.__class__.__name__} '{self.name}'>"
@@ -129,6 +134,7 @@ class Definition:
                 f"{', '.join(f'{k}: {v}' for k, v in self.__dict__.items())}")
 
 
+@dataclass
 class Column(Definition):
     """
     Column (&column) command container, a data definition.
@@ -136,9 +142,10 @@ class Column(Definition):
     This optional command defines a column that will appear in the tabular data section of each
     data page.
     """
-    TAG: str = "&column"
+    TAG: ClassVar[str] = "&column"
 
 
+@dataclass
 class Parameter(Definition):
     """
     Parameter (&parameter) command container, a data definition.
@@ -149,10 +156,11 @@ class Parameter(Definition):
     and is not specified along with non-fixed parameters or tabular data. This feature is for
     convenience only; the parameter thus defined is treated like any other.
     """
-    TAG: str = "&parameter"
+    TAG: ClassVar[str] = "&parameter"
     fixed_value: Optional[str] = None
 
 
+@dataclass
 class Array(Definition):
     """
     Array (&array) command container, a data definition.
@@ -163,12 +171,13 @@ class Array(Definition):
     to indicate that different arrays are related (e.g., have the same dimensions, or parallel
     elements). The optional dimensions field gives the number of dimensions in the array.
     """
-    TAG: str = "&array"
+    TAG: ClassVar[str] = "&array"
     field_length: int = 0
     group_name: Optional[str] = None
     dimensions: int = 1
 
 
+@dataclass
 class Data:
     """
     Data (&data) command container.
@@ -177,10 +186,8 @@ class Data:
     array commands, or column commands have been given. The mode field is required, and it must
     be “binary”, the only supported mode.
     """
-    TAG: str = "&data"
-
-    def __init__(self, mode: str) -> None:
-        self.mode = mode
+    mode: str
+    TAG: ClassVar[str] = "&data"
 
     def __repr__(self):
         return f"<SDDS {self.mode} Data Container>"
