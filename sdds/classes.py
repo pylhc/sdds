@@ -109,17 +109,22 @@ class Definition:
         # Fix types (probably strings from reading files) by using the type-hints:
         for field in fields(self):
             value = getattr(self, field.name)
-            if value is None:
-                continue
-            if value == "None":
-                break
-
             type_hint = field.type
             if hasattr(type_hint, "__args__"):  # For the Optional[...] types
+                if value is None:
+                    continue
+
+                if isinstance(value, str) and value.lower() == "none":
+                    # The key should have been skipped when writing, but you never know
+                    LOGGER.debug(f"'None' found in {field.name}.")
+                    setattr(self, field.name, None)
+                    continue
+
+                # find the proper type from type-hint:
                 type_hint = next(t for t in type_hint.__args__
                                  if not isinstance(t, type(None)))
 
-            if isinstance(value, type_hint):
+            if isinstance(value, type_hint):  # all is fine
                 continue
 
             LOGGER.debug(f"converting {field.name}: "
