@@ -158,7 +158,10 @@ def _read_bin_array(inbytes: IO[bytes], definition: Array, endianness: str) -> A
     return data.reshape(dims)
 
 
-def _read_bin_array_len(inbytes: IO[bytes], num_dims: int, endianness: str) -> Tuple[List[int], int]:
+def _read_bin_array_len(inbytes: IO[bytes], num_dims: Optional[int], endianness: str) -> Tuple[List[int], int]:
+    if num_dims is None:
+        num_dims = 1
+
     dims = [_read_bin_int(inbytes, endianness) for _ in range(num_dims)]
     return dims, int(np.prod(dims))
 

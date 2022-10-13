@@ -52,8 +52,8 @@ class Description:
     frequently, the contents field is used to record the name of the program that created or most
     recently modified the file.
     """
-    text: Optional[str]
-    contents: Optional[str]
+    text: Optional[str] = None
+    contents: Optional[str] = None
     TAG: ClassVar[str] = "&description"
 
     def __repr__(self):
@@ -177,9 +177,9 @@ class Array(Definition):
     elements). The optional dimensions field gives the number of dimensions in the array.
     """
     TAG: ClassVar[str] = "&array"
-    field_length: int = 0
+    field_length: Optional[int] = None
     group_name: Optional[str] = None
-    dimensions: int = 1
+    dimensions: Optional[int] = None
 
 
 @dataclass

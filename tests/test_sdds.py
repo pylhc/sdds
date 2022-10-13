@@ -139,12 +139,12 @@ def test_def_as_dict():
 
 
 def test_sort_defs():
-    param1 = Parameter(name="param1", type_="long")
-    param2 = Parameter(name="param2", type_="long")
-    array1 = Array(name="array1", type_="long")
-    array2 = Array(name="array2", type_="long")
-    col1 = Column(name="col1", type_="long")
-    col2 = Column(name="col2", type_="long")
+    param1 = Parameter(name="param1", type="long")
+    param2 = Parameter(name="param2", type="long")
+    array1 = Array(name="array1", type="long")
+    array2 = Array(name="array2", type="long")
+    col1 = Column(name="col1", type="long")
+    col2 = Column(name="col2", type="long")
     unsorted = [array1, col1, param1, param2, array2, col2]
     sorted_ = [param1, param2, array1, array2, col1, col2]
     assert sorted_ == _sort_definitions(unsorted)
@@ -212,8 +212,8 @@ class TestClasses:
         with pytest.raises(ValueError) as e:
             SddsFile(
                 version="SDDS1", description=None,
-                definitions_list=[Parameter(name="test", type_="int"),
-                                  Parameter(name="test", type_="str")],
+                definitions_list=[Parameter(name="test", type="int"),
+                                  Parameter(name="test", type="str")],
                 values_list=[1, "hello"],
             )
         assert "Duplicated" in str(e)
@@ -223,7 +223,7 @@ class TestClasses:
         assert "SDDS-File" in repr(sdds)
         assert "SDDS-File" in str(sdds)
 
-        definition = Definition(name="mydef", type_="mytype")
+        definition = Definition(name="mydef", type="mytype")
         assert "Definition" in repr(definition)
         assert "mydef" in repr(definition)
         assert "Definition" in str(definition)
@@ -231,7 +231,7 @@ class TestClasses:
         assert "mytype" in str(definition)
         assert "no tag" in str(definition)
 
-        array = Array(name="mydef", type_="mytype")
+        array = Array(name="mydef", type="mytype")
         assert "Array" in repr(array)
         assert "Array" in str(array)
         assert "&array" in str(array)
