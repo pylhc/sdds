@@ -106,7 +106,8 @@ class Definition:
     format_string: Optional[str] = None
 
     def __post_init__(self):
-        # Fix types (probably strings from reading files) by using the type-hints:
+        # Fix types (probably strings from reading files) by using the type-hints
+        # this only works for native types, not the ones from typing.
         for field in fields(self):
             value = getattr(self, field.name)
             hinted_type = field.type
@@ -115,7 +116,7 @@ class Definition:
                     continue
 
                 if isinstance(value, str) and value.lower() == "none":
-                    # The key should have been skipped when writing, but you never know
+                    # The key should have been skipped when writing, but to be safe
                     LOGGER.debug(f"'None' found in {field.name}.")
                     setattr(self, field.name, None)
                     continue
@@ -124,12 +125,13 @@ class Definition:
                 hinted_type = next(t for t in hinted_type.__args__
                                    if not isinstance(t, type(None)))
 
-            if isinstance(value, hinted_type):  # all is fine
+            if isinstance(value, hinted_type):
+                # all is fine
                 continue
 
             LOGGER.debug(f"converting {field.name}: "
                          f"{type(value).__name__} -> {hinted_type.__name__}")
-            setattr(self, field.name, hinted_type(getattr(self, field.name)))
+            setattr(self, field.name, hinted_type(value))
 
     def __repr__(self):
         return f"<SDDS {self.__class__.__name__} '{self.name}'>"
