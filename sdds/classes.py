@@ -109,8 +109,8 @@ class Definition:
         # Fix types (probably strings from reading files) by using the type-hints:
         for field in fields(self):
             value = getattr(self, field.name)
-            type_hint = field.type
-            if hasattr(type_hint, "__args__"):  # For the Optional[...] types
+            hinted_type = field.type
+            if hasattr(hinted_type, "__args__"):  # For the Optional[...] types
                 if value is None:
                     continue
 
@@ -121,15 +121,15 @@ class Definition:
                     continue
 
                 # find the proper type from type-hint:
-                type_hint = next(t for t in type_hint.__args__
-                                 if not isinstance(t, type(None)))
+                hinted_type = next(t for t in hinted_type.__args__
+                                   if not isinstance(t, type(None)))
 
-            if isinstance(value, type_hint):  # all is fine
+            if isinstance(value, hinted_type):  # all is fine
                 continue
 
             LOGGER.debug(f"converting {field.name}: "
-                         f"{type(value).__name__} -> {type_hint.__name__}")
-            setattr(self, field.name, type_hint(getattr(self, field.name)))
+                         f"{type(value).__name__} -> {hinted_type.__name__}")
+            setattr(self, field.name, hinted_type(getattr(self, field.name)))
 
     def __repr__(self):
         return f"<SDDS {self.__class__.__name__} '{self.name}'>"
