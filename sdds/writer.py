@@ -46,7 +46,7 @@ def _write_header(sdds_file: SddsFile, outbytes: IO[bytes]) -> List[str]:
 
 def _sdds_def_as_str(definition: Union[Description, Definition, Data]) -> str:
     start = definition.TAG + " "
-    field_values = {field.name: getattr(definition, field.name)for field in fields(definition)}
+    field_values = {field.name: getattr(definition, field.name) for field in fields(definition)}
     kv_pairs = ", ".join([f"{key}={value}" for key, value in field_values.items() if value is not None])
     end = " &end\n"
     return start + kv_pairs + end
