@@ -144,10 +144,9 @@ def _read_bin_array(inbytes: IO[bytes], definition: Array, endianness: str) -> A
     dims, total_len = _read_bin_array_len(inbytes, definition.dimensions, endianness)
 
     if definition.type == "string":
-        len_type: str = "long"\
-                        if not hasattr(definition, "modifier")\
-                        else {"u1": "char", "i2": "short"}\
-                             .get(definition.modifier, "long")
+        len_type = {"u1": "char", "i2": "short"}.get(
+            getattr(definition, "modifier", None), "long"
+        )
         str_array = []
         for _ in range(total_len):
             str_len = int(_read_bin_numeric(inbytes, len_type, 1, endianness))

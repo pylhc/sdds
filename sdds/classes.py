@@ -51,6 +51,10 @@ class Description:
     contents, is intended to formally specify the type of data stored in a data set. Most
     frequently, the contents field is used to record the name of the program that created or most
     recently modified the file.
+    
+    Fields:
+        text (str): Optional. Informal description intended for humans.
+        contents (str): Optional. Formal specification of the type of data stored in a data set.
     """
     text: Optional[str] = None
     contents: Optional[str] = None
@@ -67,6 +71,9 @@ class Include:
 
     This optional command directs that SDDS header lines be read from the file named by the
     filename field. These commands may be nested.
+
+    Fields:
+        filename (str): Name of the file to be read containing header lines.
     """
     filename: str
 
@@ -82,28 +89,29 @@ class Definition:
     """
     Abstract class for the common behaviour of the data definition commands.
 
-    The name field must be supplied, as must the type field. The type must be one of short, long,
-    float, double, character, or string.
-
-    The optional symbol field allows specification of a symbol to represent the parameter; it may
-    contain escape sequences, for example, to produce Greek or mathematical characters. The
-    optional units field allows specification of the units of the parameter. The optional
-    description field provides for an informal description of the parameter. The optional format
-    field allows specification of the print format string to be used to print the data (e.g.,
-    for ASCII in SDDS or other formats).
 
     The Column, Array and Parameter definitions inherit from this class. They can be created just by
     passing name and type and optionally more parameters that depend on the actual definition type.
 
-    Raises:
-        AssertionError: If an invalid argument for the definition type is passed.
+    Fields:
+        name (str): Name of the data.
+        type (str): Type of the data.
+                    One of "short", "long", "float", "double", "character", or "string".
+        symbol (str): Optional. Allows specification of a symbol to represent the parameter;
+                      it may contain escape sequences, for example,
+                      to produce Greek or mathematical characters.
+        units (str): Optional. Allows specification of the units of the parameter.
+        description (str): Optional.  Provides for an informal description of the parameter.
+        format (str): Optional. Specification of the print format string to be used to print the data
+                      (e.g. for ASCII in SDDS or other formats). NOT IMPLEMENTED!
+
     """
     name: str
     type: str
     symbol: Optional[str] = None
     units: Optional[str] = None
     description: Optional[str] = None
-    format_string: Optional[str] = None
+    format: Optional[str] = None
 
     def __post_init__(self):
         # Fix types (probably strings from reading files) by using the type-hints
@@ -133,12 +141,18 @@ class Definition:
                          f"{type(value).__name__} -> {hinted_type.__name__}")
             setattr(self, field.name, hinted_type(value))
 
+    def get_key_value_string(self) -> str:
+        """ Return a string with comma separated key=value pairs.
+            Hint: `ClassVars` (like ``TAG``) are ignored in `fields`.
+        """
+        field_values = {field.name: getattr(self, field.name) for field in fields(self)}
+        return ", ".join([f"{key}={value}" for key, value in field_values.items() if value is not None])
+
     def __repr__(self):
         return f"<SDDS {self.__class__.__name__} '{self.name}'>"
 
     def __str__(self):
-        return (f"<{self.__class__.__name__} ({getattr(self, 'TAG', 'no tag')})> "
-                f"{', '.join(f'{k}: {v}' for k, v in self.__dict__.items())}")
+        return f"<{self.__class__.__name__} ({getattr(self, 'TAG', 'no tag')})> {self.get_key_value_string()}"
 
 
 @dataclass
@@ -158,10 +172,14 @@ class Parameter(Definition):
     Parameter (&parameter) command container, a data definition.
 
     This optional command defines a parameter that will appear along with the tabular data
-    section of each data page. The optional fixed_value field allows specification of a constant
-    value for a given parameter. This value will not change from data page to data page,
-    and is not specified along with non-fixed parameters or tabular data. This feature is for
-    convenience only; the parameter thus defined is treated like any other.
+    section of each data page.
+
+    Fields:
+        fixed_value (str): Optional. Allows specification of a constant value for a given parameter.
+                           This value will not change from data page to data page,
+                           and is not specified along with non-fixed parameters or tabular data.
+                           This feature is for convenience only;
+                           the parameter thus defined is treated like any other.
     """
     TAG: ClassVar[str] = "&parameter"
     fixed_value: Optional[str] = None
@@ -173,10 +191,17 @@ class Array(Definition):
     Array (&array) command container, a data definition.
 
     This optional command defines an array that will appear along with the tabular data section
-    of each data page. The optional group_name field allows specification of a string giving the
-    name of the array group to which the array belongs; such strings may be defined by the user
-    to indicate that different arrays are related (e.g., have the same dimensions, or parallel
-    elements). The optional dimensions field gives the number of dimensions in the array.
+    of each data page.
+
+    Fields:
+        field_length (int): Optional. Length of the field (Not sure, actually. jdilly2022).
+        group_name (int): Optional. Allows specification of a string giving the
+                          name of the array group to which the array belongs;
+                          such strings may be defined by the user
+                          to indicate that different arrays are related
+                          (e.g., have the same dimensions, or parallel elements).
+        dimensions (int): Optional. Gives the number of dimensions in the array.
+                          If not given, defaults to ``1`` upon reading.
     """
     TAG: ClassVar[str] = "&array"
     field_length: Optional[int] = None
@@ -190,8 +215,10 @@ class Data:
     Data (&data) command container.
 
     This command is optional unless parameter commands without fixed_value fields,
-    array commands, or column commands have been given. The mode field is required, and it must
-    be “binary”, the only supported mode.
+    array commands, or column commands have been given.
+
+    Fields:
+        mode (str): File/Data mode. Either “binary” or "ascii".
     """
     mode: str
     TAG: ClassVar[str] = "&data"
@@ -214,6 +241,21 @@ class SddsFile:
         val = sdds_file.values["name"]
         # The definitions and values can also be accessed like:
         def_, val = sdds_file["name"]
+
+    Args:
+        version (str): Always needs to be "SDDS1"!
+        description (Description): Optional. Description Tag.
+        definitions_list (list[Definition]): List of definitions objects,
+                                             describing the data.
+        values_list (list[Any]): List of values for the SDDS data.
+                                 Same lengths as definitions.
+
+    Fields:
+        version (str): Always needs to be "SDDS1"!
+        description (Description): Optional. Description Tag.
+        definitions (dict[str, Definition]): Definitions of the data, mapped to their name.
+        values (dict[str, Any]): Values of the data, mapped to their name.
+
     """
     version: str  # This should always be "SDDS1"
     description: Optional[Description]

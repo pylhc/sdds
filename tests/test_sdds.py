@@ -3,6 +3,7 @@ import pathlib
 import io
 import struct
 import sys
+from typing import Dict
 
 import pytest
 import numpy as np
@@ -16,7 +17,9 @@ from sdds.reader import (
 )
 from sdds.writer import write_sdds, _sdds_def_as_str
 from sdds.classes import (Parameter, Column, Array,
-                          SddsFile, Definition, Include, Data, Description, get_dtype_str, NUMTYPES)
+                          SddsFile, Definition, Include, Data,
+                          Description, get_dtype_str, NUMTYPES,
+                          NUMTYPES_CAST)
 
 
 CURRENT_DIR = pathlib.Path(__file__).parent
@@ -111,21 +114,34 @@ class TestReadFunctions:
             assert definition.type == test_data[definition.name]
 
     def test_read_header_optionals(self):
-        test_head = b"""
-        SDDS1
-        !# little-endian
-        &description text="Momentum aperture search", contents="momentum aperture", &end
-        &parameter name=Step, type=long, &end
-        &parameter name=SVNVersion, description="SVN version number", type=string, fixed_value=28096M, &end
-        &column name=ElementName, type=string,  &end
-        &column name=s, units=m, type=double,  &end
-        &column name=ElementType, type=string,  &end
-        &column name=ElementOccurence, type=long,  &end
-        &column name=deltaPositiveFound, type=short,  &end
-        &column name=deltaPositive, symbol="$gd$R$bpos$n", type=double,  &end
-        &data mode=binary, &end
-        """
+        # build
+        to_check = {
+            "Step": {"type": "long", "class": "Parameter"},
+            "SVNVersion": {"type": "string", "class": "Parameter", "description": '"SVN version number"', "fixed_value": "28096M"},
+            "ElementName": {"type": "string", "class": "Column"},
+            "s": {"type": "double", "units": "m", "class": "Column"},
+            "ElementType": {"type": "string", "class": "Column"},
+            "ElementOccurence": {"type": "long", "class": "Column"},
+            "deltaPositiveFound": {"type": "short", "class": "Column"},
+            "deltaPositive": {"type": "double", "symbol": '"$gd$R$bpos$n"', "class": "Column"},
+        }
+
+        test_head = (
+                "SDDS1\n"
+                "!# little-endian\n"
+                '&description text="Momentum aperture search", contents="momentum aperture", &end\n' +
+                 _header_from_dict(to_check) +
+                "&data mode=binary, &end"
+        ).encode("ascii")
+
+        # read
         version, definitions, _, data = _read_header(io.BytesIO(test_head))
+
+        # check
+        for entry in definitions:
+            check_dict = to_check[entry.name]
+            for key, value in check_dict.items():
+                assert getattr(entry, key) == value
 
 
 def test_def_as_dict():
@@ -259,6 +275,7 @@ class TestClasses:
         for name, format_ in NUMTYPES.items():
             assert get_dtype_str(name).endswith(format_)
 
+
 # Helpers
 
 def _write_read_header():
@@ -268,6 +285,15 @@ def _write_read_header():
     def_dict = _get_def_as_dict(word_gen)
     assert def_dict["name"] == original.name
     assert def_dict["type"] == original.type
+
+
+def _header_from_dict(d: Dict[str, Dict[str, str]]) -> str:
+    """ Build a quick header from given dict. """
+    return ", &end\n".join(  # join lines
+        f"&{v.pop('class').lower()} name={k}, type={v.pop('type')}" +
+        (", " + ", ".join(f"{vk}={vv}" for vk, vv in v.items()) if v else "")
+        for k, v in d.items()
+    ) + ", &end\n"
 
 
 @pytest.fixture()
