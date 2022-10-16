@@ -140,6 +140,7 @@ class TestReadFunctions:
         # check
         for entry in definitions:
             check_dict = to_check[entry.name]
+            assert entry.__class__.__name__ == check_dict.pop("class")
             for key, value in check_dict.items():
                 assert getattr(entry, key) == value
 
@@ -289,6 +290,7 @@ def _write_read_header():
 
 def _header_from_dict(d: Dict[str, Dict[str, str]]) -> str:
     """ Build a quick header from given dict. """
+    d = {k: v.copy() for k, v in d.items()}
     return ", &end\n".join(  # join lines
         f"&{v.pop('class').lower()} name={k}, type={v.pop('type')}" +
         (", " + ", ".join(f"{vk}={vv}" for vk, vv in v.items()) if v else "")
