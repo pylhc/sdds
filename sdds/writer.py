@@ -7,6 +7,7 @@ It provides a high-level function to write SDDS files in different formats, and 
 """
 import pathlib
 import struct
+from dataclasses import fields
 from typing import IO, List, Union, Iterable, Tuple, Any
 import numpy as np
 from sdds.classes import (SddsFile, Column, Parameter, Definition, Array, Data, Description,
@@ -44,14 +45,10 @@ def _write_header(sdds_file: SddsFile, outbytes: IO[bytes]) -> List[str]:
 
 
 def _sdds_def_as_str(definition: Union[Description, Definition, Data]) -> str:
-    start = definition.TAG + " "
-    things = ", ".join([f"{key}={definition.__dict__[key]}"
-                        for key in definition.__dict__ if "__" not in key])
-    end = " &end\n"
-    return start + things + end
+    return f"{definition.TAG} {definition.get_key_value_string()} &end\n"
 
 
-def _write_data(names: List[str], sdds_file: SddsFile, outbytes: IO[bytes])-> None:
+def _write_data(names: List[str], sdds_file: SddsFile, outbytes: IO[bytes]) -> None:
     # row_count:
     outbytes.write(np.array(0, dtype=get_dtype_str("long")).tobytes())
     _write_parameters((sdds_file[name] for name in names

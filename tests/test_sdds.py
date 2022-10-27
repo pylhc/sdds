@@ -3,6 +3,7 @@ import pathlib
 import io
 import struct
 import sys
+from typing import Dict
 
 import pytest
 import numpy as np
@@ -16,7 +17,9 @@ from sdds.reader import (
 )
 from sdds.writer import write_sdds, _sdds_def_as_str
 from sdds.classes import (Parameter, Column, Array,
-                          SddsFile, Definition, Include, Data, Description, get_dtype_str, NUMTYPES)
+                          SddsFile, Definition, Include, Data,
+                          Description, get_dtype_str, NUMTYPES,
+                          NUMTYPES_CAST)
 
 
 CURRENT_DIR = pathlib.Path(__file__).parent
@@ -89,18 +92,18 @@ class TestReadFunctions:
 
     def test_read_header(self):
         test_head = b"""
-SDDS1
-!# big-endian
-&parameter name=acqStamp, type=double, &end
-&parameter name=nbOfCapTurns, type=long, &end
-&array name=horPositionsConcentratedAndSorted, type=float, &end
-&array
-    name=verBunchId,
-    type=long,
-    field_length=3,
-&end
-&data mode=binary, &end
-"""
+        SDDS1
+        !# big-endian
+        &parameter name=acqStamp, type=double, &end
+        &parameter name=nbOfCapTurns, type=long, &end
+        &array name=horPositionsConcentratedAndSorted, type=float, &end
+        &array
+            name=verBunchId,
+            type=long,
+            field_length=3,
+        &end
+        &data mode=binary, &end
+        """
         test_data = {"acqStamp": "double", "nbOfCapTurns": "long",
                      "horPositionsConcentratedAndSorted": "float",
                      "verBunchId": "long"}
@@ -109,6 +112,37 @@ SDDS1
         assert data.mode == "binary"
         for definition in definitions:
             assert definition.type == test_data[definition.name]
+
+    def test_read_header_optionals(self):
+        # build
+        to_check = {
+            "Step": {"type": "long", "class": "Parameter"},
+            "SVNVersion": {"type": "string", "class": "Parameter", "description": '"SVN version number"', "fixed_value": "28096M"},
+            "ElementName": {"type": "string", "class": "Column"},
+            "s": {"type": "double", "units": "m", "class": "Column"},
+            "ElementType": {"type": "string", "class": "Column"},
+            "ElementOccurence": {"type": "long", "class": "Column"},
+            "deltaPositiveFound": {"type": "short", "class": "Column"},
+            "deltaPositive": {"type": "double", "symbol": '"$gd$R$bpos$n"', "class": "Column"},
+        }
+
+        test_head = (
+                "SDDS1\n"
+                "!# little-endian\n"
+                '&description text="Momentum aperture search", contents="momentum aperture", &end\n' +
+                 _header_from_dict(to_check) +
+                "&data mode=binary, &end"
+        ).encode("ascii")
+
+        # read
+        version, definitions, _, data = _read_header(io.BytesIO(test_head))
+
+        # check
+        for entry in definitions:
+            check_dict = to_check[entry.name]
+            assert entry.__class__.__name__ == check_dict.pop("class")
+            for key, value in check_dict.items():
+                assert getattr(entry, key) == value
 
 
 def test_def_as_dict():
@@ -122,12 +156,12 @@ def test_def_as_dict():
 
 
 def test_sort_defs():
-    param1 = Parameter(name="param1", type_="long")
-    param2 = Parameter(name="param2", type_="long")
-    array1 = Array(name="array1", type_="long")
-    array2 = Array(name="array2", type_="long")
-    col1 = Column(name="col1", type_="long")
-    col2 = Column(name="col2", type_="long")
+    param1 = Parameter(name="param1", type="long")
+    param2 = Parameter(name="param2", type="long")
+    array1 = Array(name="array1", type="long")
+    array2 = Array(name="array2", type="long")
+    col1 = Column(name="col1", type="long")
+    col2 = Column(name="col2", type="long")
     unsorted = [array1, col1, param1, param2, array2, col2]
     sorted_ = [param1, param2, array1, array2, col1, col2]
     assert sorted_ == _sort_definitions(unsorted)
@@ -195,8 +229,8 @@ class TestClasses:
         with pytest.raises(ValueError) as e:
             SddsFile(
                 version="SDDS1", description=None,
-                definitions_list=[Parameter(name="test", type_="int"),
-                                  Parameter(name="test", type_="str")],
+                definitions_list=[Parameter(name="test", type="int"),
+                                  Parameter(name="test", type="str")],
                 values_list=[1, "hello"],
             )
         assert "Duplicated" in str(e)
@@ -206,7 +240,7 @@ class TestClasses:
         assert "SDDS-File" in repr(sdds)
         assert "SDDS-File" in str(sdds)
 
-        definition = Definition(name="mydef", type_="mytype")
+        definition = Definition(name="mydef", type="mytype")
         assert "Definition" in repr(definition)
         assert "mydef" in repr(definition)
         assert "Definition" in str(definition)
@@ -214,7 +248,7 @@ class TestClasses:
         assert "mytype" in str(definition)
         assert "no tag" in str(definition)
 
-        array = Array(name="mydef", type_="mytype")
+        array = Array(name="mydef", type="mytype")
         assert "Array" in repr(array)
         assert "Array" in str(array)
         assert "&array" in str(array)
@@ -242,6 +276,7 @@ class TestClasses:
         for name, format_ in NUMTYPES.items():
             assert get_dtype_str(name).endswith(format_)
 
+
 # Helpers
 
 def _write_read_header():
@@ -251,6 +286,16 @@ def _write_read_header():
     def_dict = _get_def_as_dict(word_gen)
     assert def_dict["name"] == original.name
     assert def_dict["type"] == original.type
+
+
+def _header_from_dict(d: Dict[str, Dict[str, str]]) -> str:
+    """ Build a quick header from given dict. """
+    d = {k: v.copy() for k, v in d.items()}
+    return ", &end\n".join(  # join lines
+        f"&{v.pop('class').lower()} name={k}, type={v.pop('type')}" +
+        (", " + ", ".join(f"{vk}={vv}" for vk, vv in v.items()) if v else "")
+        for k, v in d.items()
+    ) + ", &end\n"
 
 
 @pytest.fixture()

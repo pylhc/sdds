@@ -62,7 +62,7 @@ def _read_header(inbytes: IO[bytes]) -> Tuple[str, List[Definition], Optional[De
                 Column.TAG: Column,
                 Parameter.TAG: Parameter,
                 Array.TAG: Array}[word](name=def_dict.pop("name"),
-                                        type_=def_dict.pop("type"),
+                                        type=def_dict.pop("type"),
                                         **def_dict))
             continue
         if word == Description.TAG:
@@ -144,10 +144,9 @@ def _read_bin_array(inbytes: IO[bytes], definition: Array, endianness: str) -> A
     dims, total_len = _read_bin_array_len(inbytes, definition.dimensions, endianness)
 
     if definition.type == "string":
-        len_type: str = "long"\
-                        if not hasattr(definition, "modifier")\
-                        else {"u1": "char", "i2": "short"}\
-                             .get(definition.modifier, "long")
+        len_type = {"u1": "char", "i2": "short"}.get(
+            getattr(definition, "modifier", None), "long"
+        )
         str_array = []
         for _ in range(total_len):
             str_len = int(_read_bin_numeric(inbytes, len_type, 1, endianness))
@@ -158,7 +157,10 @@ def _read_bin_array(inbytes: IO[bytes], definition: Array, endianness: str) -> A
     return data.reshape(dims)
 
 
-def _read_bin_array_len(inbytes: IO[bytes], num_dims: int, endianness: str) -> Tuple[List[int], int]:
+def _read_bin_array_len(inbytes: IO[bytes], num_dims: Optional[int], endianness: str) -> Tuple[List[int], int]:
+    if num_dims is None:
+        num_dims = 1
+
     dims = [_read_bin_int(inbytes, endianness) for _ in range(num_dims)]
     return dims, int(np.prod(dims))
 
