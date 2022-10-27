@@ -96,18 +96,30 @@ Implementation are based on documentation at:
 </section>
 <dl class="py class">
 <dt class="sig sig-object py" id="sdds.classes.Array">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sdds.classes.</span></span><span class="sig-name descname"><span class="pre">Array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdds/classes.html#Array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdds.classes.Array" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sdds.classes.</span></span><span class="sig-name descname"><span class="pre">Array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symbol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimensions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdds/classes.html#Array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdds.classes.Array" title="Permalink to this definition"></a></dt>
 <dd><p>Array (&amp;array) command container, a data definition.</p>
 <p>This optional command defines an array that will appear along with the tabular data section
-of each data page. The optional group_name field allows specification of a string giving the
-name of the array group to which the array belongs; such strings may be defined by the user
-to indicate that different arrays are related (e.g., have the same dimensions, or parallel
-elements). The optional dimensions field gives the number of dimensions in the array.</p>
+of each data page.</p>
+<dl>
+<dt>Fields:</dt><dd><p>field_length (int): Optional. Length of the field (Not sure, actually. jdilly2022).
+group_name (int): Optional. Allows specification of a string giving the</p>
+<blockquote>
+<div><p>name of the array group to which the array belongs;
+such strings may be defined by the user
+to indicate that different arrays are related
+(e.g., have the same dimensions, or parallel elements).</p>
+</div></blockquote>
+<dl class="simple">
+<dt>dimensions (int): Optional. Gives the number of dimensions in the array.</dt><dd><p>If not given, defaults to <code class="docutils literal notranslate"><span class="pre">1</span></code> upon reading.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="sdds.classes.Column">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sdds.classes.</span></span><span class="sig-name descname"><span class="pre">Column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdds/classes.html#Column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdds.classes.Column" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sdds.classes.</span></span><span class="sig-name descname"><span class="pre">Column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symbol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdds/classes.html#Column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdds.classes.Column" title="Permalink to this definition"></a></dt>
 <dd><p>Column (&amp;column) command container, a data definition.</p>
 <p>This optional command defines a column that will appear in the tabular data section of each
 data page.</p>
@@ -118,29 +130,45 @@ data page.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sdds.classes.</span></span><span class="sig-name descname"><span class="pre">Data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdds/classes.html#Data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdds.classes.Data" title="Permalink to this definition"></a></dt>
 <dd><p>Data (&amp;data) command container.</p>
 <p>This command is optional unless parameter commands without fixed_value fields,
-array commands, or column commands have been given. The mode field is required, and it must
-be “binary”, the only supported mode.</p>
+array commands, or column commands have been given.</p>
+<dl class="simple">
+<dt>Fields:</dt><dd><p>mode (str): File/Data mode. Either “binary” or “ascii”.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="sdds.classes.Definition">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sdds.classes.</span></span><span class="sig-name descname"><span class="pre">Definition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdds/classes.html#Definition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdds.classes.Definition" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sdds.classes.</span></span><span class="sig-name descname"><span class="pre">Definition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symbol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdds/classes.html#Definition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdds.classes.Definition" title="Permalink to this definition"></a></dt>
 <dd><p>Abstract class for the common behaviour of the data definition commands.</p>
-<p>The name field must be supplied, as must the type field. The type must be one of short, long,
-float, double, character, or string.</p>
-<p>The optional symbol field allows specification of a symbol to represent the parameter; it may
-contain escape sequences, for example, to produce Greek or mathematical characters. The
-optional units field allows specification of the units of the parameter. The optional
-description field provides for an informal description of the parameter. The optional format
-field allows specification of the print format string to be used to print the data (e.g.,
-for ASCII in SDDS or other formats).</p>
 <p>The Column, Array and Parameter definitions inherit from this class. They can be created just by
 passing name and type and optionally more parameters that depend on the actual definition type.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p><strong>AssertionError</strong> -- If an invalid argument for the definition type is passed.</p>
+<dl>
+<dt>Fields:</dt><dd><p>name (str): Name of the data.
+type (str): Type of the data.</p>
+<blockquote>
+<div><p>One of “short”, “long”, “float”, “double”, “character”, or “string”.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>symbol (str): Optional. Allows specification of a symbol to represent the parameter;</dt><dd><p>it may contain escape sequences, for example,
+to produce Greek or mathematical characters.</p>
 </dd>
 </dl>
+<p>units (str): Optional. Allows specification of the units of the parameter.
+description (str): Optional.  Provides for an informal description of the parameter.
+format (str): Optional. Specification of the print format string to be used to print the data</p>
+<blockquote>
+<div><p>(e.g. for ASCII in SDDS or other formats). NOT IMPLEMENTED!</p>
+</div></blockquote>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="sdds.classes.Definition.get_key_value_string">
+<span class="sig-name descname"><span class="pre">get_key_value_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/sdds/classes.html#Definition.get_key_value_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdds.classes.Definition.get_key_value_string" title="Permalink to this definition"></a></dt>
+<dd><p>Return a string with comma separated key=value pairs.
+Hint: <cite>ClassVars</cite> (like <code class="docutils literal notranslate"><span class="pre">TAG</span></code>) are ignored in <cite>fields</cite>.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -152,6 +180,11 @@ is an informal description that is intended principally for human consumption. T
 contents, is intended to formally specify the type of data stored in a data set. Most
 frequently, the contents field is used to record the name of the program that created or most
 recently modified the file.</p>
+<dl class="simple">
+<dt>Fields:</dt><dd><p>text (str): Optional. Informal description intended for humans.
+contents (str): Optional. Formal specification of the type of data stored in a data set.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
@@ -160,17 +193,28 @@ recently modified the file.</p>
 <dd><p>Include (&amp;include) command container.</p>
 <p>This optional command directs that SDDS header lines be read from the file named by the
 filename field. These commands may be nested.</p>
+<dl class="simple">
+<dt>Fields:</dt><dd><p>filename (str): Name of the file to be read containing header lines.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="sdds.classes.Parameter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sdds.classes.</span></span><span class="sig-name descname"><span class="pre">Parameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdds/classes.html#Parameter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdds.classes.Parameter" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sdds.classes.</span></span><span class="sig-name descname"><span class="pre">Parameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symbol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdds/classes.html#Parameter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdds.classes.Parameter" title="Permalink to this definition"></a></dt>
 <dd><p>Parameter (&amp;parameter) command container, a data definition.</p>
 <p>This optional command defines a parameter that will appear along with the tabular data
-section of each data page. The optional fixed_value field allows specification of a constant
-value for a given parameter. This value will not change from data page to data page,
-and is not specified along with non-fixed parameters or tabular data. This feature is for
-convenience only; the parameter thus defined is treated like any other.</p>
+section of each data page.</p>
+<dl class="simple">
+<dt>Fields:</dt><dd><dl class="simple">
+<dt>fixed_value (str): Optional. Allows specification of a constant value for a given parameter.</dt><dd><p>This value will not change from data page to data page,
+and is not specified along with non-fixed parameters or tabular data.
+This feature is for convenience only;
+the parameter thus defined is treated like any other.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
@@ -186,6 +230,25 @@ dictionary has the form: <strong>name (str) -&gt; value</strong>. To access them
 <span class="n">def_</span><span class="p">,</span> <span class="n">val</span> <span class="o">=</span> <span class="n">sdds_file</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
 </pre></div>
 </div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>version</strong> (<em>str</em>) -- Always needs to be “SDDS1”!</p></li>
+<li><p><strong>description</strong> (<a class="reference internal" href="#sdds.classes.Description" title="sdds.classes.Description"><em>Description</em></a>) -- Optional. Description Tag.</p></li>
+<li><p><strong>definitions_list</strong> (<em>list</em><em>[</em><a class="reference internal" href="#sdds.classes.Definition" title="sdds.classes.Definition"><em>Definition</em></a><em>]</em>) -- List of definitions objects,
+describing the data.</p></li>
+<li><p><strong>values_list</strong> (<em>list</em><em>[</em><em>Any</em><em>]</em>) -- List of values for the SDDS data.
+Same lengths as definitions.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Fields:</dt><dd><p>version (str): Always needs to be “SDDS1”!
+description (Description): Optional. Description Tag.
+definitions (dict[str, Definition]): Definitions of the data, mapped to their name.
+values (dict[str, Any]): Values of the data, mapped to their name.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <span class="target" id="module-sdds.reader"></span><section id="reader">
