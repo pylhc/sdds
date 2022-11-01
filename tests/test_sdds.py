@@ -191,8 +191,8 @@ class TestAscii:
     def test_sdds_write_read_ascii_1_dim(self, _sdds_file_lei1, tmp_file):
         self.template_ascii_read_write_read(_sdds_file_lei1, tmp_file)
 
-    def test_sdds_write_read_ascii_2_dim(self, _sdds_file_lei1, tmp_file):
-        self.template_ascii_read_write_read(_sdds_file_lei1, tmp_file)
+    def test_sdds_write_read_ascii_2_dim(self, _sdds_file_lei2, tmp_file):
+        self.template_ascii_read_write_read(_sdds_file_lei2, tmp_file)
 
     def test_sdds_write_ascii(self):
         sdds_file = b'''SDDS1
