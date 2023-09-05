@@ -11,10 +11,10 @@ import os
 import pathlib
 import struct
 import sys
+from collections.abc import Callable
 from contextlib import AbstractContextManager, contextmanager
 from functools import partial
-from typing import (IO, Any, Callable, Dict, Generator, List, Optional, Tuple,
-                    Type, Union)
+from typing import IO, Any, Dict, Generator, List, Optional, Tuple, Type, Union
 
 import numpy as np
 
