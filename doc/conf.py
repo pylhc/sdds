@@ -113,7 +113,7 @@ html_theme_options = {
     'collapse_navigation': False,
     'display_version': True,
     'logo_only': True,
-    'navigation_depth': 2,
+    'navigation_depth': 3,
 }
 
 html_logo = '_static/img/omc_logo.svg'
