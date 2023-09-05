@@ -1,26 +1,19 @@
+import io
 import os
 import pathlib
-import io
 import struct
 import sys
 from typing import Dict
 
-import pytest
 import numpy as np
-from sdds.reader import (
-    read_sdds,
-    _gen_words,
-    _get_def_as_dict,
-    _read_header,
-    _read_data,
-    _sort_definitions,
-)
-from sdds.writer import write_sdds, _sdds_def_as_str
-from sdds.classes import (Parameter, Column, Array,
-                          SddsFile, Definition, Include, Data,
-                          Description, get_dtype_str, NUMTYPES,
-                          NUMTYPES_CAST)
+import pytest
 
+from sdds.classes import (NUMTYPES, NUMTYPES_CAST, Array, Column, Data,
+                          Definition, Description, Include, Parameter,
+                          SddsFile, get_dtype_str)
+from sdds.reader import (_gen_words, _get_def_as_dict, _read_data,
+                         _read_header, _sort_definitions, gzip_open, read_sdds)
+from sdds.writer import _sdds_def_as_str, write_sdds
 
 CURRENT_DIR = pathlib.Path(__file__).parent
 
@@ -46,6 +39,27 @@ class TestReadWrite:
             assert new_def.type == definition.type
             assert np.all(value == new_val)
 
+
+class TestReadGzippedFiles:
+    def test_sdds_read_gzipped_file_pathlib(self, _sdds_gzipped_file_pathlib, tmp_file):
+        original = read_sdds(_sdds_gzipped_file_pathlib, opener=gzip_open)
+        write_sdds(original, tmp_file)
+        new = read_sdds(tmp_file)
+        for definition, value in original:
+            new_def, new_val = new[definition.name]
+            assert new_def.name == definition.name
+            assert new_def.type == definition.type
+            assert np.all(value == new_val)
+
+    def test_sdds_read_gzipped_file_str(self, _sdds_gzipped_file_str, tmp_file):
+        original = read_sdds(_sdds_gzipped_file_str, opener=gzip_open)
+        write_sdds(original, tmp_file)
+        new = read_sdds(tmp_file)
+        for definition, value in original:
+            new_def, new_val = new[definition.name]
+            assert new_def.name == definition.name
+            assert new_def.type == definition.type
+            assert np.all(value == new_val)
 
 class TestEndianness:
     def test_sdds_read_little_endian(self, _sdds_file_little_endian):
@@ -277,7 +291,7 @@ class TestClasses:
             assert get_dtype_str(name).endswith(format_)
 
 
-# Helpers
+# ----- Helpers ----- #
 
 def _write_read_header():
     original = Parameter(name="param1", type="str")
@@ -298,6 +312,8 @@ def _header_from_dict(d: Dict[str, Dict[str, str]]) -> str:
     ) + ", &end\n"
 
 
+# ----- Fixtures ----- #
+
 @pytest.fixture()
 def _sdds_file_pathlib() -> pathlib.Path:
     return CURRENT_DIR / "inputs" / "test_file.sdds"
@@ -306,6 +322,16 @@ def _sdds_file_pathlib() -> pathlib.Path:
 @pytest.fixture()
 def _sdds_file_str() -> str:
     return os.path.join(os.path.dirname(__file__), "inputs", "test_file.sdds")
+
+
+@pytest.fixture()
+def _sdds_gzipped_file_pathlib() -> pathlib.Path:
+    return CURRENT_DIR / "inputs" / "test_file.sdds.gz"
+
+
+@pytest.fixture()
+def _sdds_gzipped_file_str() -> str:
+    return os.path.join(os.path.dirname(__file__), "inputs", "test_file.sdds.gz")
 
 
 @pytest.fixture()
