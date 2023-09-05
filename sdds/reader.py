@@ -24,11 +24,12 @@ from sdds.classes import (ENCODING, NUMTYPES_CAST, NUMTYPES_SIZES, Array,
 
 # ----- Providing Opener Abstractions for the Reader ----- #
 
-# On Python 3.8, we cannot subscript contextlib.AbstractContextManager so here's a workaround
+# On Python 3.8, we cannot subscript contextlib.AbstractContextManager, which became possible 
+# with PEP 585 in Python 3.9. We will check for the runtime version and simply not subscript
+# the AbstractContextManager if running on 3.8. The cost here is degraded typing.
 # TODO: remove this conditional once Python 3.8 has reached EoL and we drop support for it
 if sys.version_info < (3, 9, 0):  # we're running on 3.8, which is our lowest supported
-    from typing import ContextManager
-    OpenerType = Callable[[os.PathLike], ContextManager[io.BufferedIOBase]]
+    OpenerType = Callable[[os.PathLike], AbstractContextManager]
 else:
     OpenerType = Callable[[os.PathLike], AbstractContextManager[io.BufferedIOBase]]
 
