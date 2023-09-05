@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>sdds.reader &mdash; sdds 0.3.1 documentation</title>
+  <title>sdds.reader &mdash; sdds 0.4.0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
@@ -11,12 +11,11 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=6c02275b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -27,15 +26,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html">
-            <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.3
+                0.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -44,18 +47,8 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">SDDS Modules</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#classes">Classes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#sdds.classes.Array"><code class="docutils literal notranslate"><span class="pre">Array</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#sdds.classes.Column"><code class="docutils literal notranslate"><span class="pre">Column</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#sdds.classes.Data"><code class="docutils literal notranslate"><span class="pre">Data</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#sdds.classes.Definition"><code class="docutils literal notranslate"><span class="pre">Definition</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#sdds.classes.Description"><code class="docutils literal notranslate"><span class="pre">Description</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#sdds.classes.Include"><code class="docutils literal notranslate"><span class="pre">Include</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#sdds.classes.Parameter"><code class="docutils literal notranslate"><span class="pre">Parameter</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#sdds.classes.SddsFile"><code class="docutils literal notranslate"><span class="pre">SddsFile</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#reader">Reader</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#sdds.reader.read_sdds"><code class="docutils literal notranslate"><span class="pre">read_sdds()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#writer">Writer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#sdds.writer.write_sdds"><code class="docutils literal notranslate"><span class="pre">write_sdds()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -73,9 +66,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>sdds.reader</li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">sdds.reader</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -92,42 +85,103 @@
 <span class="sd">This module contains the reading functionality of ``sdds``.</span>
 <span class="sd">It provides a high-level function to read SDDS files in different formats, and a series of helpers.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">gzip</span>
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">pathlib</span>
 <span class="kn">import</span> <span class="nn">struct</span>
 <span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">IO</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Type</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">AbstractContextManager</span><span class="p">,</span> <span class="n">contextmanager</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">IO</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">sdds.classes</span> <span class="kn">import</span> <span class="p">(</span><span class="n">SddsFile</span><span class="p">,</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">Definition</span><span class="p">,</span> <span class="n">Array</span><span class="p">,</span> <span class="n">Data</span><span class="p">,</span> <span class="n">Description</span><span class="p">,</span>
-                          <span class="n">ENCODING</span><span class="p">,</span> <span class="n">NUMTYPES_CAST</span><span class="p">,</span> <span class="n">NUMTYPES_SIZES</span><span class="p">,</span> <span class="n">get_dtype_str</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">sdds.classes</span> <span class="kn">import</span> <span class="p">(</span><span class="n">ENCODING</span><span class="p">,</span> <span class="n">NUMTYPES_CAST</span><span class="p">,</span> <span class="n">NUMTYPES_SIZES</span><span class="p">,</span> <span class="n">Array</span><span class="p">,</span>
+                          <span class="n">Column</span><span class="p">,</span> <span class="n">Data</span><span class="p">,</span> <span class="n">Definition</span><span class="p">,</span> <span class="n">Description</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">,</span>
+                          <span class="n">SddsFile</span><span class="p">,</span> <span class="n">get_dtype_str</span><span class="p">)</span>
+
+<span class="c1"># ----- Providing Opener Abstractions for the Reader ----- #</span>
+
+<span class="c1"># On Python 3.8, we cannot subscript contextlib.AbstractContextManager or collections.abc.Callable,</span>
+<span class="c1"># which became possible with PEP 585 in Python 3.9. We will check for the runtime version and simply</span>
+<span class="c1"># not subscript if running on 3.8. The cost here is degraded typing.</span>
+<span class="c1"># TODO: remove this conditional once Python 3.8 has reached EoL and we drop support for it</span>
+<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>  <span class="c1"># we&#39;re running on 3.8, which is our lowest supported</span>
+    <span class="n">OpenerType</span> <span class="o">=</span> <span class="n">Callable</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">OpenerType</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">],</span> <span class="n">AbstractContextManager</span><span class="p">[</span><span class="n">io</span><span class="o">.</span><span class="n">BufferedIOBase</span><span class="p">]]</span>
+
+<span class="n">binary_open</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="nb">open</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;rb&quot;</span><span class="p">)</span>  <span class="c1"># default opening mode, simple sdds files</span>
+<span class="n">gzip_open</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;rb&quot;</span><span class="p">)</span>  <span class="c1"># for gzip-compressed sdds files</span>
 
 
-<div class="viewcode-block" id="read_sdds"><a class="viewcode-back" href="../../modules/index.html#sdds.reader.read_sdds">[docs]</a><span class="k">def</span> <span class="nf">read_sdds</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">endianness</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SddsFile</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Reads SDDS file from the specified ``file_path``.</span>
+<span class="c1"># ----- Reader Function ----- #</span>
+
+<div class="viewcode-block" id="read_sdds">
+<a class="viewcode-back" href="../../modules/index.html#sdds.reader.read_sdds">[docs]</a>
+<span class="k">def</span> <span class="nf">read_sdds</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">endianness</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">opener</span><span class="p">:</span> <span class="n">OpenerType</span> <span class="o">=</span> <span class="n">binary_open</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SddsFile</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads an SDDS file from the specified ``file_path``.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file_path (Union[pathlib.Path, str]): `Path` object to the input SDDS file. Can be a</span>
 <span class="sd">            `string`, in which case it will be cast to a `Path` object.</span>
-<span class="sd">        endianness (str): Endianness of the file. Either &#39;big&#39; or &#39;little&#39;.</span>
-<span class="sd">                          If not given, the endianness is either extracted from</span>
-<span class="sd">                          the comments in the header of the file (if present)</span>
-<span class="sd">                          or determined by the machine you are running on.</span>
-<span class="sd">                          Binary files written by this package are all big-endian,</span>
-<span class="sd">                          and contain a comment in the file.</span>
+<span class="sd">        endianness (str): Endianness of the file, either &#39;big&#39; or &#39;little&#39;. If not given,</span>
+<span class="sd">            the endianness is either extracted from the comments in the header of the file</span>
+<span class="sd">            (if present) or determined by the machine you are running on. Binary files</span>
+<span class="sd">            written by this package are all big-endian, and contain a comment in the file.</span>
+<span class="sd">        opener (OpenerType): Callable to open the SDDS file. Uses `open(file, mode=&quot;rb&quot;)` by</span>
+<span class="sd">            default. One can use provided openers for specific format or bring their own, see</span>
+<span class="sd">            the examples below.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        An `SddsFile` object containing the loaded data.</span>
+<span class="sd">    </span>
+<span class="sd">    Examples:</span>
+
+<span class="sd">        To read a typical file, one can use the default options:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            import sdds</span>
+
+<span class="sd">            data = sdds.read(&quot;some/location/to/file.sdds&quot;)</span>
+
+
+<span class="sd">        To read a ``gzip``-compressed file, use the provided opener function:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            import sdds</span>
+<span class="sd">            from sdds.reader import gzip_open</span>
+
+<span class="sd">            data = sdds.read(&quot;some/location/to/file.sdds.gz&quot;, opener=gzip_open)</span>
+
+<span class="sd">        To read another specific compression format, bring your own opener abstraction.</span>
+<span class="sd">        It should take a single parameter for the path-like object pointing to the file,</span>
+<span class="sd">        and return a context manager providing byte-data of the file. For instance the</span>
+<span class="sd">        `gzip_opener` from the example above is built as `functools.partial(gzip.open, mode=&quot;rb&quot;)`.</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            import sdds</span>
+<span class="sd">            from functools import partial</span>
+<span class="sd">            from relevant_module import opening_function</span>
+
+<span class="sd">            your_opener = partial(opening_function, some_option)</span>
+<span class="sd">            data = sdds.read(&quot;some/location/to/file.sdds.extension&quot;, opener=your_opener)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">file_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
-    <span class="k">with</span> <span class="n">file_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inbytes</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">opener</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">inbytes</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">endianness</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">endianness</span> <span class="o">=</span> <span class="n">_get_endianness</span><span class="p">(</span><span class="n">inbytes</span><span class="p">)</span>
         <span class="n">version</span><span class="p">,</span> <span class="n">definition_list</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">_read_header</span><span class="p">(</span><span class="n">inbytes</span><span class="p">)</span>
         <span class="n">data_list</span> <span class="o">=</span> <span class="n">_read_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">definition_list</span><span class="p">,</span> <span class="n">inbytes</span><span class="p">,</span> <span class="n">endianness</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">SddsFile</span><span class="p">(</span><span class="n">version</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">definition_list</span><span class="p">,</span> <span class="n">data_list</span><span class="p">)</span></div>
+
 
 
 <span class="c1">##############################################################################</span>
@@ -171,7 +225,7 @@
 
 
 <span class="k">def</span> <span class="nf">_sort_definitions</span><span class="p">(</span><span class="n">orig_defs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Definition</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Definition</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sorts the definitions in the parameter, array, column order.</span>
 <span class="sd">    According to the specification, parameters appear first in data pages then arrays</span>
 <span class="sd">    and then columns. Inside each group they follow the order of appearance in the header.</span>
@@ -353,7 +407,7 @@
 <span class="c1">##############################################################################</span>
 
 <span class="k">def</span> <span class="nf">_get_endianness</span><span class="p">(</span><span class="n">inbytes</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Tries to determine endianness from file-comments.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Tries to determine endianness from file-comments.</span>
 <span class="sd">    If nothing found, uses machine endianness.&quot;&quot;&quot;</span>
     <span class="n">endianness</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">byteorder</span>
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
@@ -371,7 +425,7 @@
 
 
 <span class="k">def</span> <span class="nf">_gen_real_lines</span><span class="p">(</span><span class="n">inbytes</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;No comments and stripped lines.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;No comments and stripped lines.&quot;&quot;&quot;</span>
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">line</span> <span class="o">=</span> <span class="n">inbytes</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">ENCODING</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>

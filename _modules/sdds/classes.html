@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>sdds.classes &mdash; sdds 0.3.1 documentation</title>
+  <title>sdds.classes &mdash; sdds 0.4.0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
@@ -11,12 +11,11 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=6c02275b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -27,15 +26,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html">
-            <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.3
+                0.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -44,18 +47,8 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">SDDS Modules</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#classes">Classes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#sdds.classes.Array"><code class="docutils literal notranslate"><span class="pre">Array</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#sdds.classes.Column"><code class="docutils literal notranslate"><span class="pre">Column</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#sdds.classes.Data"><code class="docutils literal notranslate"><span class="pre">Data</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#sdds.classes.Definition"><code class="docutils literal notranslate"><span class="pre">Definition</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#sdds.classes.Description"><code class="docutils literal notranslate"><span class="pre">Description</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#sdds.classes.Include"><code class="docutils literal notranslate"><span class="pre">Include</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#sdds.classes.Parameter"><code class="docutils literal notranslate"><span class="pre">Parameter</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#sdds.classes.SddsFile"><code class="docutils literal notranslate"><span class="pre">SddsFile</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#reader">Reader</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#sdds.reader.read_sdds"><code class="docutils literal notranslate"><span class="pre">read_sdds()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#writer">Writer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#sdds.writer.write_sdds"><code class="docutils literal notranslate"><span class="pre">write_sdds()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -73,9 +66,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>sdds.classes</li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">sdds.classes</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -128,9 +121,11 @@
 <span class="c1">#  Classes</span>
 <span class="c1">##############################################################################</span>
 
-<div class="viewcode-block" id="Description"><a class="viewcode-back" href="../../modules/index.html#sdds.classes.Description">[docs]</a><span class="nd">@dataclass</span>
+<div class="viewcode-block" id="Description">
+<a class="viewcode-back" href="../../modules/index.html#sdds.classes.Description">[docs]</a>
+<span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Description</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Description (&amp;description) command container.</span>
 
 <span class="sd">    This optional command describes the data set in terms of two strings. The first, text,</span>
@@ -151,9 +146,12 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;SDDS Description Container&gt;&quot;</span></div>
 
 
-<div class="viewcode-block" id="Include"><a class="viewcode-back" href="../../modules/index.html#sdds.classes.Include">[docs]</a><span class="nd">@dataclass</span>
+
+<div class="viewcode-block" id="Include">
+<a class="viewcode-back" href="../../modules/index.html#sdds.classes.Include">[docs]</a>
+<span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Include</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Include (&amp;include) command container.</span>
 
 <span class="sd">    This optional command directs that SDDS header lines be read from the file named by the</span>
@@ -171,9 +169,12 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Include: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="si">:</span><span class="s2">s</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
 
-<div class="viewcode-block" id="Definition"><a class="viewcode-back" href="../../modules/index.html#sdds.classes.Definition">[docs]</a><span class="nd">@dataclass</span>
+
+<div class="viewcode-block" id="Definition">
+<a class="viewcode-back" href="../../modules/index.html#sdds.classes.Definition">[docs]</a>
+<span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Definition</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Abstract class for the common behaviour of the data definition commands.</span>
 
 
@@ -228,23 +229,29 @@
                          <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">hinted_type</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">hinted_type</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
 
-<div class="viewcode-block" id="Definition.get_key_value_string"><a class="viewcode-back" href="../../modules/index.html#sdds.classes.Definition.get_key_value_string">[docs]</a>    <span class="k">def</span> <span class="nf">get_key_value_string</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Return a string with comma separated key=value pairs.</span>
+<div class="viewcode-block" id="Definition.get_key_value_string">
+<a class="viewcode-back" href="../../modules/index.html#sdds.classes.Definition.get_key_value_string">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_key_value_string</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Return a string with comma separated key=value pairs.</span>
 <span class="sd">            Hint: `ClassVars` (like ``TAG``) are ignored in `fields`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">field_values</span> <span class="o">=</span> <span class="p">{</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">(</span><span class="bp">self</span><span class="p">)}</span>
         <span class="k">return</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">field_values</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">])</span></div>
 
+
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;SDDS </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;&gt;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;TAG&#39;</span><span class="p">,</span> <span class="s1">&#39;no tag&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">)&gt; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_key_value_string</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span></div>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;TAG&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;no tag&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">)&gt; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_key_value_string</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
 
-<div class="viewcode-block" id="Column"><a class="viewcode-back" href="../../modules/index.html#sdds.classes.Column">[docs]</a><span class="nd">@dataclass</span>
+
+<div class="viewcode-block" id="Column">
+<a class="viewcode-back" href="../../modules/index.html#sdds.classes.Column">[docs]</a>
+<span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Column</span><span class="p">(</span><span class="n">Definition</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Column (&amp;column) command container, a data definition.</span>
 
 <span class="sd">    This optional command defines a column that will appear in the tabular data section of each</span>
@@ -253,9 +260,12 @@
     <span class="n">TAG</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&amp;column&quot;</span></div>
 
 
-<div class="viewcode-block" id="Parameter"><a class="viewcode-back" href="../../modules/index.html#sdds.classes.Parameter">[docs]</a><span class="nd">@dataclass</span>
+
+<div class="viewcode-block" id="Parameter">
+<a class="viewcode-back" href="../../modules/index.html#sdds.classes.Parameter">[docs]</a>
+<span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Parameter</span><span class="p">(</span><span class="n">Definition</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parameter (&amp;parameter) command container, a data definition.</span>
 
 <span class="sd">    This optional command defines a parameter that will appear along with the tabular data</span>
@@ -272,9 +282,12 @@
     <span class="n">fixed_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
-<div class="viewcode-block" id="Array"><a class="viewcode-back" href="../../modules/index.html#sdds.classes.Array">[docs]</a><span class="nd">@dataclass</span>
+
+<div class="viewcode-block" id="Array">
+<a class="viewcode-back" href="../../modules/index.html#sdds.classes.Array">[docs]</a>
+<span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Array</span><span class="p">(</span><span class="n">Definition</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Array (&amp;array) command container, a data definition.</span>
 
 <span class="sd">    This optional command defines an array that will appear along with the tabular data section</span>
@@ -296,9 +309,12 @@
     <span class="n">dimensions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
-<div class="viewcode-block" id="Data"><a class="viewcode-back" href="../../modules/index.html#sdds.classes.Data">[docs]</a><span class="nd">@dataclass</span>
+
+<div class="viewcode-block" id="Data">
+<a class="viewcode-back" href="../../modules/index.html#sdds.classes.Data">[docs]</a>
+<span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Data</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Data (&amp;data) command container.</span>
 
 <span class="sd">    This command is optional unless parameter commands without fixed_value fields,</span>
@@ -314,8 +330,11 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;SDDS </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="si">}</span><span class="s2"> Data Container&gt;&quot;</span></div>
 
 
-<div class="viewcode-block" id="SddsFile"><a class="viewcode-back" href="../../modules/index.html#sdds.classes.SddsFile">[docs]</a><span class="k">class</span> <span class="nc">SddsFile</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SddsFile">
+<a class="viewcode-back" href="../../modules/index.html#sdds.classes.SddsFile">[docs]</a>
+<span class="k">class</span> <span class="nc">SddsFile</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Holds the contents of the SDDS file as a pair of dictionaries.</span>
 
 <span class="sd">    The first dictionary &quot;definitions&quot; has the form: **name (str) -&gt; Definition**, containing an</span>
@@ -375,6 +394,7 @@
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;SDDS-File (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2">)&quot;</span>  <span class="c1"># TODO make something nice</span></div>
+
 </pre></div>
 
            </div>
