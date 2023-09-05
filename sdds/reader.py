@@ -70,7 +70,10 @@ def read_sdds(file_path: Union[pathlib.Path, str], endianness: str = None, opene
 
             data = sdds.read("some/location/to/file.sdds.gz", opener=gzip_open)
 
-        To read another specific compression format, bring your own opener abstraction:
+        To read another specific compression format, bring your own opener abstraction.
+        It should take a single parameter for the path-like object pointing to the file,
+        and return a context manager providing byte-data of the file. For instance the
+        `gzip_opener` from the example above is built as `functools.partial(gzip.open, mode="rb")`.
 
         .. code-block:: python
 
