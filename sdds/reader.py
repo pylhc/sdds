@@ -81,7 +81,7 @@ def read_sdds(file_path: Union[pathlib.Path, str], endianness: str = None, opene
             your_opener = partial(opening_function, some_option)
             data = sdds.read("some/location/to/file.sdds.extension", opener=your_opener)
     """
-    file_path = pathlib.Path(file_path)   
+    file_path = pathlib.Path(file_path)
     with opener(file_path) as inbytes:
         if endianness is None:
             endianness = _get_endianness(inbytes)
