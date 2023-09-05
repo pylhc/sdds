@@ -24,7 +24,13 @@ from sdds.classes import (ENCODING, NUMTYPES_CAST, NUMTYPES_SIZES, Array,
 
 # ----- Providing Opener Abstractions for the Reader ----- #
 
-OpenerType = Callable[[os.PathLike], AbstractContextManager[io.BufferedIOBase]]
+# On Python 3.8, we cannot subscript contextlib.AbstractContextManager so here's a workaround
+# TODO: remove this conditional once Python 3.8 has reached EoL and we drop support for it
+if sys.version_info < (3, 9, 0):  # we're running on 3.8, which is our lowest supported
+    from typing import ContextManager
+    OpenerType = Callable[[os.PathLike], ContextManager[io.BufferedIOBase]]
+else:
+    OpenerType = Callable[[os.PathLike], AbstractContextManager[io.BufferedIOBase]]
 
 binary_open = partial(open, mode="rb")  # default opening mode, simple sdds files
 gzip_open = partial(gzip.open, mode="rb")  # for gzip-compressed sdds files
