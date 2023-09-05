@@ -1,5 +1,9 @@
 # SDDS-Files Changelog
 
+## Version 0.4
+- Added:
+    - Support for reading gzipped compressed file and arbitrary compression formats if the opener abstraction is provided.
+
 ## Version 0.3
 - Added:
     - little endian support.
