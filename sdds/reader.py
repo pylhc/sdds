@@ -5,36 +5,94 @@ Reader
 This module contains the reading functionality of ``sdds``.
 It provides a high-level function to read SDDS files in different formats, and a series of helpers.
 """
+import gzip
+import io
+import os
 import pathlib
 import struct
 import sys
-from typing import IO, Any, List, Optional, Generator, Dict, Union, Tuple, Callable, Type
+from collections.abc import Callable
+from contextlib import AbstractContextManager, contextmanager
+from functools import partial
+from typing import IO, Any, Dict, Generator, List, Optional, Tuple, Type, Union
 
 import numpy as np
 
-from sdds.classes import (SddsFile, Column, Parameter, Definition, Array, Data, Description,
-                          ENCODING, NUMTYPES_CAST, NUMTYPES_SIZES, get_dtype_str)
+from sdds.classes import (ENCODING, NUMTYPES_CAST, NUMTYPES_SIZES, Array,
+                          Column, Data, Definition, Description, Parameter,
+                          SddsFile, get_dtype_str)
+
+# ----- Providing Opener Abstractions for the Reader ----- #
+
+# On Python 3.8, we cannot subscript contextlib.AbstractContextManager or collections.abc.Callable,
+# which became possible with PEP 585 in Python 3.9. We will check for the runtime version and simply
+# not subscript if running on 3.8. The cost here is degraded typing.
+# TODO: remove this conditional once Python 3.8 has reached EoL and we drop support for it
+if sys.version_info < (3, 9, 0):  # we're running on 3.8, which is our lowest supported
+    OpenerType = Callable
+else:
+    OpenerType = Callable[[os.PathLike], AbstractContextManager[io.BufferedIOBase]]
+
+binary_open = partial(open, mode="rb")  # default opening mode, simple sdds files
+gzip_open = partial(gzip.open, mode="rb")  # for gzip-compressed sdds files
 
 
-def read_sdds(file_path: Union[pathlib.Path, str], endianness: str = None) -> SddsFile:
+# ----- Reader Function ----- #
+
+def read_sdds(file_path: Union[pathlib.Path, str], endianness: str = None, opener: OpenerType = binary_open) -> SddsFile:
     """
-    Reads SDDS file from the specified ``file_path``.
+    Reads an SDDS file from the specified ``file_path``.
 
     Args:
         file_path (Union[pathlib.Path, str]): `Path` object to the input SDDS file. Can be a
             `string`, in which case it will be cast to a `Path` object.
-        endianness (str): Endianness of the file. Either 'big' or 'little'.
-                          If not given, the endianness is either extracted from
-                          the comments in the header of the file (if present)
-                          or determined by the machine you are running on.
-                          Binary files written by this package are all big-endian,
-                          and contain a comment in the file.
+        endianness (str): Endianness of the file, either 'big' or 'little'. If not given,
+            the endianness is either extracted from the comments in the header of the file
+            (if present) or determined by the machine you are running on. Binary files
+            written by this package are all big-endian, and contain a comment in the file.
+        opener (OpenerType): Callable to open the SDDS file. Uses `open(file, mode="rb")` by
+            default. One can use provided openers for specific format or bring their own, see
+            the examples below.
 
     Returns:
         An `SddsFile` object containing the loaded data.
+    
+    Examples:
+
+        To read a typical file, one can use the default options:
+
+        .. code-block:: python
+
+            import sdds
+
+            data = sdds.read("some/location/to/file.sdds")
+
+
+        To read a ``gzip``-compressed file, use the provided opener function:
+
+        .. code-block:: python
+
+            import sdds
+            from sdds.reader import gzip_open
+
+            data = sdds.read("some/location/to/file.sdds.gz", opener=gzip_open)
+
+        To read another specific compression format, bring your own opener abstraction.
+        It should take a single parameter for the path-like object pointing to the file,
+        and return a context manager providing byte-data of the file. For instance the
+        `gzip_opener` from the example above is built as `functools.partial(gzip.open, mode="rb")`.
+
+        .. code-block:: python
+
+            import sdds
+            from functools import partial
+            from relevant_module import opening_function
+
+            your_opener = partial(opening_function, some_option)
+            data = sdds.read("some/location/to/file.sdds.extension", opener=your_opener)
     """
     file_path = pathlib.Path(file_path)
-    with file_path.open("rb") as inbytes:
+    with opener(file_path) as inbytes:
         if endianness is None:
             endianness = _get_endianness(inbytes)
         version, definition_list, description, data = _read_header(inbytes)

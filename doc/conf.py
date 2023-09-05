@@ -88,7 +88,7 @@ release = ABOUT_SDDS["__version__"]
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = "en"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -113,7 +113,7 @@ html_theme_options = {
     'collapse_navigation': False,
     'display_version': True,
     'logo_only': True,
-    'navigation_depth': 2,
+    'navigation_depth': 3,
 }
 
 html_logo = '_static/img/omc_logo.svg'
