@@ -1,42 +1,17 @@
 # Runs all tests 
-name: Tests
+name: All Tests
 
 defaults:
   run:
     shell: bash
 
-on:  [push]  # Runs on all push events to any branch
-
+on:  # Runs on any push event to any branch except master (the coverage workflow takes care of that)
+  push:
+    branches-ignore:
+      - 'master'
 
 jobs:
   tests:
-    name: ${{ matrix.os }} / ${{ matrix.python-version }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-18.04, ubuntu-20.04, ubuntu-22.04, macos-latest, windows-latest]
-        # Make sure to escape 3.10 with quotes so it doesn't get interpreted as float 3.1 by GA's parser
-        python-version: [3.7, 3.8, 3.9, "3.10"]
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-          cache: 'pip'
-          cache-dependency-path: '**/setup.py'
-
-      - name: Get full Python version
-        id: full-python-version
-        run: echo ::set-output name=version::$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))")
-
-      - name: Upgrade pip, setuptools and wheel
-        run: python -m pip install --upgrade pip setuptools wheel
-
-      - name: Install package
-        run: python -m pip install '.[test]'
-
-      - name: Run basic tests
-        run: python -m pytest
+    uses: pylhc/.github/.github/workflows/tests.yml@master
+    with:
+      extra-dependencies: test
