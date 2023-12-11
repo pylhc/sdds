@@ -7,11 +7,11 @@ It provides a high-level function to write SDDS files in different formats, and 
 """
 import pathlib
 import struct
-from dataclasses import fields
-from typing import IO, List, Union, Iterable, Tuple, Any
+from typing import IO, Any, Iterable, List, Tuple, Union
+
 import numpy as np
-from sdds.classes import (SddsFile, Column, Parameter, Definition, Array, Data, Description,
-                          ENCODING, get_dtype_str)
+
+from sdds.classes import ENCODING, Array, Column, Data, Definition, Description, Parameter, SddsFile, get_dtype_str
 
 
 def write_sdds(sdds_file: SddsFile, output_path: Union[pathlib.Path, str]) -> None:
@@ -31,10 +31,10 @@ def write_sdds(sdds_file: SddsFile, output_path: Union[pathlib.Path, str]) -> No
 
 
 def _write_header(sdds_file: SddsFile, outbytes: IO[bytes]) -> List[str]:
-    outbytes.writelines(("SDDS1\n".encode(ENCODING),
-                         "!# big-endian\n".encode(ENCODING)))
+    outbytes.writelines(("SDDS1\n".encode(ENCODING), "!# big-endian\n".encode(ENCODING)))
     names = []
     if sdds_file.description is not None:
+        # TODO: For Description and Data, this is not implemented yet
         outbytes.write(_sdds_def_as_str(sdds_file.description).encode(ENCODING))
     for def_name in sdds_file.definitions:
         names.append(def_name)
@@ -51,15 +51,23 @@ def _sdds_def_as_str(definition: Union[Description, Definition, Data]) -> str:
 def _write_data(names: List[str], sdds_file: SddsFile, outbytes: IO[bytes]) -> None:
     # row_count:
     outbytes.write(np.array(0, dtype=get_dtype_str("long")).tobytes())
-    _write_parameters((sdds_file[name] for name in names
-                       if isinstance(sdds_file.definitions[name], Parameter)),
-                      outbytes)
-    _write_arrays((sdds_file[name] for name in names
-                   if isinstance(sdds_file.definitions[name], Array)),
-                  outbytes)
-    _write_columns((sdds_file[name] for name in names
-                    if isinstance(sdds_file.definitions[name], Column)),
-                   outbytes)
+
+    def __getitem__(self, name: str) -> Tuple[Definition, Any]:
+        return self.definitions[name], self.values[name]
+
+    parameters: List[Any] = []
+    arrays: List[Any] = []
+    columns: List[Any] = []
+    for name in names:
+        if isinstance(sdds_file[name][0], Parameter):
+            parameters.append(sdds_file[name])
+        elif isinstance(sdds_file[name][0], Array):
+            arrays.append(sdds_file[name])
+        elif isinstance(sdds_file[name][0], Column):
+            columns.append(sdds_file[name])
+    _write_parameters(parameters, outbytes)
+    _write_arrays(arrays, outbytes)
+    _write_columns(columns, outbytes)
 
 
 def _write_parameters(param_gen: Iterable[Tuple[Parameter, Any]], outbytes: IO[bytes]):
@@ -75,7 +83,10 @@ def _write_arrays(array_gen: Iterable[Tuple[Array, Any]], outbytes: IO[bytes]):
         # Return the number of items per dimension
         # For an array a[n][m], returns [n, m]
         if isinstance(value, np.ndarray) or isinstance(value, list):
-            return [len(value)] + get_dimensions_from_array(value[0])
+            if len(value) == 0:
+                return [0]
+            else:
+                return [len(value)] + get_dimensions_from_array(value[0])
         return []
 
     for array_def, value in array_gen:
@@ -98,4 +109,9 @@ def _write_columns(col_gen: Iterable[Tuple[Column, Any]], outbytes: IO[bytes]):
 
 def _write_string(string: str, outbytes: IO[bytes]):
     outbytes.write(np.array(len(string), dtype=get_dtype_str("long")).tobytes())
-    outbytes.write(struct.pack(get_dtype_str("string", length=len(string)), string.encode(ENCODING)))
+    outbytes.write(
+        struct.pack(
+            get_dtype_str("string", length=len(string)),
+            string.encode(ENCODING),
+        )
+    )

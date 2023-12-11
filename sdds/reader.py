@@ -6,21 +6,30 @@ This module contains the reading functionality of ``sdds``.
 It provides a high-level function to read SDDS files in different formats, and a series of helpers.
 """
 import gzip
-import io
 import os
 import pathlib
 import struct
 import sys
 from collections.abc import Callable
-from contextlib import AbstractContextManager, contextmanager
+from contextlib import AbstractContextManager
 from functools import partial
 from typing import IO, Any, Dict, Generator, List, Optional, Tuple, Type, Union
 
 import numpy as np
 
-from sdds.classes import (ENCODING, NUMTYPES_CAST, NUMTYPES_SIZES, Array,
-                          Column, Data, Definition, Description, Parameter,
-                          SddsFile, get_dtype_str)
+from sdds.classes import (
+    ENCODING,
+    NUMTYPES_CAST,
+    NUMTYPES_SIZES,
+    Array,
+    Column,
+    Data,
+    Definition,
+    Description,
+    Parameter,
+    SddsFile,
+    get_dtype_str,
+)
 
 # ----- Providing Opener Abstractions for the Reader ----- #
 
@@ -31,7 +40,7 @@ from sdds.classes import (ENCODING, NUMTYPES_CAST, NUMTYPES_SIZES, Array,
 if sys.version_info < (3, 9, 0):  # we're running on 3.8, which is our lowest supported
     OpenerType = Callable
 else:
-    OpenerType = Callable[[os.PathLike], AbstractContextManager[io.BufferedIOBase]]
+    OpenerType = Callable[[os.PathLike], AbstractContextManager[IO]]
 
 binary_open = partial(open, mode="rb")  # default opening mode, simple sdds files
 gzip_open = partial(gzip.open, mode="rb")  # for gzip-compressed sdds files
@@ -39,7 +48,12 @@ gzip_open = partial(gzip.open, mode="rb")  # for gzip-compressed sdds files
 
 # ----- Reader Function ----- #
 
-def read_sdds(file_path: Union[pathlib.Path, str], endianness: str = None, opener: OpenerType = binary_open) -> SddsFile:
+
+def read_sdds(
+    file_path: Union[pathlib.Path, str],
+    endianness: Optional[str] = None,
+    opener: OpenerType = binary_open,
+) -> SddsFile:
     """
     Reads an SDDS file from the specified ``file_path``.
 
@@ -56,7 +70,7 @@ def read_sdds(file_path: Union[pathlib.Path, str], endianness: str = None, opene
 
     Returns:
         An `SddsFile` object containing the loaded data.
-    
+
     Examples:
 
         To read a typical file, one can use the default options:
@@ -105,23 +119,24 @@ def read_sdds(file_path: Union[pathlib.Path, str], endianness: str = None, opene
 # Common reading of header and data.
 ##############################################################################
 
-def _read_header(inbytes: IO[bytes]) -> Tuple[str, List[Definition], Optional[Description], Data]:
+
+def _read_header(
+    inbytes: IO[bytes],
+) -> Tuple[str, List[Definition], Optional[Description], Data]:
     word_gen = _gen_words(inbytes)
     version = next(word_gen)  # First token is the SDDS version
-    assert version == "SDDS1",\
-        "This module is compatible with SDDS v1 only... are there really other versions?"
+    assert version == "SDDS1", "This module is compatible with SDDS v1 only... are there really other versions?"
     definitions: List[Definition] = []
     description: Optional[Description] = None
     data: Optional[Data] = None
     for word in word_gen:
         def_dict: Dict[str, str] = _get_def_as_dict(word_gen)
         if word in (Column.TAG, Parameter.TAG, Array.TAG):
-            definitions.append({
-                Column.TAG: Column,
-                Parameter.TAG: Parameter,
-                Array.TAG: Array}[word](name=def_dict.pop("name"),
-                                        type=def_dict.pop("type"),
-                                        **def_dict))
+            definitions.append(
+                {Column.TAG: Column, Parameter.TAG: Parameter, Array.TAG: Array}[word](
+                    name=def_dict.pop("name"), type=def_dict.pop("type"), **def_dict
+                )
+            )
             continue
         if word == Description.TAG:
             if description is not None:
@@ -147,8 +162,7 @@ def _sort_definitions(orig_defs: List[Definition]) -> List[Definition]:
     According to the specification, parameters appear first in data pages then arrays
     and then columns. Inside each group they follow the order of appearance in the header.
     """
-    definitions: List[Definition] = [definition for definition in orig_defs
-                                     if isinstance(definition, Parameter)]
+    definitions: List[Definition] = [definition for definition in orig_defs if isinstance(definition, Parameter)]
     definitions.extend([definition for definition in orig_defs if isinstance(definition, Array)])
     definitions.extend([definition for definition in orig_defs if isinstance(definition, Column)])
     return definitions
@@ -167,12 +181,13 @@ def _read_data(data: Data, definitions: List[Definition], inbytes: IO[bytes], en
 # Binary data reading
 ##############################################################################
 
+
 def _read_data_binary(definitions: List[Definition], inbytes: IO[bytes], endianness: str) -> List[Any]:
     row_count: int = _read_bin_int(inbytes, endianness)  # First int in bin data
     functs_dict: Dict[Type[Definition], Callable] = {
         Parameter: _read_bin_param,
         Column: lambda x, y, z: _read_bin_column(x, y, z, row_count),
-        Array: _read_bin_array
+        Array: _read_bin_array,
     }
     return [functs_dict[definition.__class__](inbytes, definition, endianness) for definition in definitions]
 
@@ -188,9 +203,7 @@ def _read_bin_param(inbytes: IO[bytes], definition: Parameter, endianness: str) 
     if definition.type == "string":
         str_len: int = _read_bin_int(inbytes, endianness)
         return _read_string(inbytes, str_len, endianness)
-    return NUMTYPES_CAST[definition.type](
-        _read_bin_numeric(inbytes, definition.type, 1, endianness)
-    )
+    return NUMTYPES_CAST[definition.type](_read_bin_numeric(inbytes, definition.type, 1, endianness))
 
 
 def _read_bin_column(inbytes: IO[bytes], definition: Column, endianness: str, row_count: int):
@@ -202,9 +215,7 @@ def _read_bin_array(inbytes: IO[bytes], definition: Array, endianness: str) -> A
     dims, total_len = _read_bin_array_len(inbytes, definition.dimensions, endianness)
 
     if definition.type == "string":
-        len_type = {"u1": "char", "i2": "short"}.get(
-            getattr(definition, "modifier", None), "long"
-        )
+        len_type = {"u1": "char", "i2": "short"}.get(getattr(definition, "modifier", ""), "long")
         str_array = []
         for _ in range(total_len):
             str_len = int(_read_bin_numeric(inbytes, len_type, 1, endianness))
@@ -224,8 +235,10 @@ def _read_bin_array_len(inbytes: IO[bytes], num_dims: Optional[int], endianness:
 
 
 def _read_bin_numeric(inbytes: IO[bytes], type_: str, count: int, endianness: str) -> Any:
-    return np.frombuffer(inbytes.read(count * NUMTYPES_SIZES[type_]),
-                         dtype=np.dtype(get_dtype_str(type_, endianness)))
+    return np.frombuffer(
+        inbytes.read(count * NUMTYPES_SIZES[type_]),
+        dtype=np.dtype(get_dtype_str(type_, endianness)),
+    )
 
 
 def _read_bin_int(inbytes: IO[bytes], endianness: str) -> int:
@@ -242,6 +255,7 @@ def _read_string(inbytes: IO[bytes], str_len: int, endianness: str) -> str:
 # ASCII data reading
 ##############################################################################
 
+
 def _read_data_ascii(definitions: List[Definition], inbytes: IO[bytes]) -> List[Any]:
     def _ascii_generator(ascii_text):
         for line in ascii_text:
@@ -249,33 +263,26 @@ def _read_data_ascii(definitions: List[Definition], inbytes: IO[bytes]) -> List[
 
     # Convert bytes to ASCII, separate by lines and remove comments
     ascii_text = [chr(r) for r in inbytes.read()]
-    ascii_text = ''.join(ascii_text).split('\n')
-    ascii_text = [line for line in ascii_text if not line.startswith('!')]
+    ascii_text = "".join(ascii_text).split("\n")
+    ascii_text = [line for line in ascii_text if not line.startswith("!")]
 
     # Get the generator for the text
     ascii_gen = _ascii_generator(ascii_text)
 
-    # Dict of function to call for each type of tag: array, parameter
-    functs_dict = {Parameter: _read_ascii_parameter,
-                   Array: _read_ascii_array
-                   }
-
     # Iterate through every parameters and arrays in the file
-    data = []
+    data: List[Any] = []
     for definition in definitions:
-        def_tag = definition.__class__
-
         # Call the function handling the tag we're on
         # Change the current line according to the tag and dimensions
-        value = functs_dict[def_tag](ascii_gen, definition)
-        data.append(value)
+        if isinstance(definition, Parameter):
+            data.append(_read_ascii_parameter(ascii_gen, definition))
+        elif isinstance(definition, Array):
+            data.append(_read_ascii_array(ascii_gen, definition))
 
     return data
 
 
-def _read_ascii_parameter(ascii_gen: Generator[str, None, None],
-                          definition: Parameter) -> Union[str, int, float]:
-
+def _read_ascii_parameter(ascii_gen: Generator[str, None, None], definition: Parameter) -> Union[str, int, float]:
     # Check if we got fixed values, no need to read a line if that's the case
     if definition.fixed_value is not None:
         if definition.type == "string":
@@ -295,33 +302,31 @@ def _read_ascii_parameter(ascii_gen: Generator[str, None, None],
     raise TypeError(f"Type {definition.type} for Parameter unsupported")
 
 
-def _read_ascii_array(ascii_gen: Generator[str, None, None],
-                      definition: Array) -> np.ndarray:
-
+def _read_ascii_array(ascii_gen: Generator[str, None, None], definition: Array) -> np.ndarray:
     # Get the number of elements per dimension
-    dimensions = next(ascii_gen).split()
-    dimensions = np.array(dimensions, dtype="int")
+    dimensions = np.array(next(ascii_gen).split(), dtype="int")
 
     # Get all the data given by the dimensions
-    data = []
+    data: List[str] = []
     while len(data) != np.prod(dimensions):
         # The values on each line are split by a space
-        data += next(ascii_gen).strip().split(' ')
+        data += next(ascii_gen).strip().split(" ")
 
     # Cast every object to the correct type
-    if definition.type != 'string':
+    if definition.type != "string":
         data = list(map(NUMTYPES_CAST[definition.type], data))
 
     # Convert to np.array so that it can be reshaped to reflect the dimensions
-    data = np.array(data)
-    data = data.reshape(dimensions)
+    npdata = np.array(data)
+    npdata = npdata.reshape(dimensions)
 
-    return data
+    return npdata
 
 
 ##############################################################################
 # Helper generators to consume the input bytes
 ##############################################################################
+
 
 def _get_endianness(inbytes: IO[bytes]) -> str:
     """Tries to determine endianness from file-comments.
@@ -337,7 +342,7 @@ def _get_endianness(inbytes: IO[bytes]) -> str:
         if line.strip() == "!# little-endian":
             endianness = "little"
             break
-    inbytes.seek(0)   # return back to beginning of file
+    inbytes.seek(0)  # return back to beginning of file
     return endianness
 
 
@@ -364,7 +369,6 @@ def _get_def_as_dict(word_gen: Generator[str, None, None]) -> Dict[str, str]:
         if word.strip() == "&end":
             recomposed: str = " ".join(raw_str)
             parts = [assign for assign in recomposed.split(",") if assign]
-            return {key.strip(): value.strip() for (key, value) in
-                    [assign.split("=") for assign in parts]}
+            return {key.strip(): value.strip() for (key, value) in [assign.split("=") for assign in parts]}
         raw_str.append(word.strip())
     raise ValueError("EOF found while looking for &end tag.")

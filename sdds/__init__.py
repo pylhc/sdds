@@ -16,4 +16,4 @@ read = read_sdds
 write = write_sdds
 
 
-__all__ = [read, SddsFile, write, __version__]
+__all__ = ["read", "SddsFile", "write", "__version__"]
