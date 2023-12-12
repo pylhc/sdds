@@ -55,16 +55,16 @@ def _write_data(names: List[str], sdds_file: SddsFile, outbytes: IO[bytes]) -> N
     def __getitem__(self, name: str) -> Tuple[Definition, Any]:
         return self.definitions[name], self.values[name]
 
-    parameters: List[Any] = []
-    arrays: List[Any] = []
-    columns: List[Any] = []
+    parameters: List[Tuple[Parameter, Any]] = []
+    arrays: List[Tuple[Array, Any]] = []
+    columns: List[Tuple[Column, Any]] = []
     for name in names:
         if isinstance(sdds_file[name][0], Parameter):
-            parameters.append(sdds_file[name])
+            parameters.append(sdds_file[name])  # type: ignore
         elif isinstance(sdds_file[name][0], Array):
-            arrays.append(sdds_file[name])
+            arrays.append(sdds_file[name])  # type: ignore
         elif isinstance(sdds_file[name][0], Column):
-            columns.append(sdds_file[name])
+            columns.append(sdds_file[name])  # type: ignore
     _write_parameters(parameters, outbytes)
     _write_arrays(arrays, outbytes)
     _write_columns(columns, outbytes)

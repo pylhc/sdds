@@ -70,7 +70,7 @@ class Description:
         return "<SDDS Description Container>"
 
     def get_key_value_string(self) -> str:
-        warnings.warn("no implemented yet")
+        warnings.warn("not implemented yet")
         return ""
 
 
@@ -243,7 +243,7 @@ class Data:
         return f"<SDDS {self.mode} Data Container>"
 
     def get_key_value_string(self) -> str:
-        warnings.warn("no implemented yet")
+        warnings.warn("not implemented yet")
         return ""
 
 

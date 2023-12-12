@@ -17,19 +17,9 @@ from typing import IO, Any, Dict, Generator, List, Optional, Tuple, Type, Union
 
 import numpy as np
 
-from sdds.classes import (
-    ENCODING,
-    NUMTYPES_CAST,
-    NUMTYPES_SIZES,
-    Array,
-    Column,
-    Data,
-    Definition,
-    Description,
-    Parameter,
-    SddsFile,
-    get_dtype_str,
-)
+from sdds.classes import (ENCODING, NUMTYPES_CAST, NUMTYPES_SIZES, Array,
+                          Column, Data, Definition, Description, Parameter,
+                          SddsFile, get_dtype_str)
 
 # ----- Providing Opener Abstractions for the Reader ----- #
 
@@ -203,7 +193,7 @@ def _read_bin_param(inbytes: IO[bytes], definition: Parameter, endianness: str) 
     if definition.type == "string":
         str_len: int = _read_bin_int(inbytes, endianness)
         return _read_string(inbytes, str_len, endianness)
-    return NUMTYPES_CAST[definition.type](_read_bin_numeric(inbytes, definition.type, 1, endianness))
+    return NUMTYPES_CAST[definition.type](_read_bin_numeric(inbytes, definition.type, 1, endianness)[0])
 
 
 def _read_bin_column(inbytes: IO[bytes], definition: Column, endianness: str, row_count: int):
@@ -218,7 +208,7 @@ def _read_bin_array(inbytes: IO[bytes], definition: Array, endianness: str) -> A
         len_type = {"u1": "char", "i2": "short"}.get(getattr(definition, "modifier", ""), "long")
         str_array = []
         for _ in range(total_len):
-            str_len = int(_read_bin_numeric(inbytes, len_type, 1, endianness))
+            str_len = int(_read_bin_numeric(inbytes, len_type, 1, endianness)[0])
             str_array.append(_read_string(inbytes, str_len, endianness))
         return str_array
 
@@ -242,7 +232,7 @@ def _read_bin_numeric(inbytes: IO[bytes], type_: str, count: int, endianness: st
 
 
 def _read_bin_int(inbytes: IO[bytes], endianness: str) -> int:
-    return int(_read_bin_numeric(inbytes, "long", 1, endianness))
+    return int(_read_bin_numeric(inbytes, "long", 1, endianness)[0])
 
 
 def _read_string(inbytes: IO[bytes], str_len: int, endianness: str) -> str:
