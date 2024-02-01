@@ -52,9 +52,6 @@ def _write_data(names: List[str], sdds_file: SddsFile, outbytes: IO[bytes]) -> N
     # row_count:
     outbytes.write(np.array(0, dtype=get_dtype_str("long")).tobytes())
 
-    def __getitem__(self, name: str) -> Tuple[Definition, Any]:
-        return self.definitions[name], self.values[name]
-
     parameters: List[Tuple[Parameter, Any]] = []
     arrays: List[Tuple[Array, Any]] = []
     columns: List[Tuple[Column, Any]] = []
