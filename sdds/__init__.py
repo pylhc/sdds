@@ -6,7 +6,7 @@ from sdds.writer import write_sdds
 __title__ = "sdds"
 __description__ = "SDDS file handling."
 __url__ = "https://github.com/pylhc/sdds"
-__version__ = "0.4.0"
+__version__ = "0.4.1"
 __author__ = "pylhc"
 __author_email__ = "pylhc@github.com"
 __license__ = "MIT"
@@ -16,4 +16,4 @@ read = read_sdds
 write = write_sdds
 
 
-__all__ = [read, SddsFile, write, __version__]
+__all__ = ["read", "SddsFile", "write", "__version__"]

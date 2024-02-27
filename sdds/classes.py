@@ -6,9 +6,10 @@ This module holds classes to handle different namelist commands in an SDDS file.
 Implementation are based on documentation at:
 https://ops.aps.anl.gov/manuals/SDDStoolkit/SDDStoolkitsu2.html
 """
-from typing import Any, Tuple, List, Iterator, Optional, Dict, ClassVar
-from dataclasses import dataclass, fields
 import logging
+import warnings
+from dataclasses import dataclass, fields
+from typing import Any, ClassVar, Dict, Iterator, List, Optional, Tuple
 
 LOGGER = logging.getLogger(__name__)
 
@@ -20,26 +21,30 @@ LOGGER = logging.getLogger(__name__)
 ENCODING = "utf-8"
 ENCODING_LEN = 1
 
-ENDIAN = {'little': '<', 'big': '>'}
+ENDIAN = {"little": "<", "big": ">"}
 
-NUMTYPES = {"float": "f", "double": "d", "short": "i2",
-            "long": "i4", "llong": "i8", "char": "i1", "boolean": "i1",
-            "string": "s"}
-NUMTYPES_SIZES = {"float": 4, "double": 8, "short": 2,
-                  "long": 4, "llong": 8, "char": 1, "boolean": 1}
-NUMTYPES_CAST = {"float": float, "double": float, "short": int,
-                 "long": int, "llong": int, "char": str, "boolean": int}
+NUMTYPES = {
+    "float": "f",
+    "double": "d",
+    "short": "i2",
+    "long": "i4",
+    "llong": "i8",
+    "char": "i1",
+    "boolean": "i1",
+    "string": "s",
+}
+NUMTYPES_SIZES = {"float": 4, "double": 8, "short": 2, "long": 4, "llong": 8, "char": 1, "boolean": 1}
+NUMTYPES_CAST = {"float": float, "double": float, "short": int, "long": int, "llong": int, "char": str, "boolean": int}
 
 
-def get_dtype_str(type_: str, endianness: str = 'big', length: int = None):
-    if length is None:
-        length = ''
-    return f"{ENDIAN[endianness]}{length}{NUMTYPES[type_]}"
+def get_dtype_str(type_: str, endianness: str = "big", length: Optional[int] = None):
+    return f"{ENDIAN[endianness]}{length if length is not None else ''}{NUMTYPES[type_]}"
 
 
 ##############################################################################
 #  Classes
 ##############################################################################
+
 
 @dataclass
 class Description:
@@ -51,17 +56,22 @@ class Description:
     contents, is intended to formally specify the type of data stored in a data set. Most
     frequently, the contents field is used to record the name of the program that created or most
     recently modified the file.
-    
+
     Fields:
         text (str): Optional. Informal description intended for humans.
         contents (str): Optional. Formal specification of the type of data stored in a data set.
     """
+
     text: Optional[str] = None
     contents: Optional[str] = None
     TAG: ClassVar[str] = "&description"
 
     def __repr__(self):
-        return f"<SDDS Description Container>"
+        return "<SDDS Description Container>"
+
+    def get_key_value_string(self) -> str:
+        warnings.warn("not implemented yet")
+        return ""
 
 
 @dataclass
@@ -75,10 +85,11 @@ class Include:
     Fields:
         filename (str): Name of the file to be read containing header lines.
     """
+
     filename: str
 
     def __repr__(self):
-        return f"<SDDS Include Container>"
+        return "<SDDS Include Container>"
 
     def __str__(self):
         return f"Include: {self.filename:s}"
@@ -106,12 +117,14 @@ class Definition:
                       (e.g. for ASCII in SDDS or other formats). NOT IMPLEMENTED!
 
     """
+
     name: str
     type: str
     symbol: Optional[str] = None
     units: Optional[str] = None
     description: Optional[str] = None
     format: Optional[str] = None
+    TAG: ClassVar[Optional[str]] = None
 
     def __post_init__(self):
         # Fix types (probably strings from reading files) by using the type-hints
@@ -130,20 +143,19 @@ class Definition:
                     continue
 
                 # find the proper type from type-hint:
-                hinted_type = next(t for t in hinted_type.__args__
-                                   if not isinstance(t, type(None)))
+                hinted_type = next(t for t in hinted_type.__args__ if not isinstance(t, type(None)))
 
             if isinstance(value, hinted_type):
                 # all is fine
                 continue
 
-            LOGGER.debug(f"converting {field.name}: "
-                         f"{type(value).__name__} -> {hinted_type.__name__}")
+            LOGGER.debug(f"converting {field.name}: " f"{type(value).__name__} -> {hinted_type.__name__}")
             setattr(self, field.name, hinted_type(value))
 
     def get_key_value_string(self) -> str:
-        """ Return a string with comma separated key=value pairs.
-            Hint: `ClassVars` (like ``TAG``) are ignored in `fields`.
+        """Return a string with comma separated key=value pairs.
+
+        Hint: `ClassVars` (like ``TAG``) are ignored in `fields`.
         """
         field_values = {field.name: getattr(self, field.name) for field in fields(self)}
         return ", ".join([f"{key}={value}" for key, value in field_values.items() if value is not None])
@@ -152,7 +164,7 @@ class Definition:
         return f"<SDDS {self.__class__.__name__} '{self.name}'>"
 
     def __str__(self):
-        return f"<{self.__class__.__name__} ({getattr(self, 'TAG', 'no tag')})> {self.get_key_value_string()}"
+        return f"<{self.__class__.__name__} ({self.TAG or 'no tag'})> {self.get_key_value_string()}"
 
 
 @dataclass
@@ -163,6 +175,7 @@ class Column(Definition):
     This optional command defines a column that will appear in the tabular data section of each
     data page.
     """
+
     TAG: ClassVar[str] = "&column"
 
 
@@ -181,6 +194,7 @@ class Parameter(Definition):
                            This feature is for convenience only;
                            the parameter thus defined is treated like any other.
     """
+
     TAG: ClassVar[str] = "&parameter"
     fixed_value: Optional[str] = None
 
@@ -203,6 +217,7 @@ class Array(Definition):
         dimensions (int): Optional. Gives the number of dimensions in the array.
                           If not given, defaults to ``1`` upon reading.
     """
+
     TAG: ClassVar[str] = "&array"
     field_length: Optional[int] = None
     group_name: Optional[str] = None
@@ -220,11 +235,16 @@ class Data:
     Fields:
         mode (str): File/Data mode. Either “binary” or "ascii".
     """
+
     mode: str
     TAG: ClassVar[str] = "&data"
 
     def __repr__(self):
         return f"<SDDS {self.mode} Data Container>"
+
+    def get_key_value_string(self) -> str:
+        warnings.warn("not implemented yet")
+        return ""
 
 
 class SddsFile:
@@ -257,14 +277,19 @@ class SddsFile:
         values (dict[str, Any]): Values of the data, mapped to their name.
 
     """
+
     version: str  # This should always be "SDDS1"
     description: Optional[Description]
     definitions: Dict[str, Definition]
     values: Dict[str, Any]
 
-    def __init__(self, version: str, description: Optional[Description],
-                 definitions_list: List[Definition],
-                 values_list: List[Any]) -> None:
+    def __init__(
+        self,
+        version: str,
+        description: Optional[Description],
+        definitions_list: List[Definition],
+        values_list: List[Any],
+    ) -> None:
         self.version = version
 
         name_list = [definition.name for definition in definitions_list]
@@ -273,8 +298,7 @@ class SddsFile:
 
         self.description = description
         self.definitions = {definition.name: definition for definition in definitions_list}
-        self.values = {definition.name: value for definition, value
-                       in zip(definitions_list, values_list)}
+        self.values = {definition.name: value for definition, value in zip(definitions_list, values_list)}
 
     def __getitem__(self, name: str) -> Tuple[Definition, Any]:
         return self.definitions[name], self.values[name]
@@ -284,7 +308,7 @@ class SddsFile:
             yield self[def_name]
 
     def __repr__(self):
-        return f"<SDDS-File Object>"
+        return "<SDDS-File Object>"
 
     def __str__(self):
         return f"SDDS-File ({self.version})"  # TODO make something nice
