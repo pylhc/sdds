@@ -1,20 +1,22 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SDDS Modules &mdash; sdds 0.4.0 documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+  <title>SDDS Modules &mdash; sdds 0.4.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=988d0652" />
+
+  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script src="../_static/jquery.js?v=5d32c60e"></script>
         <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=6c02275b"></script>
+        <script src="../_static/documentation_options.js?v=c87aa342"></script>
         <script src="../_static/doctools.js?v=888ff710"></script>
         <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
@@ -158,8 +160,8 @@ format (str): Optional. Specification of the print format string to be used to p
 <dl class="py method">
 <dt class="sig sig-object py">
 <span class="sig-name descname"><span class="pre">get_key_value_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/sdds/classes.html#Definition.get_key_value_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Return a string with comma separated key=value pairs.
-Hint: <cite>ClassVars</cite> (like <code class="docutils literal notranslate"><span class="pre">TAG</span></code>) are ignored in <cite>fields</cite>.</p>
+<dd><p>Return a string with comma separated key=value pairs.</p>
+<p>Hint: <cite>ClassVars</cite> (like <code class="docutils literal notranslate"><span class="pre">TAG</span></code>) are ignored in <cite>fields</cite>.</p>
 </dd></dl>
 
 </dd></dl>
@@ -251,7 +253,7 @@ It provides a high-level function to read SDDS files in different formats, and a
 </section>
 <dl class="py function">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">sdds.reader.</span></span><span class="sig-name descname"><span class="pre">read_sdds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">file_path:</span> <span class="pre">~pathlib.Path</span> <span class="pre">|</span> <span class="pre">str,</span> <span class="pre">endianness:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">opener:</span> <span class="pre">~collections.abc.Callable[[~os.PathLike],</span> <span class="pre">~contextlib.AbstractContextManager[~io.BufferedIOBase]]</span> <span class="pre">=</span> <span class="pre">functools.partial(&lt;built-in</span> <span class="pre">function</span> <span class="pre">open&gt;,</span> <span class="pre">mode='rb')</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">SddsFile</span></span></span><a class="reference internal" href="../_modules/sdds/reader.html#read_sdds"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<span class="sig-prename descclassname"><span class="pre">sdds.reader.</span></span><span class="sig-name descname"><span class="pre">read_sdds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">file_path:</span> <span class="pre">~pathlib.Path</span> <span class="pre">|</span> <span class="pre">str,</span> <span class="pre">endianness:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">opener:</span> <span class="pre">~collections.abc.Callable[[~os.PathLike],</span> <span class="pre">~contextlib.AbstractContextManager[~typing.IO]]</span> <span class="pre">=</span> <span class="pre">functools.partial(&lt;built-in</span> <span class="pre">function</span> <span class="pre">open&gt;,</span> <span class="pre">mode='rb')</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">SddsFile</span></span></span><a class="reference internal" href="../_modules/sdds/reader.html#read_sdds"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Reads an SDDS file from the specified <code class="docutils literal notranslate"><span class="pre">file_path</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
