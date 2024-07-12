@@ -113,8 +113,8 @@ class Definition:
                       to produce Greek or mathematical characters.
         units (str): Optional. Allows specification of the units of the parameter.
         description (str): Optional.  Provides for an informal description of the parameter.
-        format (str): Optional. Specification of the print format string to be used to print the data
-                      (e.g. for ASCII in SDDS or other formats).
+        format_string (str): Optional. Specification of the print format string to be used to print the data
+                             (e.g. for ASCII in SDDS or other formats).
 
     """
 
