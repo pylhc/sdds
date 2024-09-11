@@ -23,22 +23,25 @@ ENCODING_LEN = 1
 
 ENDIAN = {"little": "<", "big": ">"}
 
-NUMTYPES = {
-    "float": "f",
-    "double": "d",
-    "short": "i2",
-    "long": "i4",
-    "llong": "i8",
-    "char": "i1",
-    "boolean": "i1",
-    "string": "s",
-}
-NUMTYPES_SIZES = {"float": 4, "double": 8, "short": 2, "long": 4, "llong": 8, "char": 1, "boolean": 1}
-NUMTYPES_CAST = {"float": float, "double": float, "short": int, "long": int, "llong": int, "char": str, "boolean": int}
+@dataclass(frozen=True)
+class DataType:
+    type_: str
+    size: int
+    cast: type
 
+DATA_TYPES = {
+    "float": DataType("f", 4, float),
+    "double": DataType("d", 8, float),
+    "short": DataType("i2", 2, int),
+    "long": DataType("i4", 4, int),
+    "llong": DataType("i8", 8, int),
+    "char": DataType("i1", 1, str),
+    "boolean": DataType("i1", 1, int),
+    "string": DataType("s", None, str),
+}
 
 def get_dtype_str(type_: str, endianness: str = "big", length: Optional[int] = None):
-    return f"{ENDIAN[endianness]}{length if length is not None else ''}{NUMTYPES[type_]}"
+    return f"{ENDIAN[endianness]}{length if length is not None else ''}{DATA_TYPES[type_].type_}"
 
 
 ##############################################################################
@@ -107,7 +110,7 @@ class Definition:
     Fields:
         name (str): Name of the data.
         type (str): Type of the data.
-                    One of "short", "long", "float", "double", "character", or "string".
+                    One of "short", "long", "llong", "float", "double", "char", or "string".
         symbol (str): Optional. Allows specification of a symbol to represent the parameter;
                       it may contain escape sequences, for example,
                       to produce Greek or mathematical characters.
