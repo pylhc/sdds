@@ -91,7 +91,7 @@ def _write_arrays(array_gen: Iterable[tuple[Array, Any]], outbytes: IO[bytes]):
     def get_dimensions_from_array(value):
         # Return the number of items per dimension
         # For an array a[n][m], returns [n, m]
-        if isinstance(value, np.ndarray) or isinstance(value, list):
+        if isinstance(value, np.ndarray | list):
             if len(value) == 0:
                 return [0]
             return [len(value)] + get_dimensions_from_array(value[0])
