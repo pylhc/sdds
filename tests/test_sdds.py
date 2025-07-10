@@ -1,5 +1,4 @@
 import io
-import os
 import pathlib
 import struct
 import sys
@@ -371,7 +370,7 @@ def _sdds_gzipped_file_pathlib() -> pathlib.Path:
 
 @pytest.fixture()
 def _sdds_gzipped_file_str() -> str:
-    return os.path.join(os.path.dirname(__file__), "inputs", "test_file.sdds.gz")
+    return str(CURRENT_DIR / "inputs" / "test_file.sdds.gz")
 
 
 @pytest.fixture()
