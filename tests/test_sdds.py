@@ -228,7 +228,7 @@ class TestAscii:
             if not isinstance(value, np.ndarray):
                 values_equal = np.isclose(value, new_val, atol=0.0001)
             elif isinstance(value[0], np.str_):
-                values_equal = all([a == b for a, b in zip(value, new_val)])
+                values_equal = all(a == b for a, b in zip(value, new_val))
             else:
                 values_equal = np.isclose(value, new_val, atol=0.0001).all()
 
