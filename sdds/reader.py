@@ -269,8 +269,7 @@ def _read_string(inbytes: IO[bytes], str_len: int, endianness: str) -> str:
 
 def _read_data_ascii(definitions: list[Definition], inbytes: IO[bytes]) -> list[Any]:
     def _ascii_generator(ascii_text):
-        for line in ascii_text:
-            yield line
+        yield from ascii_text
 
     # Convert bytes to ASCII, separate by lines and remove comments
     ascii_text = [chr(r) for r in inbytes.read()]
