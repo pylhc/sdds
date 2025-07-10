@@ -361,7 +361,7 @@ def _sdds_file_pathlib() -> pathlib.Path:
 
 @pytest.fixture()
 def _sdds_file_str() -> str:
-    return os.path.join(os.path.dirname(__file__), "inputs", "test_file.sdds")
+    return str(CURRENT_DIR / "inputs" / "test_file.sdds")
 
 
 @pytest.fixture()
