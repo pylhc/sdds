@@ -11,10 +11,10 @@ import os
 import pathlib
 import struct
 import sys
-from collections.abc import Callable
+from collections.abc import Callable, Generator
 from contextlib import AbstractContextManager
 from functools import partial
-from typing import IO, Any, Dict, Generator, List, Optional, Tuple, Type, Union
+from typing import IO, Any
 
 import numpy as np
 
@@ -51,8 +51,8 @@ gzip_open = partial(gzip.open, mode="rb")  # for gzip-compressed sdds files
 
 
 def read_sdds(
-    file_path: Union[pathlib.Path, str],
-    endianness: Optional[str] = None,
+    file_path: pathlib.Path | str,
+    endianness: str | None = None,
     opener: OpenerType = binary_open,
 ) -> SddsFile:
     """
@@ -123,17 +123,17 @@ def read_sdds(
 
 def _read_header(
     inbytes: IO[bytes],
-) -> Tuple[str, List[Definition], Optional[Description], Data]:
+) -> tuple[str, list[Definition], Description | None, Data]:
     word_gen = _gen_words(inbytes)
     version = next(word_gen)  # First token is the SDDS version
     assert version == "SDDS1", (
         "This module is compatible with SDDS v1 only... are there really other versions?"
     )
-    definitions: List[Definition] = []
-    description: Optional[Description] = None
-    data: Optional[Data] = None
+    definitions: list[Definition] = []
+    description: Description | None = None
+    data: Data | None = None
     for word in word_gen:
-        def_dict: Dict[str, str] = _get_def_as_dict(word_gen)
+        def_dict: dict[str, str] = _get_def_as_dict(word_gen)
         if word in (Column.TAG, Parameter.TAG, Array.TAG):
             definitions.append(
                 {Column.TAG: Column, Parameter.TAG: Parameter, Array.TAG: Array}[word](
@@ -159,13 +159,13 @@ def _read_header(
     return version, definitions, description, data
 
 
-def _sort_definitions(orig_defs: List[Definition]) -> List[Definition]:
+def _sort_definitions(orig_defs: list[Definition]) -> list[Definition]:
     """
     Sorts the definitions in the parameter, array, column order.
     According to the specification, parameters appear first in data pages then arrays
     and then columns. Inside each group they follow the order of appearance in the header.
     """
-    definitions: List[Definition] = [
+    definitions: list[Definition] = [
         definition for definition in orig_defs if isinstance(definition, Parameter)
     ]
     definitions.extend([definition for definition in orig_defs if isinstance(definition, Array)])
@@ -174,11 +174,11 @@ def _sort_definitions(orig_defs: List[Definition]) -> List[Definition]:
 
 
 def _read_data(
-    data: Data, definitions: List[Definition], inbytes: IO[bytes], endianness: str
-) -> List[Any]:
+    data: Data, definitions: list[Definition], inbytes: IO[bytes], endianness: str
+) -> list[Any]:
     if data.mode == "binary":
         return _read_data_binary(definitions, inbytes, endianness)
-    elif data.mode == "ascii":
+    if data.mode == "ascii":
         return _read_data_ascii(definitions, inbytes)
 
     raise ValueError(f"Unsupported data mode {data.mode}.")
@@ -190,10 +190,10 @@ def _read_data(
 
 
 def _read_data_binary(
-    definitions: List[Definition], inbytes: IO[bytes], endianness: str
-) -> List[Any]:
+    definitions: list[Definition], inbytes: IO[bytes], endianness: str
+) -> list[Any]:
     row_count: int = _read_bin_int(inbytes, endianness)  # First int in bin data
-    functs_dict: Dict[Type[Definition], Callable] = {
+    functs_dict: dict[type[Definition], Callable] = {
         Parameter: _read_bin_param,
         Column: lambda x, y, z: _read_bin_column(x, y, z, row_count),
         Array: _read_bin_array,
@@ -206,7 +206,7 @@ def _read_data_binary(
 
 def _read_bin_param(
     inbytes: IO[bytes], definition: Parameter, endianness: str
-) -> Union[int, float, str]:
+) -> int | float | str:
     try:
         if definition.fixed_value is not None:
             if definition.type == "string":
@@ -243,8 +243,8 @@ def _read_bin_array(inbytes: IO[bytes], definition: Array, endianness: str) -> A
 
 
 def _read_bin_array_len(
-    inbytes: IO[bytes], num_dims: Optional[int], endianness: str
-) -> Tuple[List[int], int]:
+    inbytes: IO[bytes], num_dims: int | None, endianness: str
+) -> tuple[list[int], int]:
     if num_dims is None:
         num_dims = 1
 
@@ -274,7 +274,7 @@ def _read_string(inbytes: IO[bytes], str_len: int, endianness: str) -> str:
 ##############################################################################
 
 
-def _read_data_ascii(definitions: List[Definition], inbytes: IO[bytes]) -> List[Any]:
+def _read_data_ascii(definitions: list[Definition], inbytes: IO[bytes]) -> list[Any]:
     def _ascii_generator(ascii_text):
         for line in ascii_text:
             yield line
@@ -288,7 +288,7 @@ def _read_data_ascii(definitions: List[Definition], inbytes: IO[bytes]) -> List[
     ascii_gen = _ascii_generator(ascii_text)
 
     # Iterate through every parameters and arrays in the file
-    data: List[Any] = []
+    data: list[Any] = []
     for definition in definitions:
         # Call the function handling the tag we're on
         # Change the current line according to the tag and dimensions
@@ -302,7 +302,7 @@ def _read_data_ascii(definitions: List[Definition], inbytes: IO[bytes]) -> List[
 
 def _read_ascii_parameter(
     ascii_gen: Generator[str, None, None], definition: Parameter
-) -> Union[str, int, float]:
+) -> str | int | float:
     # Check if we got fixed values, no need to read a line if that's the case
     if definition.fixed_value is not None:
         if definition.type == "string":
@@ -327,7 +327,7 @@ def _read_ascii_array(ascii_gen: Generator[str, None, None], definition: Array) 
     dimensions = np.array(next(ascii_gen).split(), dtype="int")
 
     # Get all the data given by the dimensions
-    data: List[str] = []
+    data: list[str] = []
     while len(data) != np.prod(dimensions):
         # The values on each line are split by a space
         data += next(ascii_gen).strip().split(" ")
@@ -383,8 +383,8 @@ def _gen_words(inbytes: IO[bytes]) -> Generator[str, None, None]:
     return
 
 
-def _get_def_as_dict(word_gen: Generator[str, None, None]) -> Dict[str, str]:
-    raw_str: List[str] = []
+def _get_def_as_dict(word_gen: Generator[str, None, None]) -> dict[str, str]:
+    raw_str: list[str] = []
     for word in word_gen:
         if word.strip() == "&end":
             recomposed: str = " ".join(raw_str)

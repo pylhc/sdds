@@ -8,7 +8,8 @@ It provides a high-level function to write SDDS files in different formats, and 
 
 import pathlib
 import struct
-from typing import IO, Any, Iterable, List, Tuple, Union
+from collections.abc import Iterable
+from typing import IO, Any
 
 import numpy as np
 
@@ -25,7 +26,7 @@ from sdds.classes import (
 )
 
 
-def write_sdds(sdds_file: SddsFile, output_path: Union[pathlib.Path, str]) -> None:
+def write_sdds(sdds_file: SddsFile, output_path: pathlib.Path | str) -> None:
     """
     Writes SddsFile object into ``output_path``.
     The byteorder will be big-endian, independent of the byteorder of the current machine.
@@ -41,7 +42,7 @@ def write_sdds(sdds_file: SddsFile, output_path: Union[pathlib.Path, str]) -> No
         _write_data(names, sdds_file, outbytes)
 
 
-def _write_header(sdds_file: SddsFile, outbytes: IO[bytes]) -> List[str]:
+def _write_header(sdds_file: SddsFile, outbytes: IO[bytes]) -> list[str]:
     outbytes.writelines(("SDDS1\n".encode(ENCODING), "!# big-endian\n".encode(ENCODING)))
     names = []
     if sdds_file.description is not None:
@@ -55,17 +56,17 @@ def _write_header(sdds_file: SddsFile, outbytes: IO[bytes]) -> List[str]:
     return names
 
 
-def _sdds_def_as_str(definition: Union[Description, Definition, Data]) -> str:
+def _sdds_def_as_str(definition: Description | Definition | Data) -> str:
     return f"{definition.TAG} {definition.get_key_value_string()} &end\n"
 
 
-def _write_data(names: List[str], sdds_file: SddsFile, outbytes: IO[bytes]) -> None:
+def _write_data(names: list[str], sdds_file: SddsFile, outbytes: IO[bytes]) -> None:
     # row_count:
     outbytes.write(np.array(0, dtype=get_dtype_str("long")).tobytes())
 
-    parameters: List[Tuple[Parameter, Any]] = []
-    arrays: List[Tuple[Array, Any]] = []
-    columns: List[Tuple[Column, Any]] = []
+    parameters: list[tuple[Parameter, Any]] = []
+    arrays: list[tuple[Array, Any]] = []
+    columns: list[tuple[Column, Any]] = []
     for name in names:
         if isinstance(sdds_file[name][0], Parameter):
             parameters.append(sdds_file[name])  # type: ignore
@@ -78,7 +79,7 @@ def _write_data(names: List[str], sdds_file: SddsFile, outbytes: IO[bytes]) -> N
     _write_columns(columns, outbytes)
 
 
-def _write_parameters(param_gen: Iterable[Tuple[Parameter, Any]], outbytes: IO[bytes]):
+def _write_parameters(param_gen: Iterable[tuple[Parameter, Any]], outbytes: IO[bytes]):
     for param_def, value in param_gen:
         if param_def.type == "string":
             _write_string(value, outbytes)
@@ -86,15 +87,14 @@ def _write_parameters(param_gen: Iterable[Tuple[Parameter, Any]], outbytes: IO[b
             outbytes.write(np.array(value, dtype=get_dtype_str(param_def.type)).tobytes())
 
 
-def _write_arrays(array_gen: Iterable[Tuple[Array, Any]], outbytes: IO[bytes]):
+def _write_arrays(array_gen: Iterable[tuple[Array, Any]], outbytes: IO[bytes]):
     def get_dimensions_from_array(value):
         # Return the number of items per dimension
         # For an array a[n][m], returns [n, m]
         if isinstance(value, np.ndarray) or isinstance(value, list):
             if len(value) == 0:
                 return [0]
-            else:
-                return [len(value)] + get_dimensions_from_array(value[0])
+            return [len(value)] + get_dimensions_from_array(value[0])
         return []
 
     for array_def, value in array_gen:
@@ -110,7 +110,7 @@ def _write_arrays(array_gen: Iterable[Tuple[Array, Any]], outbytes: IO[bytes]):
             outbytes.write(np.array(value, dtype=get_dtype_str(array_def.type)).tobytes())
 
 
-def _write_columns(col_gen: Iterable[Tuple[Column, Any]], outbytes: IO[bytes]):
+def _write_columns(col_gen: Iterable[tuple[Column, Any]], outbytes: IO[bytes]):
     # TODO: Implement the columns thing.
     pass
 

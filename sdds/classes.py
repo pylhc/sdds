@@ -9,8 +9,9 @@ https://ops.aps.anl.gov/manuals/SDDStoolkit/SDDStoolkitsu2.html
 
 import logging
 import warnings
+from collections.abc import Iterator
 from dataclasses import dataclass, fields
-from typing import Any, ClassVar, Dict, Iterator, List, Optional, Tuple
+from typing import Any, ClassVar
 
 LOGGER = logging.getLogger(__name__)
 
@@ -54,7 +55,7 @@ NUMTYPES_CAST = {
 }
 
 
-def get_dtype_str(type_: str, endianness: str = "big", length: Optional[int] = None):
+def get_dtype_str(type_: str, endianness: str = "big", length: int | None = None):
     return f"{ENDIAN[endianness]}{length if length is not None else ''}{NUMTYPES[type_]}"
 
 
@@ -79,8 +80,8 @@ class Description:
         contents (str): Optional. Formal specification of the type of data stored in a data set.
     """
 
-    text: Optional[str] = None
-    contents: Optional[str] = None
+    text: str | None = None
+    contents: str | None = None
     TAG: ClassVar[str] = "&description"
 
     def __repr__(self):
@@ -137,11 +138,11 @@ class Definition:
 
     name: str
     type: str
-    symbol: Optional[str] = None
-    units: Optional[str] = None
-    description: Optional[str] = None
-    format_string: Optional[str] = None
-    TAG: ClassVar[Optional[str]] = None
+    symbol: str | None = None
+    units: str | None = None
+    description: str | None = None
+    format_string: str | None = None
+    TAG: ClassVar[str | None] = None
 
     def __post_init__(self):
         # Fix types (probably strings from reading files) by using the type-hints
@@ -217,7 +218,7 @@ class Parameter(Definition):
     """
 
     TAG: ClassVar[str] = "&parameter"
-    fixed_value: Optional[str] = None
+    fixed_value: str | None = None
 
 
 @dataclass
@@ -240,9 +241,9 @@ class Array(Definition):
     """
 
     TAG: ClassVar[str] = "&array"
-    field_length: Optional[int] = None
-    group_name: Optional[str] = None
-    dimensions: Optional[int] = None
+    field_length: int | None = None
+    group_name: str | None = None
+    dimensions: int | None = None
 
 
 @dataclass
@@ -300,16 +301,16 @@ class SddsFile:
     """
 
     version: str  # This should always be "SDDS1"
-    description: Optional[Description]
-    definitions: Dict[str, Definition]
-    values: Dict[str, Any]
+    description: Description | None
+    definitions: dict[str, Definition]
+    values: dict[str, Any]
 
     def __init__(
         self,
         version: str,
-        description: Optional[Description],
-        definitions_list: List[Definition],
-        values_list: List[Any],
+        description: Description | None,
+        definitions_list: list[Definition],
+        values_list: list[Any],
     ) -> None:
         self.version = version
 
@@ -323,10 +324,10 @@ class SddsFile:
             definition.name: value for definition, value in zip(definitions_list, values_list)
         }
 
-    def __getitem__(self, name: str) -> Tuple[Definition, Any]:
+    def __getitem__(self, name: str) -> tuple[Definition, Any]:
         return self.definitions[name], self.values[name]
 
-    def __iter__(self) -> Iterator[Tuple[Definition, Any]]:
+    def __iter__(self) -> Iterator[tuple[Definition, Any]]:
         for def_name in self.definitions:
             yield self[def_name]
 

@@ -3,7 +3,6 @@ import os
 import pathlib
 import struct
 import sys
-from typing import Dict
 
 import numpy as np
 import pytest
@@ -339,7 +338,7 @@ def _write_read_header():
     assert def_dict["type"] == original.type
 
 
-def _header_from_dict(d: Dict[str, Dict[str, str]]) -> str:
+def _header_from_dict(d: dict[str, dict[str, str]]) -> str:
     """Build a quick header from given dict."""
     d = {k: v.copy() for k, v in d.items()}
     return (
