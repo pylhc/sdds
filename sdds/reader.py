@@ -330,9 +330,7 @@ def _read_ascii_array(ascii_gen: Generator[str, None, None], definition: Array) 
 
     # Convert to np.array so that it can be reshaped to reflect the dimensions
     npdata = np.array(data)
-    npdata = npdata.reshape(dimensions)
-
-    return npdata
+    return npdata.reshape(dimensions)
 
 
 ##############################################################################
