@@ -1,4 +1,5 @@
 """Exposes SddsFile, read_sdds and write_sdds directly in sdds namespace."""
+
 from sdds.classes import SddsFile
 from sdds.reader import read_sdds
 from sdds.writer import write_sdds

@@ -5,13 +5,24 @@ Writer
 This module contains the writing functionality of ``sdds``.
 It provides a high-level function to write SDDS files in different formats, and a series of helpers.
 """
+
 import pathlib
 import struct
 from typing import IO, Any, Iterable, List, Tuple, Union
 
 import numpy as np
 
-from sdds.classes import ENCODING, Array, Column, Data, Definition, Description, Parameter, SddsFile, get_dtype_str
+from sdds.classes import (
+    ENCODING,
+    Array,
+    Column,
+    Data,
+    Definition,
+    Description,
+    Parameter,
+    SddsFile,
+    get_dtype_str,
+)
 
 
 def write_sdds(sdds_file: SddsFile, output_path: Union[pathlib.Path, str]) -> None:

@@ -20,7 +20,15 @@ from sdds.classes import (
     SddsFile,
     get_dtype_str,
 )
-from sdds.reader import _gen_words, _get_def_as_dict, _read_data, _read_header, _sort_definitions, gzip_open, read_sdds
+from sdds.reader import (
+    _gen_words,
+    _get_def_as_dict,
+    _read_data,
+    _read_header,
+    _sort_definitions,
+    gzip_open,
+    read_sdds,
+)
 from sdds.writer import _sdds_def_as_str, write_sdds
 
 CURRENT_DIR = pathlib.Path(__file__).parent
@@ -187,7 +195,7 @@ class TestReadFunctions:
 
 
 def test_def_as_dict():
-    test_str = b"test1=value1,  test2= value2, \n" b"test3=value3, &end"
+    test_str = b"test1=value1,  test2= value2, \ntest3=value3, &end"
     word_gen = _gen_words(io.BytesIO(test_str))
     def_dict = _get_def_as_dict(word_gen)
     assert def_dict["test1"] == "value1"

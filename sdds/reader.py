@@ -5,6 +5,7 @@ Reader
 This module contains the reading functionality of ``sdds``.
 It provides a high-level function to read SDDS files in different formats, and a series of helpers.
 """
+
 import gzip
 import os
 import pathlib
@@ -17,9 +18,19 @@ from typing import IO, Any, Dict, Generator, List, Optional, Tuple, Type, Union
 
 import numpy as np
 
-from sdds.classes import (ENCODING, NUMTYPES_CAST, NUMTYPES_SIZES, Array,
-                          Column, Data, Definition, Description, Parameter,
-                          SddsFile, get_dtype_str)
+from sdds.classes import (
+    ENCODING,
+    NUMTYPES_CAST,
+    NUMTYPES_SIZES,
+    Array,
+    Column,
+    Data,
+    Definition,
+    Description,
+    Parameter,
+    SddsFile,
+    get_dtype_str,
+)
 
 # ----- Providing Opener Abstractions for the Reader ----- #
 
@@ -115,7 +126,9 @@ def _read_header(
 ) -> Tuple[str, List[Definition], Optional[Description], Data]:
     word_gen = _gen_words(inbytes)
     version = next(word_gen)  # First token is the SDDS version
-    assert version == "SDDS1", "This module is compatible with SDDS v1 only... are there really other versions?"
+    assert version == "SDDS1", (
+        "This module is compatible with SDDS v1 only... are there really other versions?"
+    )
     definitions: List[Definition] = []
     description: Optional[Description] = None
     data: Optional[Data] = None
@@ -152,13 +165,17 @@ def _sort_definitions(orig_defs: List[Definition]) -> List[Definition]:
     According to the specification, parameters appear first in data pages then arrays
     and then columns. Inside each group they follow the order of appearance in the header.
     """
-    definitions: List[Definition] = [definition for definition in orig_defs if isinstance(definition, Parameter)]
+    definitions: List[Definition] = [
+        definition for definition in orig_defs if isinstance(definition, Parameter)
+    ]
     definitions.extend([definition for definition in orig_defs if isinstance(definition, Array)])
     definitions.extend([definition for definition in orig_defs if isinstance(definition, Column)])
     return definitions
 
 
-def _read_data(data: Data, definitions: List[Definition], inbytes: IO[bytes], endianness: str) -> List[Any]:
+def _read_data(
+    data: Data, definitions: List[Definition], inbytes: IO[bytes], endianness: str
+) -> List[Any]:
     if data.mode == "binary":
         return _read_data_binary(definitions, inbytes, endianness)
     elif data.mode == "ascii":
@@ -172,17 +189,24 @@ def _read_data(data: Data, definitions: List[Definition], inbytes: IO[bytes], en
 ##############################################################################
 
 
-def _read_data_binary(definitions: List[Definition], inbytes: IO[bytes], endianness: str) -> List[Any]:
+def _read_data_binary(
+    definitions: List[Definition], inbytes: IO[bytes], endianness: str
+) -> List[Any]:
     row_count: int = _read_bin_int(inbytes, endianness)  # First int in bin data
     functs_dict: Dict[Type[Definition], Callable] = {
         Parameter: _read_bin_param,
         Column: lambda x, y, z: _read_bin_column(x, y, z, row_count),
         Array: _read_bin_array,
     }
-    return [functs_dict[definition.__class__](inbytes, definition, endianness) for definition in definitions]
+    return [
+        functs_dict[definition.__class__](inbytes, definition, endianness)
+        for definition in definitions
+    ]
 
 
-def _read_bin_param(inbytes: IO[bytes], definition: Parameter, endianness: str) -> Union[int, float, str]:
+def _read_bin_param(
+    inbytes: IO[bytes], definition: Parameter, endianness: str
+) -> Union[int, float, str]:
     try:
         if definition.fixed_value is not None:
             if definition.type == "string":
@@ -193,7 +217,9 @@ def _read_bin_param(inbytes: IO[bytes], definition: Parameter, endianness: str) 
     if definition.type == "string":
         str_len: int = _read_bin_int(inbytes, endianness)
         return _read_string(inbytes, str_len, endianness)
-    return NUMTYPES_CAST[definition.type](_read_bin_numeric(inbytes, definition.type, 1, endianness)[0])
+    return NUMTYPES_CAST[definition.type](
+        _read_bin_numeric(inbytes, definition.type, 1, endianness)[0]
+    )
 
 
 def _read_bin_column(inbytes: IO[bytes], definition: Column, endianness: str, row_count: int):
@@ -216,7 +242,9 @@ def _read_bin_array(inbytes: IO[bytes], definition: Array, endianness: str) -> A
     return data.reshape(dims)
 
 
-def _read_bin_array_len(inbytes: IO[bytes], num_dims: Optional[int], endianness: str) -> Tuple[List[int], int]:
+def _read_bin_array_len(
+    inbytes: IO[bytes], num_dims: Optional[int], endianness: str
+) -> Tuple[List[int], int]:
     if num_dims is None:
         num_dims = 1
 
@@ -272,7 +300,9 @@ def _read_data_ascii(definitions: List[Definition], inbytes: IO[bytes]) -> List[
     return data
 
 
-def _read_ascii_parameter(ascii_gen: Generator[str, None, None], definition: Parameter) -> Union[str, int, float]:
+def _read_ascii_parameter(
+    ascii_gen: Generator[str, None, None], definition: Parameter
+) -> Union[str, int, float]:
     # Check if we got fixed values, no need to read a line if that's the case
     if definition.fixed_value is not None:
         if definition.type == "string":
@@ -359,6 +389,9 @@ def _get_def_as_dict(word_gen: Generator[str, None, None]) -> Dict[str, str]:
         if word.strip() == "&end":
             recomposed: str = " ".join(raw_str)
             parts = [assign for assign in recomposed.split(",") if assign]
-            return {key.strip(): value.strip() for (key, value) in [assign.split("=") for assign in parts]}
+            return {
+                key.strip(): value.strip()
+                for (key, value) in [assign.split("=") for assign in parts]
+            }
         raw_str.append(word.strip())
     raise ValueError("EOF found while looking for &end tag.")

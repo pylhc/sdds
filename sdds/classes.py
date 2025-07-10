@@ -6,6 +6,7 @@ This module holds classes to handle different namelist commands in an SDDS file.
 Implementation are based on documentation at:
 https://ops.aps.anl.gov/manuals/SDDStoolkit/SDDStoolkitsu2.html
 """
+
 import logging
 import warnings
 from dataclasses import dataclass, fields
@@ -33,8 +34,24 @@ NUMTYPES = {
     "boolean": "i1",
     "string": "s",
 }
-NUMTYPES_SIZES = {"float": 4, "double": 8, "short": 2, "long": 4, "llong": 8, "char": 1, "boolean": 1}
-NUMTYPES_CAST = {"float": float, "double": float, "short": int, "long": int, "llong": int, "char": str, "boolean": int}
+NUMTYPES_SIZES = {
+    "float": 4,
+    "double": 8,
+    "short": 2,
+    "long": 4,
+    "llong": 8,
+    "char": 1,
+    "boolean": 1,
+}
+NUMTYPES_CAST = {
+    "float": float,
+    "double": float,
+    "short": int,
+    "long": int,
+    "llong": int,
+    "char": str,
+    "boolean": int,
+}
 
 
 def get_dtype_str(type_: str, endianness: str = "big", length: Optional[int] = None):
@@ -149,7 +166,9 @@ class Definition:
                 # all is fine
                 continue
 
-            LOGGER.debug(f"converting {field.name}: " f"{type(value).__name__} -> {hinted_type.__name__}")
+            LOGGER.debug(
+                f"converting {field.name}: {type(value).__name__} -> {hinted_type.__name__}"
+            )
             setattr(self, field.name, hinted_type(value))
 
     def get_key_value_string(self) -> str:
@@ -158,7 +177,9 @@ class Definition:
         Hint: `ClassVars` (like ``TAG``) are ignored in `fields`.
         """
         field_values = {field.name: getattr(self, field.name) for field in fields(self)}
-        return ", ".join([f"{key}={value}" for key, value in field_values.items() if value is not None])
+        return ", ".join(
+            [f"{key}={value}" for key, value in field_values.items() if value is not None]
+        )
 
     def __repr__(self):
         return f"<SDDS {self.__class__.__name__} '{self.name}'>"
@@ -298,7 +319,9 @@ class SddsFile:
 
         self.description = description
         self.definitions = {definition.name: definition for definition in definitions_list}
-        self.values = {definition.name: value for definition, value in zip(definitions_list, values_list)}
+        self.values = {
+            definition.name: value for definition, value in zip(definitions_list, values_list)
+        }
 
     def __getitem__(self, name: str) -> Tuple[Definition, Any]:
         return self.definitions[name], self.values[name]
