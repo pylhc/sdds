@@ -368,8 +368,7 @@ def _gen_real_lines(inbytes: IO[bytes]) -> Generator[str, None, None]:
 
 def _gen_words(inbytes: IO[bytes]) -> Generator[str, None, None]:
     for line in _gen_real_lines(inbytes):
-        for word in line.split():
-            yield word
+        yield from line.split()
     return
 
 
