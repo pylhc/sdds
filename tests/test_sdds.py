@@ -1,9 +1,7 @@
 import io
-import os
 import pathlib
 import struct
 import sys
-from typing import Dict
 
 import numpy as np
 import pytest
@@ -20,7 +18,15 @@ from sdds.classes import (
     SddsFile,
     get_dtype_str,
 )
-from sdds.reader import _gen_words, _get_def_as_dict, _read_data, _read_header, _sort_definitions, gzip_open, read_sdds
+from sdds.reader import (
+    _gen_words,
+    _get_def_as_dict,
+    _read_data,
+    _read_header,
+    _sort_definitions,
+    gzip_open,
+    read_sdds,
+)
 from sdds.writer import _sdds_def_as_str, write_sdds
 
 CURRENT_DIR = pathlib.Path(__file__).parent
@@ -187,7 +193,7 @@ class TestReadFunctions:
 
 
 def test_def_as_dict():
-    test_str = b"test1=value1,  test2= value2, \n" b"test3=value3, &end"
+    test_str = b"test1=value1,  test2= value2, \ntest3=value3, &end"
     word_gen = _gen_words(io.BytesIO(test_str))
     def_dict = _get_def_as_dict(word_gen)
     assert def_dict["test1"] == "value1"
@@ -221,7 +227,7 @@ class TestAscii:
             if not isinstance(value, np.ndarray):
                 values_equal = np.isclose(value, new_val, atol=0.0001)
             elif isinstance(value[0], np.str_):
-                values_equal = all([a == b for a, b in zip(value, new_val)])
+                values_equal = all(a == b for a, b in zip(value, new_val))
             else:
                 values_equal = np.isclose(value, new_val, atol=0.0001).all()
 
@@ -331,7 +337,7 @@ def _write_read_header():
     assert def_dict["type"] == original.type
 
 
-def _header_from_dict(d: Dict[str, Dict[str, str]]) -> str:
+def _header_from_dict(d: dict[str, dict[str, str]]) -> str:
     """Build a quick header from given dict."""
     d = {k: v.copy() for k, v in d.items()}
     return (
@@ -354,7 +360,7 @@ def _sdds_file_pathlib() -> pathlib.Path:
 
 @pytest.fixture()
 def _sdds_file_str() -> str:
-    return os.path.join(os.path.dirname(__file__), "inputs", "test_file.sdds")
+    return str(CURRENT_DIR / "inputs" / "test_file.sdds")
 
 
 @pytest.fixture()
@@ -364,7 +370,7 @@ def _sdds_gzipped_file_pathlib() -> pathlib.Path:
 
 @pytest.fixture()
 def _sdds_gzipped_file_str() -> str:
-    return os.path.join(os.path.dirname(__file__), "inputs", "test_file.sdds.gz")
+    return str(CURRENT_DIR / "inputs" / "test_file.sdds.gz")
 
 
 @pytest.fixture()
