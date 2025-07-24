@@ -7,15 +7,11 @@ Implementation are based on documentation at:
 https://ops.aps.anl.gov/manuals/SDDStoolkit/SDDStoolkitsu2.html
 """
 
-from __future__ import annotations
-
 import logging
 import warnings
+from collections.abc import Iterator
 from dataclasses import dataclass, fields
-from typing import TYPE_CHECKING, Any, ClassVar
-
-if TYPE_CHECKING:
-    from collections.abc import Iterator
+from typing import Any, ClassVar
 
 LOGGER = logging.getLogger(__name__)
 
