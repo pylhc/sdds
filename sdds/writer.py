@@ -6,10 +6,11 @@ This module contains the writing functionality of ``sdds``.
 It provides a high-level function to write SDDS files in different formats, and a series of helpers.
 """
 
+from __future__ import annotations  # For type hints in Python < 3.10
+
 import pathlib
 import struct
-from collections.abc import Iterable
-from typing import IO, Any
+from typing import IO, TYPE_CHECKING, Any
 
 import numpy as np
 
@@ -24,6 +25,9 @@ from sdds.classes import (
     SddsFile,
     get_dtype_str,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 
 def write_sdds(sdds_file: SddsFile, output_path: pathlib.Path | str) -> None:
