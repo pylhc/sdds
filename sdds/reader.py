@@ -6,6 +6,8 @@ This module contains the reading functionality of ``sdds``.
 It provides a high-level function to read SDDS files in different formats, and a series of helpers.
 """
 
+from __future__ import annotations
+
 import gzip
 import os
 import pathlib
