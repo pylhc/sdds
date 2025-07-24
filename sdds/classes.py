@@ -7,6 +7,10 @@ Implementation are based on documentation at:
 https://ops.aps.anl.gov/manuals/SDDStoolkit/SDDStoolkitsu2.html
 """
 
+# Note: do not add 'from __future__ import annotations' in this file,
+# as the __post_init__ method relies on the type hints determination
+# at runtime and will fail if they are all made strings (in asserts).
+
 import logging
 import warnings
 from collections.abc import Iterator
