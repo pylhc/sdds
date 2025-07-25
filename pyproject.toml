@@ -73,6 +73,10 @@ changelog = "https://github.com/pylhc/sdds/blob/master/CHANGELOG.md"
 
 # ----- Testing ----- #
 
+[tool.pytest.ini_options]
+addopts = "--cov-report=xml --cov-report term-missing --cov-config=pyproject.toml --cov=sdds"
+testpaths = ["tests"]
+
 [tool.coverage.run]
 source = ["sdds/"]
 
