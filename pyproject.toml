@@ -71,6 +71,19 @@ repository = "https://github.com/pylhc/sdds"
 documentation = "https://pylhc.github.io/sdds/"
 changelog = "https://github.com/pylhc/sdds/blob/master/CHANGELOG.md"
 
+# ----- Testing ----- #
+
+[tool.coverage.run]
+source = ["sdds/"]
+
+[tool.coverage.report]
+precision = 2
+ignore_errors = true
+exclude_also = [
+  "if TYPE_CHECKING:",  # do not count if TYPE_CHECKING block imports (ignored at runtime) for coverage
+  "except ImportError:",  # do not count missing optional dependencies set to None, we monkeypatch and test that
+]
+
 # ----- Dev Tools Configuration ----- #
 
 [tool.ruff]
