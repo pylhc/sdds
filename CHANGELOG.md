@@ -1,5 +1,9 @@
 # SDDS-Files Changelog
 
+## Version 0.4.3
+
+- Dropped support for `Python 3.9`.
+
 ## Version 0.4.2
 
 - Using `format_string` instead of `format` in `Definition` class.
