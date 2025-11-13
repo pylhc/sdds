@@ -24,7 +24,7 @@ authors = [
 ]
 license = "MIT"
 dynamic = ["version"]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 
 keywords = [
   "SDDS",
@@ -36,10 +36,11 @@ classifiers = [
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: Implementation :: CPython",
     "Topic :: Scientific/Engineering",
     "Topic :: Software Development :: Libraries :: Python Modules",
@@ -74,17 +75,16 @@ changelog = "https://github.com/pylhc/sdds/blob/master/CHANGELOG.md"
 # ----- Testing ----- #
 
 [tool.pytest.ini_options]
-addopts = "--cov-report=xml --cov-report term-missing --cov-config=pyproject.toml --cov=sdds"
-testpaths = ["tests"]
+addopts = [
+    "--import-mode=importlib",
+]
 
 [tool.coverage.run]
-source = ["sdds/"]
+relative_files = true
 
 [tool.coverage.report]
-precision = 2
-ignore_errors = true
 exclude_also = [
-  "if TYPE_CHECKING:",  # do not count if TYPE_CHECKING block imports (ignored at runtime) for coverage
+  "if TYPE_CHECKING:",  # do not count type checking imports (ignored at runtime) for coverage
   "except ImportError:",  # do not count missing optional dependencies set to None, we monkeypatch and test that
 ]
 
